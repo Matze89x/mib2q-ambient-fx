@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 726" role="img" aria-label="AmbientFX Phase 1: Kontur-LED-Streifen an Armaturenbrett und allen vier Türen werden gesteuert, passive Flächenbeleuchtung bleibt manuell / contour LED strips on the dashboard and all four doors are controlled, passive surface lighting stays manual">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 726" role="img" aria-label="AmbientFX Phase 1: Kontur-LED-Streifen an Armaturenbrett und allen vier Türen werden gesteuert, passive Flächenbeleuchtung bleibt manuell / contour LED strips on the instrument panel and all four doors are controlled, passive surface lighting stays manual">
   <title>AmbientFX Phase 1 - Kontur / contour</title>
   <defs>
     <linearGradient id="hz" gradientUnits="userSpaceOnUse" x1="236" x2="564" y1="0" y2="0">
@@ -38,7 +38,7 @@
   <!-- body -->
   <rect x="196" y="96" width="408" height="402" rx="64" fill="url(#body)" stroke="#2a3242" stroke-width="2"/>
   <path d="M232 106 Q400 92 568 106" fill="none" stroke="#2a3242" stroke-width="2"/>
-  <!-- dashboard -->
+  <!-- instrument panel -->
   <path d="M224 118 Q400 98 576 118 L576 168 Q400 150 224 168 Z" fill="#1b2230" stroke="#2a3242" stroke-width="1.5"/>
   <!-- steering wheel (left-hand drive) -->
   <ellipse cx="290" cy="202" rx="26" ry="13" fill="none" stroke="#3a4458" stroke-width="5"/>

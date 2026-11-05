@@ -109,6 +109,11 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 .stage svg{display:block;width:100%;height:auto}
 .led{fill:none;stroke:var(--led,#fff);stroke-width:4.5;stroke-linecap:round;filter:url(#glow);opacity:var(--lo,1)}
 .spill{fill:var(--led,#fff);filter:blur(22px);opacity:calc(var(--lo,1)*.22)}
+.seat{fill:#19202c;stroke:#2a3242;stroke-width:1.5}
+.pz{fill:rgba(139,147,166,.13);stroke:#8b93a6;stroke-width:2;stroke-dasharray:6 5}
+.zleg{display:flex;flex-wrap:wrap;gap:6px 18px;margin:10px 0 0;font-size:12px;color:var(--muted)}
+.zleg i{display:inline-block;width:26px;height:0;border-top:4px solid var(--led,#b45cff);border-radius:3px;margin-right:7px;vertical-align:middle;box-shadow:0 0 8px var(--led,#b45cff)}
+.zleg i.p{height:10px;border:2px dashed #8b93a6;border-radius:4px;box-shadow:none;background:rgba(139,147,166,.13);vertical-align:-1px}
 .readout{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;margin-top:12px}
 .swatch{width:46px;height:46px;border-radius:14px;border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)}
 .readout .v{font-family:'Space Mono',monospace;font-size:13px;line-height:1.5}
@@ -200,23 +205,40 @@ footer a{color:var(--muted)}
     <section class="card">
       <h2><span data-i18n="preview">Live-Vorschau</span></h2>
       <div class="stage" id="stage">
-        <svg viewBox="0 0 640 330" id="cab" role="img" aria-label="Preview">
+        <svg viewBox="90 84 630 430" id="cab" role="img" aria-label="Preview">
           <defs>
-            <filter id="glow" x="-20%" y="-60%" width="140%" height="220%"><feGaussianBlur stdDeviation="4.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            <linearGradient id="gl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#202733"/><stop offset="1" stop-color="#0e121a"/></linearGradient>
-            <linearGradient id="dash" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#151a23"/><stop offset="1" stop-color="#0b0e14"/></linearGradient>
+            <filter id="glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="4.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <linearGradient id="body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#161b26"/><stop offset="1" stop-color="#0e121a"/></linearGradient>
           </defs>
-          <path d="M70 168 C 130 36, 510 36, 570 168 Z" fill="url(#gl)" opacity=".55"/>
-          <path d="M0 214 C 120 168, 520 168, 640 214 L 640 330 L 0 330 Z" fill="url(#dash)"/>
-          <ellipse class="spill" cx="320" cy="196" rx="260" ry="26"/>
-          <rect x="268" y="196" width="104" height="62" rx="9" fill="#090c11" stroke="#222a36"/>
-          <circle cx="156" cy="256" r="50" fill="none" stroke="#1d2430" stroke-width="12"/>
-          <circle cx="156" cy="256" r="12" fill="#161b25"/>
-          <path d="M452 330 C 470 288, 540 280, 640 308 L 640 330 Z" fill="#10141c"/>
-          <path d="M0 268 C 40 262, 70 266, 96 300 L 0 300 Z" fill="#10141c"/>
-          <path class="led" d="M10 214 C 130 176, 510 176, 630 214"/>
-          <path class="led" d="M8 270 C 44 264, 72 268, 98 300"/>
-          <path class="led" d="M456 322 C 478 292, 540 286, 626 312"/>
+          <rect x="196" y="96" width="408" height="402" rx="64" fill="url(#body)" stroke="#2a3242" stroke-width="2"/>
+          <path d="M232 106 Q400 92 568 106" fill="none" stroke="#2a3242" stroke-width="2"/>
+          <path d="M224 118 Q400 98 576 118 L576 168 Q400 150 224 168 Z" fill="#1b2230" stroke="#2a3242" stroke-width="1.5"/>
+          <ellipse cx="290" cy="202" rx="26" ry="13" fill="none" stroke="#3a4458" stroke-width="5"/>
+          <line x1="290" y1="202" x2="290" y2="215" stroke="#3a4458" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="290" cy="202" r="4" fill="#3a4458"/>
+          <rect class="seat" x="248" y="272" width="84" height="88" rx="18"/>
+          <rect class="seat" x="468" y="272" width="84" height="88" rx="18"/>
+          <rect class="seat" x="236" y="416" width="328" height="58" rx="20"/>
+          <rect x="358" y="214" width="84" height="174" rx="14" fill="#1b2230" stroke="#2a3242" stroke-width="1.5"/>
+          <!-- passive surface (stays manual in the MMI) -->
+          <rect class="pz" x="158" y="196" width="34" height="132" rx="10"/>
+          <rect class="pz" x="158" y="352" width="34" height="132" rx="10"/>
+          <rect class="pz" x="608" y="196" width="34" height="132" rx="10"/>
+          <rect class="pz" x="608" y="352" width="34" height="132" rx="10"/>
+          <ellipse class="pz" cx="290" cy="244" rx="44" ry="16"/>
+          <ellipse class="pz" cx="510" cy="244" rx="44" ry="16"/>
+          <ellipse class="pz" cx="290" cy="386" rx="44" ry="15"/>
+          <ellipse class="pz" cx="510" cy="386" rx="44" ry="15"/>
+          <rect class="pz" x="346" y="230" width="9" height="140" rx="4"/>
+          <rect class="pz" x="445" y="230" width="9" height="140" rx="4"/>
+          <!-- contour (driven by the design) -->
+          <path class="led" d="M236 134 Q400 114 564 134"/>
+          <path class="led" d="M196.5 202 L196.5 322"/>
+          <path class="led" d="M196.5 358 L196.5 480"/>
+          <path class="led" d="M603.5 202 L603.5 322"/>
+          <path class="led" d="M603.5 358 L603.5 480"/>
+          <circle class="led" cx="381" cy="242" r="9"/>
+          <circle class="led" cx="419" cy="242" r="9"/>
         </svg>
       </div>
       <div class="readout">
@@ -227,6 +249,12 @@ footer a{color:var(--muted)}
       <div class="barwrap"><canvas class="bar" id="rampBar" width="640" height="26"></canvas><div class="marker" id="marker"></div></div>
       <div class="axis"><span id="axMin"></span><span id="axSrc"></span><span id="axMax"></span></div>
       <p class="sub" data-i18n="previewNote">Die Vorschau zeigt die Wunschfarbe. Im Fahrzeug wird sie (bei aktivem „Werksfarben“) auf die nächste Werksfarbe gerundet, dann erst gedimmt.</p>
+      <div class="zleg" id="zleg"><span><i></i><span data-i18n="zLegC">Kontur: wird vom Design gesteuert</span></span><span><i class="p"></i><span data-i18n="zLegP">Fläche: passiv, bleibt manuell im MMI</span></span></div>
+      <p class="sub" data-i18n-html="zNote"></p>
+      <details class="how" id="zoneInfo">
+        <summary data-i18n="zTitle">Was wird gesteuert?</summary>
+        <div data-i18n-html="zInfo"></div>
+      </details>
     </section>
 
     <section class="card">
@@ -403,6 +431,9 @@ de:{
  legal:'Recht & Haftung', offline:'läuft komplett offline im Browser, nichts wird hochgeladen',
  dropHere:'.ambiente hier ablegen zum Importieren',
  fileHintNew:'Wird exportiert als', newId:'Neue ID', newIdTitle:'Jedes Design hat eine feste, zufällige ID. Sie bleibt bei Import und Export erhalten. Für eine eigene Kopie eines fremden Designs: neue ID erzeugen.', toastNewId:'Neue ID',
+ zLegC:'Kontur: wird vom Design gesteuert', zLegP:'Fläche: passiv, bleibt manuell im MMI',
+ zNote:'<b>Aktuell ist im System erst die Kontur gebaut</b> (die LED-Streifen). Die passive Fläche stellst du weiter manuell im MMI ein. Sie kommt in einem späteren Update dazu.',
+ zTitle:'Was wird gesteuert?', zInfo:'<p><b>Kontur (gesteuert):</b> die Tür-Kontur an allen vier Türen, die beiden Getränkehalter vorn und, nur bei Nachrüstung, der LED-Streifen am Armaturenbrett. Im MMI ist das die <b>eine Farbwahl</b> für alles mit LED-Streifen.</p><p><b>Fläche (passiv, bleibt manuell):</b> Türtaschen, Lautsprecher, Fußraum an allen Plätzen und die Mittelkonsole (nur links und rechts). Im MMI ist das die <b>andere Farbwahl</b>. Mit QQ2 sind sie ebenfalls farbig (30 Farben).</p><p>Ein Design färbt also nur die Kontur. Die Fläche folgt weiter deiner Auswahl im MMI und kann später ebenfalls dazukommen. Die Zeichnung ist schematisch und nicht maßstabsgetreu.</p>',
  idTitle:'Was ist die ID?', idInfo:'<p>Die ID (<code>AFX-XXXX-XXXX</code>) ist der <b>Fingerabdruck deines Designs</b>. Sie wird einmal zufällig erzeugt und bleibt bei <b>Import und Export</b> gleich. So erkennst du ein Design wieder, auch wenn mehrere ähnliche Namen haben, und im Debug-Protokoll des Autos steht, welches Design gerade läuft.</p><p><b>Das Auto merkt sich deine Auswahl über den Namen</b> (den Text im MMI-Menü), nicht über die ID. Entfernst du ein Design, schaltet AmbientFX beim nächsten Start auf das Standard-Profil „Kontur-Weiß“ zurück. Das ist ein Rückfall, kein Fehler. Legst du später ein Design mit <b>demselben Namen</b> wieder ein, kann das Auto es am Namen wiedererkennen.</p><p><b>Neu</b> und jedes <b>Beispiel</b> erzeugen eine neue ID. „Neue ID“ brauchst du nur, wenn du ein fremdes Design als eigene Kopie weiterverwenden willst.</p>',
  src_speed:'Tempo', src_throttle:'Gaspedal', src_steer:'Lenkwinkel (Betrag)', src_brake:'Bremse', src_rpm:'Drehzahl', src_accel:'Längsbeschleunigung', src_lat:'Querbeschleunigung', src_temp:'Außentemperatur', src_none:'– keine (konstant) –',
  sl_speed:'Tempo', sl_throttle:'Gaspedal', sl_steer:'Lenkwinkel', sl_rpm:'Drehzahl', sl_accel:'Längsbeschl.', sl_lat:'Querbeschl.', sl_temp:'Außentemp.',
@@ -444,6 +475,9 @@ en:{
  legal:'Law & liability', offline:'runs completely offline in your browser, nothing is uploaded',
  dropHere:'Drop a .ambiente here to import',
  fileHintNew:'Will be exported as', newId:'New ID', newIdTitle:'Every design has a fixed, random ID. It is kept on import and export. To make your own copy of someone else’s design: generate a new ID.', toastNewId:'New ID',
+ zLegC:'Contour: driven by the design', zLegP:'Surface: passive, stays manual in the MMI',
+ zNote:'<b>For now only the contour is built into the system</b> (the LED strips). You keep setting the passive surface manually in the MMI. It will follow in a later update.',
+ zTitle:'What is controlled?', zInfo:'<p><b>Contour (controlled):</b> the door contour on all four doors, the two cupholders at the front and, only if retrofitted, the LED strip on the instrument panel. In the MMI this is the <b>one colour choice</b> for everything with LED strips.</p><p><b>Surface (passive, stays manual):</b> door pockets, speakers, footwell at every seat and the centre console (left and right sides only). In the MMI this is the <b>other colour choice</b>. With QQ2 they are coloured as well (30 colours).</p><p>A design therefore only colours the contour. The surface keeps following your choice in the MMI and may be added later. The drawing is schematic and not to scale.</p>',
  idTitle:'What is the ID?', idInfo:'<p>The ID (<code>AFX-XXXX-XXXX</code>) is your design’s <b>fingerprint</b>. It is generated once at random and stays the same on <b>import and export</b>. It lets you recognise a design even if several have similar names, and the car’s debug log shows which design is running.</p><p><b>The car remembers your choice by the name</b> (the text in the MMI menu), not by the ID. If you remove a design, AmbientFX falls back to the standard profile “Kontur-Weiß” at the next start. That is a fallback, not an error. If you later put a design with <b>the same name</b> back, the car can recognise it by that name.</p><p><b>New</b> and every <b>example</b> create a new ID. You only need “New ID” if you want to keep someone else’s design as your own copy.</p>',
  src_speed:'Speed', src_throttle:'Throttle', src_steer:'Steering angle (absolute)', src_brake:'Brake', src_rpm:'Engine speed', src_accel:'Longitudinal accel.', src_lat:'Lateral accel.', src_temp:'Outside temperature', src_none:'– none (constant) –',
  sl_speed:'Speed', sl_throttle:'Throttle', sl_steer:'Steering', sl_rpm:'Engine speed', sl_accel:'Long. accel.', sl_lat:'Lat. accel.', sl_temp:'Outside temp.',
@@ -851,17 +885,21 @@ function bindInputs(){
 function sortStops(){ cfg.stops.sort((a,b)=>a.pos-b.pos); }
 
 /* ---------- Verlaufs-Editor ---------- */
+let dragging=false;
 function buildGradHandles(){
-  const w=$('#gradwrap'); $$('.handle',w).forEach(h=>h.remove());
+  const w=$('#gradwrap');
+  /* waehrend des Ziehens die Griffe NICHT neu aufbauen, sonst verliert der gezogene Griff die Maus */
+  if(dragging){ $$('.handle',w).forEach((el,i)=>el.classList.toggle('sel',cfg.stops[i]===selStop)); return; }
+  $$('.handle',w).forEach(h=>h.remove());
   if(cfg.mode!=='ramp') return;
   cfg.stops.forEach(s=>{
     const h=document.createElement('button'); h.type='button'; h.className='handle'+(s===selStop?' sel':''); h.style.left=s.pos+'%'; h.style.background=s.hex;
     h.setAttribute('aria-label','Stop '+s.pos+'%');
     h.addEventListener('pointerdown',ev=>{
-      ev.preventDefault(); ev.stopPropagation(); selStop=s; h.setPointerCapture(ev.pointerId);
+      ev.preventDefault(); ev.stopPropagation(); selStop=s; dragging=true; try{ h.setPointerCapture(ev.pointerId); }catch(err){}
       const rect=$('#grad').getBoundingClientRect();
       const move=e=>{ s.pos=Math.round(Math.max(0,Math.min(100,(e.clientX-rect.left)/rect.width*100))); h.style.left=s.pos+'%'; engine.setCfg(cfg); $('#stPos').value=s.pos; $('#txt').value=serialize(cfg); drawAll(true); };
-      const up=()=>{ h.removeEventListener('pointermove',move); h.removeEventListener('pointerup',up); h.removeEventListener('pointercancel',up); sortStops(); changed(); };
+      const up=()=>{ dragging=false; h.removeEventListener('pointermove',move); h.removeEventListener('pointerup',up); h.removeEventListener('pointercancel',up); sortStops(); changed(); };
       h.addEventListener('pointermove',move); h.addEventListener('pointerup',up); h.addEventListener('pointercancel',up);
       syncUI(true);
     });

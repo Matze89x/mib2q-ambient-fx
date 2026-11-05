@@ -32,6 +32,10 @@ Jedes Design hat eine **zufällige, feste ID** (`AFX-XXXX-XXXX`, zum Beispiel `A
 - Das Fahrzeug merkt sich den zuletzt gewählten Effekt über den **Namen** (Menü-Text). Fehlt dieser Effekt später (Plugin entfernt oder umbenannt), schaltet AmbientFX beim Start auf das Standard-Profil „Kontur-Weiß“ zurück. Das ist ein Rückfall, kein Fehler.
 - Die ID steht in `plugin.properties` und in der Design-Datei und erscheint im Debug-Protokoll ([../docs/DEBUG.md](../docs/DEBUG.md)), damit man sieht, welches Design läuft.
 
+## Was wird gesteuert?
+
+Die Live-Vorschau zeigt den Innenraum von oben. **Aktuell ist im System erst die Kontur gebaut** (die LED-Streifen): Tür-Kontur an allen vier Türen, die zwei vorderen Getränkehalter und, nur bei Nachrüstung, der Streifen am Armaturenbrett. Die **passive Fläche** (Türtaschen, Lautsprecher, Fußraum, Mittelkonsole seitlich) bleibt manuell im MMI und kommt später dazu. Im MMI sind das zwei getrennte Farbwahlen. Das Studio erklärt das auch direkt auf der Seite („Was wird gesteuert?“).
+
 ## Was ein Design kann (und was nicht)
 
 | Baustein | Möglichkeiten |
@@ -139,6 +143,10 @@ Every design has a **random, fixed ID** (`AFX-XXXX-XXXX`, for example `AFX-95A8-
 
 - The vehicle remembers the last chosen effect by its **name** (menu text). If that effect is missing later (plugin removed or renamed), AmbientFX falls back to the standard profile “contour white” at start. That is a fallback, not an error.
 - The ID is in `plugin.properties` and in the design file and appears in the debug log ([../docs/DEBUG.md](../docs/DEBUG.md)) so you can see which design is running.
+
+## What is controlled?
+
+The live preview shows the interior from above. **For now only the contour is built into the system** (the LED strips): door contour on all four doors, the two front cupholders and, only if retrofitted, the strip on the instrument panel. The **passive surface** (door pockets, speakers, footwell, centre console sides) stays manual in the MMI and will be added later. In the MMI these are two separate colour choices. The Studio also explains this on the page (“What is controlled?”).
 
 ## What a design can do (and what not)
 
