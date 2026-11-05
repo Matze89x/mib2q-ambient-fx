@@ -70,7 +70,7 @@ public final class AmbientFx {
 
     /** Stand dieses Builds - erscheint in der Debug-Ausgabe (Signal fx.build + erste Zeile),
      *  damit sofort sichtbar ist, WELCHE Jar im Auto laeuft. */
-    static final String BUILD_ID = "2026-11-05 RAM-Debug";
+    static final String BUILD_ID = "V1.0 RAM-Debug";
 
     /** Profil, auf dem die Effekte laufen ("individuell"). */
     public static final int PROFILE_INDIVIDUAL = 1;
