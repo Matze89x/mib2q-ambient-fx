@@ -390,7 +390,7 @@ const RUNTIME_SHA = "/*@RUNTIME_SHA@*/";
 const RUNTIME_CLASS = "de/mk/ambientfx/designer/DesignEffect.class";
 const PLUGIN_CLASS = "de.mk.ambientfx.designer.DesignEffect";
 const MAX_STOPS = 16;
-const BUILTIN = ['momentum','momentum select','atmosphere','scroll','drive'];
+const BUILTIN = ['momentum','momentum select','atmosphere','scroll','drive','individuell','audi drive select','maritim-blau','impuls-rot'];
 
 const SRC = {
   speed:   {unit:'km/h', min:0,   max:130},
@@ -436,7 +436,7 @@ de:{
  idTitle:'Was ist die ID?', idInfo:'<p>Die ID (<code>AFX-XXXX-XXXX</code>) ist der <b>Fingerabdruck deines Designs</b>. Sie wird einmal zufällig erzeugt und bleibt bei <b>Import und Export</b> gleich. So erkennst du ein Design wieder, auch wenn mehrere ähnliche Namen haben, und im Debug-Protokoll des Autos steht, welches Design gerade läuft.</p><p><b>Das Auto merkt sich deine Auswahl über den Namen</b> (den Text im MMI-Menü), nicht über die ID. Entfernst du ein Design, schaltet AmbientFX beim nächsten Start auf das Standard-Profil „Kontur-Weiß“ zurück. Das ist ein Rückfall, kein Fehler. Legst du später ein Design mit <b>demselben Namen</b> wieder ein, kann das Auto es am Namen wiedererkennen.</p><p><b>Neu</b> und jedes <b>Beispiel</b> erzeugen eine neue ID. „Neue ID“ brauchst du nur, wenn du ein fremdes Design als eigene Kopie weiterverwenden willst.</p>',
  src_speed:'Tempo', src_throttle:'Gaspedal', src_steer:'Lenkwinkel (Betrag)', src_brake:'Bremse', src_rpm:'Drehzahl', src_accel:'Längsbeschleunigung', src_lat:'Querbeschleunigung', src_temp:'Außentemperatur', src_none:'– keine (konstant) –',
  sl_speed:'Tempo', sl_throttle:'Gaspedal', sl_steer:'Lenkwinkel', sl_rpm:'Drehzahl', sl_accel:'Längsbeschl.', sl_lat:'Querbeschl.', sl_temp:'Außentemp.',
- nameEmpty:'Bitte einen Namen eingeben.', nameChars:'Nur Buchstaben, Ziffern, Leerzeichen und . _ - (max. 24 Zeichen).', nameBuiltin:'Der Name gehört schon zu einem eingebauten Effekt.',
+ nameEmpty:'Bitte einen Namen eingeben.', nameChars:'Nur Buchstaben, Ziffern, Leerzeichen und . _ - (max. 24 Zeichen).', nameBuiltin:'Der Name ist schon vergeben (eingebauter Effekt oder Werksauswahl im MMI).',
  toastNew:'Neues Design', toastImported:'Importiert', toastExported:'Exportiert', toastCopied:'Kopiert', toastApplied:'Übernommen', toastEx:'Beispiel geladen',
  errCompiled:'Das ist ein fertig kompilierter Effekt (z. B. Momentum). Er lässt sich hier nicht bearbeiten – nur Designs aus dem Design Studio.',
  errNotAmb:'Keine gültige .ambiente-Datei.', errInflate:'Dieser Browser kann die Datei nicht entpacken (DecompressionStream fehlt).', errFormat:'Design nicht lesbar: ',
@@ -480,7 +480,7 @@ en:{
  idTitle:'What is the ID?', idInfo:'<p>The ID (<code>AFX-XXXX-XXXX</code>) is your design’s <b>fingerprint</b>. It is generated once at random and stays the same on <b>import and export</b>. It lets you recognise a design even if several have similar names, and the car’s debug log shows which design is running.</p><p><b>The car remembers your choice by the name</b> (the text in the MMI menu), not by the ID. If you remove a design, AmbientFX falls back to the standard profile “Kontur-Weiß” at the next start. That is a fallback, not an error. If you later put a design with <b>the same name</b> back, the car can recognise it by that name.</p><p><b>New</b> and every <b>example</b> create a new ID. You only need “New ID” if you want to keep someone else’s design as your own copy.</p>',
  src_speed:'Speed', src_throttle:'Throttle', src_steer:'Steering angle (absolute)', src_brake:'Brake', src_rpm:'Engine speed', src_accel:'Longitudinal accel.', src_lat:'Lateral accel.', src_temp:'Outside temperature', src_none:'– none (constant) –',
  sl_speed:'Speed', sl_throttle:'Throttle', sl_steer:'Steering', sl_rpm:'Engine speed', sl_accel:'Long. accel.', sl_lat:'Lat. accel.', sl_temp:'Outside temp.',
- nameEmpty:'Please enter a name.', nameChars:'Only letters, digits, spaces and . _ - (max. 24 characters).', nameBuiltin:'That name already belongs to a built-in effect.',
+ nameEmpty:'Please enter a name.', nameChars:'Only letters, digits, spaces and . _ - (max. 24 characters).', nameBuiltin:'That name is already taken (built-in effect or factory choice in the MMI).',
  toastNew:'New design', toastImported:'Imported', toastExported:'Exported', toastCopied:'Copied', toastApplied:'Applied', toastEx:'Example loaded',
  errCompiled:'This is a precompiled effect (e.g. Momentum). It cannot be edited here – only designs made with the Design Studio.',
  errNotAmb:'Not a valid .ambiente file.', errInflate:'This browser cannot unpack the file (DecompressionStream missing).', errFormat:'Design not readable: ',
