@@ -19,7 +19,7 @@ AmbientFX erweitert im Audi-MMI das Menü **Fahrzeugeinstellungen → Ambientebe
 Alle Effekte steuern nur die **Kontur/Linie** der Ambientebeleuchtung. Die **Fläche** bleibt beim normalen Farbregler im MMI.
 
 > [!NOTE]
-> **Phase 1: nur die LED-Streifen.** In der ersten Phase sprechen wir ausschließlich die **LED-Streifen** (Kontur/Linie) an. Die übrige, passive LED-Beleuchtung (die flächige Ambientebeleuchtung) bleibt unverändert und lässt sich **weiterhin wie gewohnt manuell** im MMI unter *Ambientebeleuchtung* einstellen. Ob und wie wir sie in einem späteren Update mit einbeziehen, ist offen. Zuerst geht es um die Streifen.
+> **Phase 1: nur die LED-Streifen.** In der ersten Phase sprechen wir ausschließlich die **LED-Streifen** (Kontur/Linie) an. Die übrige, passive LED-Beleuchtung (die flächige Ambientebeleuchtung) bleibt unverändert und lässt sich **weiterhin wie gewohnt manuell** im MMI unter *Ambientebeleuchtung* einstellen. Wir nehmen die passive Beleuchtung **demnächst mit auf**, in einem der nächsten Updates. Zuerst geht es um die Streifen.
 
 | Effekt | Verhalten |
 |---|---|
@@ -77,8 +77,8 @@ Das SD-Menü hat den Punkt **Deinstallieren**: Es sichert zuerst alles auf die S
 
 ## Was geprüft ist – und was nicht
 
-- ✅ Im Fahrzeug (Audi A4 B9, MU1329): Momentum läuft auch im Fahrbetrieb unauffällig, Menü-Einträge, Plugin-System, Installation und Deinstallation über das SD-Menü.
-- ⚠️ Momentum select im Dunkeln, und die genauen Farbübergänge auf anderen LED-Streifen sind nur teilweise im Fahrzeug bestätigt.
+- ✅ Im Fahrzeug (Audi A4 B9, MU1329): **Alle fünf Effekte** (Momentum, Momentum select, Atmosphere, Scroll, Drive) wurden vom Autor privat durchgetestet und laufen **seit Wochen im Alltag** ohne Probleme. Ebenso Menü-Einträge, Plugin-System, Installation und Deinstallation über das SD-Menü.
+- ⚠️ Die Farbübergänge hängen vom verbauten LED-Streifen ab. Auf anderen Streifen (anderes Fahrzeug, Nachrüstung) können sie anders aussehen. Das Design Studio ist bisher nur am PC getestet.
 - ❌ Andere Fahrzeuge, andere Firmware: **ungetestet**. Das Skript `verify.sh` meldet, wenn eine ersetzte Klasse in deiner Firmware nicht passt. Dann **nicht installieren**.
 
 ## Dokumentation
@@ -103,7 +103,7 @@ AmbientFX kann ein **Protokoll nur im RAM** führen, das du per Telnet ausliest.
 ## Roadmap
 
 - **Design Studio erweitern** (mehr Bausteine, etwa Gang-abhängige Regeln oder Zonen), nach dem ersten Test im Fahrzeug. Ideen und Mithilfe willkommen.
-- **Passive LED-Beleuchtung (Fläche)** in einem späteren Update ansprechen. Phase 1 sind nur die LED-Streifen.
+- **Passive LED-Beleuchtung (Fläche)** demnächst mit aufnehmen. Phase 1 sind nur die LED-Streifen.
 - Weitere Ideen: Einparkhilfe-Effekt, Blinker-Impuls, Helligkeit je Zone.
 - Englische Übersetzung der technischen Detail-Dokumente.
 
@@ -141,7 +141,7 @@ AmbientFX adds extra, vehicle-reactive light effects to the Audi MMI menu **Vehi
 All effects only drive the **contour/line** of the ambient lighting. The **surface** stays with the normal colour control in the MMI.
 
 > [!NOTE]
-> **Phase 1: LED strips only.** In the first phase we only address the **LED strips** (contour/line). The remaining passive LED lighting (the area-type ambient lighting) is left untouched and can **still be set manually as usual** in the MMI under *Ambientebeleuchtung* (ambient lighting). Whether and how we include it in a later update is open. The strips come first.
+> **Phase 1: LED strips only.** In the first phase we only address the **LED strips** (contour/line). The remaining passive LED lighting (the area-type ambient lighting) is left untouched and can **still be set manually as usual** in the MMI under *Ambientebeleuchtung* (ambient lighting). We will **add the passive lighting soon**, in one of the next updates. The strips come first.
 
 | Effect | Behaviour |
 |---|---|
@@ -199,8 +199,8 @@ The SD menu has an **Uninstall** entry: it backs everything up to the SD card fi
 
 ## What is verified – and what is not
 
-- ✅ In the vehicle (Audi A4 B9, MU1329): Momentum runs unobtrusively while driving, menu entries, plugin system, install and uninstall through the SD menu.
-- ⚠️ Momentum select at night, and the exact colour transitions on other LED strips are only partly confirmed in the vehicle.
+- ✅ In the vehicle (Audi A4 B9, MU1329): **all five effects** (Momentum, Momentum select, Atmosphere, Scroll, Drive) were tested by the author privately and have been **running in daily driving for weeks** without problems. So have the menu entries, the plugin system, install and uninstall through the SD menu.
+- ⚠️ The colour transitions depend on the installed LED strip. On other strips (other vehicle, retrofit) they may look different. The Design Studio has so far only been tested on a computer.
 - ❌ Other vehicles, other firmware: **untested**. `verify.sh` reports when a replaced class does not match your firmware. In that case **do not install**.
 
 ## Documentation
@@ -225,7 +225,7 @@ AmbientFX can keep a **log in RAM only** that you read via telnet. It is **off b
 ## Roadmap
 
 - **Extend the Design Studio** (more building blocks, e.g. gear-dependent rules or zones), after the first test in a vehicle. Ideas and help welcome.
-- **Passive LED lighting (surface)** to be addressed in a later update. Phase 1 is the LED strips only.
+- **Passive LED lighting (surface)** to be added soon. Phase 1 is the LED strips only.
 - More ideas: parking-distance effect, indicator pulse, brightness per zone.
 - English translation of the technical detail documents.
 
