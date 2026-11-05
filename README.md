@@ -21,6 +21,8 @@ Alle Effekte steuern nur die **Kontur/Linie** der Ambientebeleuchtung. Die **Fl�
 > [!NOTE]
 > **Phase 1: nur die LED-Streifen.** In der ersten Phase sprechen wir ausschließlich die **LED-Streifen** (Kontur/Linie) an. Die übrige, passive LED-Beleuchtung (die flächige Ambientebeleuchtung) bleibt unverändert und lässt sich **weiterhin wie gewohnt manuell** im MMI unter *Ambientebeleuchtung* einstellen. Wir nehmen die passive Beleuchtung **demnächst mit auf**, in einem der nächsten Updates. Zuerst geht es um die Streifen.
 
+![AmbientFX Phase 1: LED-Streifen werden gesteuert, passive LED-Beleuchtung bleibt manuell / LED strips controlled, passive LED lighting stays manual](docs/images/ambientfx-led-zones.svg)
+
 | Effekt | Verhalten |
 |---|---|
 | **Momentum** | Farbe folgt dem Tempo (0–130 km/h in 10-km/h-Stufen, weich überblendet, 0 und 130 km/h = Rot), Helligkeit folgt dem Gaspedal, Bremsen = sofort Werks-Rot. Wechsel D → S am Gangwahlhebel: sofort Weiß 100 %, 1 s halten, 2 s in die normale Farbe ausblenden (nicht im Dynamic-Profil). |
@@ -142,6 +144,8 @@ All effects only drive the **contour/line** of the ambient lighting. The **surfa
 
 > [!NOTE]
 > **Phase 1: LED strips only.** In the first phase we only address the **LED strips** (contour/line). The remaining passive LED lighting (the area-type ambient lighting) is left untouched and can **still be set manually as usual** in the MMI under *Ambientebeleuchtung* (ambient lighting). We will **add the passive lighting soon**, in one of the next updates. The strips come first.
+
+![AmbientFX Phase 1: LED-Streifen werden gesteuert, passive LED-Beleuchtung bleibt manuell / LED strips controlled, passive LED lighting stays manual](docs/images/ambientfx-led-zones.svg)
 
 | Effect | Behaviour |
 |---|---|
