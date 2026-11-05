@@ -109,8 +109,8 @@ Eigene Effekte, Tests auf anderen Geräten und Korrekturen sind willkommen (Issu
 
 - Lizenz: [LICENSE.md](LICENSE.md) – Namensnennung Pflicht, **keine kommerzielle Nutzung, kein Verkauf**, Weitergabe unter gleichen Bedingungen. Sie gilt für den eigenen Code, die Skripte und die Dokumentation, **nicht** für Audi-/Drittanbieter-Code.
 - Audi, Volkswagen, MMI und alle weiteren Marken gehören ihren jeweiligen Inhabern. Dies ist ein unabhängiges Community-Projekt ohne Verbindung zu Audi/VW.
-- © 2026 Matze89x in cooperation with DEB and LuKa_dev.
-- Inspiriert von **LuKa_dev**: Ideen zu Drive und Scroll sowie der Bootclasspath-Mechanismus stammen aus dessen Patches.
+- © 2026 Matze89x in cooperation with [DEB](https://www.digital-eliteboard.com/) and [LuKa_dev](https://github.com/luka-dev).
+- Inspiriert von **[LuKa_dev](https://github.com/luka-dev)**: Ideen zu Drive und Scroll sowie der Bootclasspath-Mechanismus stammen aus dessen Patches. Über sein Projekt [mib2q-carplay-rgi](https://github.com/luka-dev/mib2q-carplay-rgi) sind wir überhaupt auf diesen Ansatz gekommen. Danke!
 
 ---
 
@@ -225,5 +225,5 @@ Your own effects, tests on other units and fixes are welcome (issue or pull requ
 
 - License: [LICENSE.md](LICENSE.md) – attribution required, **no commercial use, no selling**, share-alike. It covers the original code, scripts and documentation, **not** Audi/third-party code.
 - Audi, Volkswagen, MMI and all other trademarks belong to their respective owners. This is an independent community project with no connection to Audi/VW.
-- © 2026 Matze89x in cooperation with DEB and LuKa_dev.
-- Inspired by **LuKa_dev**: the ideas for Drive and Scroll and the bootclasspath mechanism come from his patches.
+- © 2026 Matze89x in cooperation with [DEB](https://www.digital-eliteboard.com/) and [LuKa_dev](https://github.com/luka-dev).
+- Inspired by **[LuKa_dev](https://github.com/luka-dev)**: the ideas for Drive and Scroll and the bootclasspath mechanism come from his patches. It was his project [mib2q-carplay-rgi](https://github.com/luka-dev/mib2q-carplay-rgi) that led us to this approach in the first place. Thank you!

@@ -528,5 +528,5 @@ Verträgt sich mit anderen Jars im Ordner `jars/` (zum Beispiel `carplay_hook.ja
 
 ## Referenzen
 
-* Inspiration (kein Build-Bestandteil): LuKa_devs Custom-Patch für das MHI2Q; seine Ideen zu **Drive** und **Scroll** und der Bootclasspath-Mechanismus (`jars/*.jar` vor `lsd.jxe`) sind übernommen bzw. angelehnt, Abweichungen stehen in den Klassenkommentaren.
+* Inspiration (kein Build-Bestandteil): [LuKa_devs](https://github.com/luka-dev) Custom-Patch für das MHI2Q (aufmerksam geworden durch [mib2q-carplay-rgi](https://github.com/luka-dev/mib2q-carplay-rgi)); seine Ideen zu **Drive** und **Scroll** und der Bootclasspath-Mechanismus (`jars/*.jar` vor `lsd.jxe`) sind übernommen bzw. angelehnt, Abweichungen stehen in den Klassenkommentaren.
 * Die Audi-Klassen (`CarScreenBag5`, `IntLightComponentEvo`, `IntLightRange2DBusiness`) gehören Audi/e.solutions und werden hier **nicht** mitgeliefert; `patches/` enthält nur unsere Änderungen daran.
