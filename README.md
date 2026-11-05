@@ -1,4 +1,4 @@
-![AmbientFX for mib2q](docs/images/ambientefx-banner.jpg)
+![AmbientFX for mib2q](docs/images/ambientfx-banner.jpg)
 
 # mib2q-ambient-fx – AmbientFX für Audi MHI2Q (MU1329)
 
