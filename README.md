@@ -16,6 +16,10 @@
 
 AmbientFX erweitert im Audi-MMI das Menü **Fahrzeugeinstellungen → Ambientebeleuchtung** (hinter „Audi drive select“) um zusätzliche, fahrzeugreaktive Licht-Effekte. Es ist ein Java-Patch für das MHI2Q (HMI „lsd“), der als zusätzliche Jar im Bootclasspath **vor** der originalen HMI geladen wird – die Original-Dateien des Geräts bleiben unverändert.
 
+**Die serienmäßigen Farbwahlen bleiben erhalten.** AmbientFX ergänzt das Menü *Ambientebeleuchtung* nur um zusätzliche Einträge hinter „Audi drive select“. Maritim-Blau, Impuls-Rot, individuell, Audi drive select und die übrigen Werksfarben und Profile bleiben wie gewohnt wählbar.
+
+![Menü Ambientebeleuchtung im MMI: die Werksauswahl (Maritim-Blau, Impuls-Rot, individuell, Audi drive select) bleibt, darunter die AmbientFX-Effekte Momentum und Momentum Select](docs/images/ambientfx-mmi-menu.jpg)
+
 Alle Effekte steuern nur die **Kontur/Linie** der Ambientebeleuchtung. Die **Fläche** bleibt beim normalen Farbregler im MMI.
 
 > [!NOTE]
@@ -139,6 +143,10 @@ Eigene Effekte, Tests auf anderen Geräten und Korrekturen sind willkommen (Issu
 ## What it is
 
 AmbientFX adds extra, vehicle-reactive light effects to the Audi MMI menu **Vehicle settings → Ambient lighting** (after “Audi drive select”). It is a Java patch for the MHI2Q (HMI “lsd”): an additional jar loaded on the bootclasspath **before** the original HMI – the unit’s original files stay untouched.
+
+**The factory colour choices stay available.** AmbientFX only adds extra entries to the *Ambientebeleuchtung* (ambient lighting) menu after “Audi drive select”. Maritim-Blau, Impuls-Rot, individuell, Audi drive select and the other factory colours and profiles remain selectable as usual.
+
+![Ambient lighting menu in the MMI: the factory choices (Maritim-Blau, Impuls-Rot, individuell, Audi drive select) stay, with the AmbientFX effects Momentum and Momentum Select below](docs/images/ambientfx-mmi-menu.jpg)
 
 All effects only drive the **contour/line** of the ambient lighting. The **surface** stays with the normal colour control in the MMI.
 
