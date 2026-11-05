@@ -34,7 +34,7 @@ Jedes Design hat eine **zufällige, feste ID** (`AFX-XXXX-XXXX`, zum Beispiel `A
 
 ## Was wird gesteuert?
 
-Die Live-Vorschau zeigt den Innenraum von oben. **Aktuell ist im System erst die Kontur gebaut** (die LED-Streifen): Tür-Kontur an allen vier Türen, die zwei vorderen Getränkehalter und, nur bei Nachrüstung, der Streifen am Armaturenbrett. Die **passive Fläche** (Türtaschen, Lautsprecher, Fußraum, Mittelkonsole seitlich) bleibt manuell im MMI und kommt später dazu. Im MMI sind das zwei getrennte Farbwahlen. Das Studio erklärt das auch direkt auf der Seite („Was wird gesteuert?“).
+Die Live-Vorschau zeigt den Innenraum von oben. **Aktuell ist im System erst die Kontur gebaut** (die LED-Streifen): Tür-Kontur an den vorderen Türen, je nach Ausstattung auch an den hinteren, und, nur bei Nachrüstung, der Streifen am Armaturenbrett. Die **passive Fläche** (Türtaschen, Lautsprecher, Fußraum, Getränkehalter, Mittelkonsole seitlich) bleibt manuell im MMI und kommt später dazu. Im MMI sind das zwei getrennte Farbwahlen. Das Studio erklärt das auch direkt auf der Seite („Was wird gesteuert?“).
 
 ## Was ein Design kann (und was nicht)
 
@@ -146,7 +146,7 @@ Every design has a **random, fixed ID** (`AFX-XXXX-XXXX`, for example `AFX-95A8-
 
 ## What is controlled?
 
-The live preview shows the interior from above. **For now only the contour is built into the system** (the LED strips): door contour on all four doors, the two front cupholders and, only if retrofitted, the strip on the instrument panel. The **passive surface** (door pockets, speakers, footwell, centre console sides) stays manual in the MMI and will be added later. In the MMI these are two separate colour choices. The Studio also explains this on the page (“What is controlled?”).
+The live preview shows the interior from above. **For now only the contour is built into the system** (the LED strips): door contour on the front doors, depending on equipment also on the rear doors, and, only if retrofitted, the strip on the instrument panel. The **passive surface** (door pockets, speakers, footwell, cupholders, centre console sides) stays manual in the MMI and will be added later. In the MMI these are two separate colour choices. The Studio also explains this on the page (“What is controlled?”).
 
 ## What a design can do (and what not)
 
