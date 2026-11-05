@@ -1,0 +1,971 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0d1016">
+<title>AmbientFX Design Studio</title>
+<!--
+  AmbientFX Design Studio - (c) 2026 Matze89x in cooperation with DEB and LuKa_dev. Lizenz / License: LICENSE.md (Namensnennung / attribution, nicht kommerziell / non-commercial).
+  Eine einzige Datei, laeuft offline, keine externen Aufrufe, kein Tracking. / One single file, works offline, no external requests, no tracking.
+  Schriften / Fonts: Space Grotesk (c) The Space Grotesk Project Authors, Space Mono (c) The Space Mono Project Authors - SIL Open Font License 1.1 (https://openfontlicense.org).
+  Quelle / source: designer/index.src.html + tools/embed_designer.py (siehe Repository / see repository).
+-->
+<style>
+/*@FONTS@*/
+:root{
+  --bg:#0d1016; --surface:#181c24; --surface2:#1e222b; --border:#282d38; --border2:#343a47;
+  --text:#F2F3F5; --muted:#9BA1AC; --dim:#6B7280; --accent:#E2001A; --ok:#4ADE80; --warn:#F87171; --amber:#FBBF24;
+  --r-s:12px; --r-m:16px; --r-l:22px; --gutter:16px;
+  --rainbow:linear-gradient(90deg,#ff3fa4,#a855f7,#3b82f6,#22d3ee,#34d399,#a3e635,#fbbf24,#fb923c);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text)}
+body{font-family:'Space Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-text-size-adjust:100%;min-height:100vh;
+  background:
+   radial-gradient(900px 420px at 8% -8%,rgba(168,85,247,.20),transparent 60%),
+   radial-gradient(900px 420px at 92% -10%,rgba(34,211,238,.16),transparent 60%),
+   radial-gradient(700px 360px at 50% -14%,rgba(226,0,26,.16),transparent 60%),
+   var(--bg);
+  background-repeat:no-repeat}
+.mono{font-family:'Space Mono',ui-monospace,Menlo,monospace}
+a{color:var(--text)}
+button,input,select,textarea{font-family:inherit;font-size:14px;color:var(--text)}
+.wrap{max-width:1180px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top)) var(--gutter) calc(40px + env(safe-area-inset-bottom))}
+
+/* ---- Kopf ---- */
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.brand{display:flex;flex-direction:column;gap:2px;min-width:0}
+.brand svg{width:min(430px,78vw);height:auto;display:block;overflow:visible}
+.eyebrow{font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;font-weight:600}
+.lang{display:inline-flex;border:1px solid var(--border2);border-radius:999px;padding:3px;background:rgba(255,255,255,.04)}
+.lang button{border:0;background:transparent;color:var(--muted);padding:6px 14px;border-radius:999px;font-weight:600;cursor:pointer;letter-spacing:.04em}
+.lang button.on{background:var(--text);color:#0d1016}
+
+.caution{display:flex;gap:10px;align-items:flex-start;margin:12px 0 14px;padding:11px 14px;border-radius:var(--r-m);background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.32);color:#fbd0d0;font-size:13px;line-height:1.45}
+.caution b{color:#fff}
+.caution a{color:#fff}
+
+/* ---- Karten ---- */
+.card{background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.015)),var(--surface);border:1px solid var(--border);border-radius:var(--r-l);padding:16px}
+.card+.card{margin-top:14px}
+.card h2{margin:0 0 12px;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px}
+.card h2 .n{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--surface2);border:1px solid var(--border2);font-size:11px;color:var(--text)}
+.sub{color:var(--dim);font-size:12px;line-height:1.45;margin:6px 0 0}
+
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.toolbar .grow{flex:1;min-width:190px}
+.btn{border:1px solid var(--border2);background:var(--surface2);border-radius:var(--r-s);padding:10px 14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:.15s;white-space:nowrap}
+.btn:hover{border-color:#4a5262;background:#232834}
+.btn.primary{background:linear-gradient(180deg,#f01430,var(--accent));border-color:#ff4d63;box-shadow:0 6px 22px rgba(226,0,26,.28)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.small{padding:6px 10px;font-size:12px}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.menu{position:relative}
+.menu .list{position:absolute;z-index:20;left:0;top:calc(100% + 6px);min-width:230px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r-m);padding:6px;box-shadow:0 18px 50px rgba(0,0,0,.55);display:none}
+.menu.open .list{display:block}
+.menu .list button{display:block;width:100%;text-align:left;background:transparent;border:0;border-radius:10px;padding:9px 10px;cursor:pointer}
+.menu .list button:hover{background:rgba(255,255,255,.07)}
+.menu .list small{display:block;color:var(--dim);font-size:11px;margin-top:2px}
+
+.grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:14px;align-items:start;margin-top:14px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.sticky{position:sticky;top:12px}
+@media(max-width:900px){.sticky{position:static}}
+
+label.f{display:block;font-size:12px;color:var(--muted);margin:0 0 5px;font-weight:600}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:10px}
+.row:first-of-type{margin-top:0}
+input[type=text],input[type=number],select,textarea{width:100%;background:#12151c;border:1px solid var(--border2);border-radius:var(--r-s);padding:9px 11px;outline:none}
+input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{border-color:#6b7a99;box-shadow:0 0 0 3px rgba(120,140,200,.16)}
+select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,#9BA1AC 50%),linear-gradient(135deg,#9BA1AC 50%,transparent 50%);background-position:calc(100% - 17px) 55%,calc(100% - 12px) 55%;background-size:5px 5px;background-repeat:no-repeat;padding-right:30px}
+textarea{font-family:'Space Mono',ui-monospace,monospace;font-size:12px;line-height:1.5;min-height:210px;resize:vertical;white-space:pre}
+input[type=color]{width:42px;height:38px;padding:2px;border-radius:10px;border:1px solid var(--border2);background:#12151c;cursor:pointer}
+.invalid{border-color:var(--warn)!important}
+.msg{font-size:12px;margin-top:6px;color:var(--warn);min-height:0}
+.hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.45}
+.sw{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:13px;cursor:pointer;user-select:none}
+.sw input{appearance:none;width:38px;height:22px;border-radius:999px;background:#2a303c;position:relative;cursor:pointer;flex:none;transition:.15s;border:1px solid var(--border2);margin:0}
+.sw input::after{content:"";position:absolute;left:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#cfd3db;transition:.15s}
+.sw input:checked{background:var(--ok);border-color:var(--ok)}
+.sw input:checked::after{left:18px;background:#06210f}
+
+.seg{display:inline-flex;width:100%;border:1px solid var(--border2);border-radius:var(--r-s);overflow:hidden;background:#12151c}
+.seg button{flex:1;border:0;background:transparent;color:var(--muted);padding:9px 8px;font-weight:600;cursor:pointer}
+.seg button.on{background:var(--text);color:#0d1016}
+[hidden]{display:none!important}
+
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:999px;background:#2a303c;outline:none;margin:8px 0 2px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--text);border:3px solid #0d1016;box-shadow:0 0 0 1px #5a6275;cursor:pointer}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--text);border:3px solid #0d1016;cursor:pointer}
+.sl{margin-top:8px}
+.sl .top{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.sl .top b{color:var(--text);font-weight:600}
+
+/* ---- Vorschau ---- */
+.stage{position:relative;border-radius:var(--r-m);overflow:hidden;background:#0a0d13;border:1px solid var(--border)}
+.stage svg{display:block;width:100%;height:auto}
+.led{fill:none;stroke:var(--led,#fff);stroke-width:4.5;stroke-linecap:round;filter:url(#glow);opacity:var(--lo,1)}
+.spill{fill:var(--led,#fff);filter:blur(22px);opacity:calc(var(--lo,1)*.22)}
+.readout{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;margin-top:12px}
+.swatch{width:46px;height:46px;border-radius:14px;border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)}
+.readout .v{font-family:'Space Mono',monospace;font-size:13px;line-height:1.5}
+.readout .v small{color:var(--muted);font-family:'Space Grotesk',sans-serif}
+.axis{display:flex;justify-content:space-between;font-size:11px;color:var(--dim);margin-top:4px;font-family:'Space Mono',monospace}
+canvas.bar{display:block;width:100%;height:26px;border-radius:9px;border:1px solid var(--border2);background:#12151c}
+.barwrap{position:relative;margin-top:12px}
+.marker{position:absolute;top:-4px;bottom:-4px;width:2px;background:#fff;box-shadow:0 0 8px #fff;border-radius:2px;pointer-events:none}
+
+/* ---- Verlaufs-Editor ---- */
+.gradwrap{position:relative;margin:6px 0 34px}
+canvas.grad{display:block;width:100%;height:34px;border-radius:12px;border:1px solid var(--border2);cursor:copy;touch-action:none}
+.handle{position:absolute;top:36px;width:24px;height:24px;margin-left:-12px;border-radius:50%;border:3px solid #0d1016;box-shadow:0 0 0 2px #5a6275;cursor:grab;touch-action:none;padding:0}
+.handle.sel{box-shadow:0 0 0 3px #fff}
+.handle::before{content:"";position:absolute;left:50%;top:-8px;margin-left:-4px;border:4px solid transparent;border-bottom-color:#5a6275}
+.stoprow{display:grid;grid-template-columns:90px 52px 1fr auto;gap:10px;align-items:center;margin-top:8px}
+@media(max-width:520px){.stoprow{grid-template-columns:80px 48px 1fr}.stoprow .btn{grid-column:1/-1}}
+
+details.how{margin-top:14px}
+details.how summary{cursor:pointer;font-weight:600;color:var(--muted)}
+details.how ol{margin:10px 0 0;padding-left:20px;color:var(--muted);font-size:13px;line-height:1.7}
+details.how code,.hint code{font-family:'Space Mono',monospace;font-size:12px;background:#12151c;border:1px solid var(--border);border-radius:6px;padding:1px 5px;color:var(--text)}
+.tech{font-family:'Space Mono',monospace;font-size:11px;color:var(--dim);word-break:break-all;line-height:1.6}
+
+footer{margin-top:26px;text-align:center;color:var(--dim);font-size:12px;line-height:1.8}
+footer a{color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translate(-50%,30px);opacity:0;background:#232834;border:1px solid var(--border2);border-radius:999px;padding:11px 18px;font-size:13px;box-shadow:0 14px 40px rgba(0,0,0,.5);transition:.25s;pointer-events:none;z-index:50;max-width:92vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.err{border-color:var(--warn);color:#fecaca}
+.drop{position:fixed;inset:0;display:none;place-items:center;background:rgba(13,16,22,.86);z-index:40;font-size:20px;font-weight:600;border:3px dashed #5a6275;margin:12px;border-radius:var(--r-l)}
+.drop.on{display:grid}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="brand">
+    <svg viewBox="0 0 560 96" role="img" aria-label="AmbientFX Design Studio">
+      <defs>
+        <linearGradient id="rb" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" stop-color="#ff3fa4"/><stop offset=".16" stop-color="#a855f7"/><stop offset=".33" stop-color="#3b82f6"/>
+          <stop offset=".5" stop-color="#22d3ee"/><stop offset=".67" stop-color="#34d399"/><stop offset=".83" stop-color="#fbbf24"/><stop offset="1" stop-color="#fb923c"/>
+        </linearGradient>
+        <filter id="neon" x="-10%" y="-40%" width="120%" height="180%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <text x="2" y="74" font-family="'Space Grotesk',system-ui,sans-serif" font-size="82" font-weight="700" letter-spacing="-2" fill="none" stroke="url(#rb)" stroke-width="3.2" stroke-linejoin="round" filter="url(#neon)">AmbientFX</text>
+    </svg>
+    <div class="eyebrow"><span data-i18n="eyebrow">Design Studio · für mib2q</span></div>
+  </div>
+  <div class="lang" role="group" aria-label="Language / Sprache">
+    <button type="button" data-lang="de">DE</button><button type="button" data-lang="en">EN</button>
+  </div>
+</header>
+
+<div class="caution" role="note">
+  <div>⚠️</div>
+  <div data-i18n-html="caution"></div>
+</div>
+
+<!-- Werkzeugleiste -->
+<section class="card">
+  <div class="toolbar">
+    <button class="btn" id="bNew" type="button">✦ <span data-i18n="new">Neu</span></button>
+    <button class="btn" id="bImport" type="button">⤓ <span data-i18n="import">Importieren</span></button>
+    <div class="menu" id="exMenu">
+      <button class="btn" id="bEx" type="button">✨ <span data-i18n="examples">Beispiele</span> ▾</button>
+      <div class="list" id="exList"></div>
+    </div>
+    <div class="grow">
+      <input type="text" id="name" maxlength="24" autocomplete="off" spellcheck="false" data-i18n-ph="namePh" placeholder="Name im MMI-Menü">
+    </div>
+    <button class="btn primary" id="bExport" type="button">⤒ <span data-i18n="export">Exportieren (.ambiente)</span></button>
+    <input type="file" id="file" accept=".ambiente,.zip,.jar,.properties,.txt" hidden>
+  </div>
+  <div class="msg" id="nameMsg"></div>
+  <div class="hint"><span id="fileHint"></span> <button class="btn small" id="bNewId" type="button" data-i18n-title="newIdTitle" title="">🎲 <span data-i18n="newId">Neue ID</span></button></div>
+</section>
+
+<div class="grid">
+
+  <!-- ===== Links: Vorschau + Simulator ===== -->
+  <div class="sticky">
+    <section class="card">
+      <h2><span data-i18n="preview">Live-Vorschau</span></h2>
+      <div class="stage" id="stage">
+        <svg viewBox="0 0 640 330" id="cab" role="img" aria-label="Preview">
+          <defs>
+            <filter id="glow" x="-20%" y="-60%" width="140%" height="220%"><feGaussianBlur stdDeviation="4.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <linearGradient id="gl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#202733"/><stop offset="1" stop-color="#0e121a"/></linearGradient>
+            <linearGradient id="dash" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#151a23"/><stop offset="1" stop-color="#0b0e14"/></linearGradient>
+          </defs>
+          <path d="M70 168 C 130 36, 510 36, 570 168 Z" fill="url(#gl)" opacity=".55"/>
+          <path d="M0 214 C 120 168, 520 168, 640 214 L 640 330 L 0 330 Z" fill="url(#dash)"/>
+          <ellipse class="spill" cx="320" cy="196" rx="260" ry="26"/>
+          <rect x="268" y="196" width="104" height="62" rx="9" fill="#090c11" stroke="#222a36"/>
+          <circle cx="156" cy="256" r="50" fill="none" stroke="#1d2430" stroke-width="12"/>
+          <circle cx="156" cy="256" r="12" fill="#161b25"/>
+          <path d="M452 330 C 470 288, 540 280, 640 308 L 640 330 Z" fill="#10141c"/>
+          <path d="M0 268 C 40 262, 70 266, 96 300 L 0 300 Z" fill="#10141c"/>
+          <path class="led" d="M10 214 C 130 176, 510 176, 630 214"/>
+          <path class="led" d="M8 270 C 44 264, 72 268, 98 300"/>
+          <path class="led" d="M456 322 C 478 292, 540 286, 626 312"/>
+        </svg>
+      </div>
+      <div class="readout">
+        <div class="swatch" id="swOut" title="Ausgabe / output"></div>
+        <div class="v"><span id="hexOut">#------</span> <small id="rgbOut"></small><br><small data-i18n="brightness">Helligkeit</small> <span id="brOut">–</span></div>
+        <div class="swatch" id="swIdeal" title="Farbe / colour"></div>
+      </div>
+      <div class="barwrap"><canvas class="bar" id="rampBar" width="640" height="26"></canvas><div class="marker" id="marker"></div></div>
+      <div class="axis"><span id="axMin"></span><span id="axSrc"></span><span id="axMax"></span></div>
+      <p class="sub" data-i18n="previewNote">Die Vorschau zeigt die Wunschfarbe. Im Fahrzeug wird sie (bei aktivem „Werksfarben“) auf die nächste Werksfarbe gerundet, dann erst gedimmt.</p>
+    </section>
+
+    <section class="card">
+      <h2><span data-i18n="sim">Fahrsimulator</span></h2>
+      <div class="toolbar">
+        <button class="btn small" id="bDemo" type="button">▶ <span data-i18n="demo">Demo-Fahrt</span></button>
+        <label class="sw" style="margin:0"><input type="checkbox" id="simNight"><span data-i18n="night">Nacht</span></label>
+        <label class="sw" style="margin:0"><input type="checkbox" id="simBrake"><span data-i18n="brakePedal">Bremse</span></label>
+      </div>
+      <div id="sliders"></div>
+    </section>
+  </div>
+
+  <!-- ===== Rechts: Editor ===== -->
+  <div>
+    <section class="card">
+      <h2><span class="n">1</span><span data-i18n="secColor">Farbe</span></h2>
+      <div class="seg" id="modeSeg" role="group"></div>
+
+      <div data-when="mode:ramp" style="margin-top:12px">
+        <div class="row">
+          <div><label class="f" data-i18n="source">Quelle</label><select data-k="source" id="selSource"></select></div>
+          <div><label class="f"><span data-i18n="rangeFrom">Von</span> <span class="unit" data-unit="source"></span></label><input type="number" step="any" data-k="min"></div>
+          <div><label class="f"><span data-i18n="rangeTo">Bis</span> <span class="unit" data-unit="source"></span></label><input type="number" step="any" data-k="max"></div>
+        </div>
+        <label class="f" style="margin-top:14px" data-i18n="gradient">Farbverlauf (Klick = Farbe hinzufügen, ziehen = verschieben)</label>
+        <div class="gradwrap" id="gradwrap"><canvas class="grad" id="grad" width="900" height="34"></canvas></div>
+        <div class="stoprow" id="stoprow">
+          <input type="number" id="stPos" min="0" max="100" step="1" aria-label="Position %">
+          <input type="color" id="stCol" aria-label="Color">
+          <input type="text" id="stHex" class="mono" maxlength="7" spellcheck="false" aria-label="#RRGGBB">
+          <button class="btn small" id="stDel" type="button" data-i18n="delStop">Entfernen</button>
+        </div>
+        <label class="sw"><input type="checkbox" data-k="smooth"><span data-i18n="smoothRamp">Weiche Übergänge zwischen den Farben</span></label>
+      </div>
+
+      <div data-when="mode:cycle" style="margin-top:12px">
+        <div class="row">
+          <div><label class="f" data-i18n="cycBase">Drehung im Stand (°/s)</label><input type="number" step="1" data-k="cycBase"></div>
+          <div><label class="f" data-i18n="cycSpeed">Zusatz bei 130 km/h (°/s)</label><input type="number" step="1" data-k="cycSpeed"></div>
+          <div><label class="f" data-i18n="cycSat">Sättigung (%)</label><input type="number" step="1" min="0" max="100" data-k="cycSat"></div>
+        </div>
+        <p class="hint" data-i18n="cycHint">Der Farbton dreht sich endlos über das Farbrad, schneller mit dem Tempo (wie „Scroll“).</p>
+      </div>
+
+      <div data-when="mode:solid" style="margin-top:12px">
+        <label class="f" data-i18n="solidCol">Farbe</label>
+        <div class="stoprow" style="grid-template-columns:52px 1fr;margin-top:0">
+          <input type="color" id="solCol" aria-label="Color"><input type="text" id="solHex" class="mono" maxlength="7" spellcheck="false">
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2><span class="n">2</span><span data-i18n="secBright">Helligkeit</span></h2>
+      <div class="row">
+        <div><label class="f" data-i18n="source">Quelle</label><select data-k="brSource" id="selBrSource"></select></div>
+        <div data-when="brSource:!none"><label class="f"><span data-i18n="rangeFrom">Von</span> <span class="unit" data-unit="brSource"></span></label><input type="number" step="any" data-k="brSrcMin"></div>
+        <div data-when="brSource:!none"><label class="f"><span data-i18n="rangeTo">Bis</span> <span class="unit" data-unit="brSource"></span></label><input type="number" step="any" data-k="brSrcMax"></div>
+      </div>
+      <div class="row">
+        <div data-when="brSource:!none"><label class="f" data-i18n="brMin">Helligkeit bei „Von“ (%)</label><input type="number" min="0" max="100" step="1" data-k="brMin"></div>
+        <div><label class="f"><span data-i18n="brMax" data-when-text="">Helligkeit (%)</span></label><input type="number" min="0" max="100" step="1" data-k="brMax"></div>
+        <div data-when="brSource:!none" style="align-self:end"><label class="sw" style="margin:0 0 8px"><input type="checkbox" data-k="brInvert"><span data-i18n="invert">Umkehren</span></label></div>
+      </div>
+      <label class="sw"><input type="checkbox" data-k="breath"><span data-i18n="breath">Sanftes „Atmen“</span></label>
+      <div class="row" data-when="breath">
+        <div><label class="f" data-i18n="breathSec">Dauer eines Zyklus (s, min. 2)</label><input type="number" min="2" max="120" step="0.5" data-k="breathSec"></div>
+        <div><label class="f" data-i18n="breathDepth">Tiefe (%)</label><input type="number" min="0" max="100" step="1" data-k="breathDepth"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2><span class="n">3</span><span data-i18n="secBrake">Bremsen</span></h2>
+      <label class="sw" style="margin-top:0"><input type="checkbox" data-k="brakeOn"><span data-i18n="brakeOn">Beim Bremsen sofort umschalten</span></label>
+      <div class="row" data-when="brakeOn">
+        <div><label class="f" data-i18n="solidCol">Farbe</label>
+          <div class="stoprow" style="grid-template-columns:52px 1fr;margin-top:0"><input type="color" id="brkCol"><input type="text" id="brkHex" class="mono" maxlength="7" spellcheck="false"></div></div>
+        <div><label class="f" data-i18n="brightPct">Helligkeit (%)</label><input type="number" min="0" max="100" step="1" data-k="brakeBright"></div>
+      </div>
+      <p class="hint" data-when="brakeOn" data-i18n-html="brakeWarn"></p>
+    </section>
+
+    <section class="card">
+      <h2><span class="n">4</span><span data-i18n="secFine">Feinschliff</span></h2>
+      <div class="row">
+        <div><label class="f" data-i18n="nightF">Nachts dimmen auf (%)</label><input type="number" min="0" max="100" step="1" data-k="night"></div>
+        <div><label class="f" data-i18n="smoothMs">Glättung (ms)</label><input type="number" min="0" max="5000" step="50" data-k="smoothMs"></div>
+        <div><label class="f" data-i18n="period">Sende-Intervall (ms)</label><input type="number" min="50" max="500" step="10" data-k="period"></div>
+      </div>
+      <label class="sw"><input type="checkbox" data-k="snap"><span data-i18n="snap">Auf Werksfarben des Fahrzeugs runden (empfohlen)</span></label>
+      <p class="hint" data-i18n="snapHint">Frei gestreamte Zwischenfarben können auf manchen LED-Streifen flackern. Mit „Runden“ nimmt AmbientFX die nächste Werksfarbe und dimmt erst danach.</p>
+    </section>
+
+    <section class="card">
+      <h2><span data-i18n="secText">Design als Text</span></h2>
+      <textarea id="txt" spellcheck="false"></textarea>
+      <div class="toolbar" style="margin-top:10px">
+        <button class="btn small" id="bCopy" type="button" data-i18n="copy">Kopieren</button>
+        <button class="btn small" id="bApply" type="button" data-i18n="apply">Text übernehmen</button>
+      </div>
+      <p class="hint" data-i18n="textHint">Zum Teilen im Chat oder zum Speichern. Der Name steht nicht im Text, er kommt aus dem Namensfeld.</p>
+      <div class="msg" id="txtMsg"></div>
+    </section>
+
+    <details class="how card">
+      <summary data-i18n="howTitle">So kommt dein Design ins Auto</summary>
+      <ol data-i18n-html="howSteps"></ol>
+      <p class="tech" id="techInfo"></p>
+    </details>
+  </div>
+</div>
+
+<footer>
+  © 2026 Matze89x in cooperation with <a href="https://www.digital-eliteboard.com/" target="_blank" rel="noopener">DEB</a> and <a href="https://github.com/luka-dev" target="_blank" rel="noopener">LuKa_dev</a><br>
+  <a href="https://github.com/Matze89x/mib2q-ambient-fx" target="_blank" rel="noopener">github.com/Matze89x/mib2q-ambient-fx</a> ·
+  <a href="https://github.com/Matze89x/mib2q-ambient-fx/blob/main/docs/RECHT_LEGAL.md" target="_blank" rel="noopener" data-i18n="legal">Recht &amp; Haftung</a> ·
+  <span data-i18n="offline">läuft komplett offline im Browser, nichts wird hochgeladen</span>
+</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="drop" id="drop"><span data-i18n="dropHere">.ambiente hier ablegen zum Importieren</span></div>
+
+<script>
+'use strict';
+/* =====================================================================================================================
+   AmbientFX Design Studio - (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
+   Teil 1: Konstanten, Text (DE/EN), Design-Format (parse/serialize, spiegelt DesignEffect.java), Engine (spiegelt DesignEffect.tick)
+   ===================================================================================================================== */
+const CONTRACT_VERSION = /*@CONTRACT@*/1/*@END@*/;
+const RUNTIME_B64 = "/*@RUNTIME_B64@*/";
+const RUNTIME_SHA = "/*@RUNTIME_SHA@*/";
+const RUNTIME_CLASS = "de/mk/ambientfx/designer/DesignEffect.class";
+const PLUGIN_CLASS = "de.mk.ambientfx.designer.DesignEffect";
+const MAX_STOPS = 16;
+const BUILTIN = ['momentum','momentum select','atmosphere','scroll','drive'];
+
+const SRC = {
+  speed:   {unit:'km/h', min:0,   max:130},
+  throttle:{unit:'%',    min:0,   max:100},
+  steer:   {unit:'°',    min:0,   max:180},
+  brake:   {unit:'%',    min:0,   max:100},
+  rpm:     {unit:'rpm',  min:800, max:6500},
+  accel:   {unit:'m/s²', min:-4,  max:4},
+  lat:     {unit:'m/s²', min:-5,  max:5},
+  temp:    {unit:'°C',   min:-10, max:35}
+};
+
+const TXT = {
+de:{
+ eyebrow:'Design Studio · für mib2q',
+ caution:'<b>Nur zum Testen auf Privatgrund</b> – im Straßenverkehr womöglich nicht zulässig (StVO/StVZO). Eigene Designs laufen im Fahrzeug <b>ungeprüft</b>: nicht blenden, nicht ablenken, kein Blinker- oder Bremslicht-Nachbau. Nutzung auf eigene Gefahr. <a href="https://github.com/Matze89x/mib2q-ambient-fx/blob/main/docs/RECHT_LEGAL.md" target="_blank" rel="noopener">Recht &amp; Haftung</a>',
+ new:'Neu', import:'Importieren', examples:'Beispiele', export:'Exportieren (.ambiente)',
+ namePh:'Name im MMI-Menü', preview:'Live-Vorschau', brightness:'Helligkeit',
+ previewNote:'Die Vorschau zeigt die Wunschfarbe. Im Fahrzeug wird sie (bei aktivem „Werksfarben“) auf die nächste Werksfarbe gerundet, dann erst gedimmt.',
+ sim:'Fahrsimulator', demo:'Demo-Fahrt', demoStop:'Demo stoppen', night:'Nacht', brakePedal:'Bremse',
+ secColor:'Farbe', secBright:'Helligkeit', secBrake:'Bremsen', secFine:'Feinschliff', secText:'Design als Text',
+ mode_ramp:'Verlauf', mode_cycle:'Regenbogen', mode_solid:'Einfarbig',
+ source:'Quelle', rangeFrom:'Von', rangeTo:'Bis',
+ gradient:'Farbverlauf (Klick = Farbe hinzufügen, ziehen = verschieben)', delStop:'Entfernen', smoothRamp:'Weiche Übergänge zwischen den Farben',
+ cycBase:'Drehung im Stand (°/s)', cycSpeed:'Zusatz bei 130 km/h (°/s)', cycSat:'Sättigung (%)',
+ cycHint:'Der Farbton dreht sich endlos über das Farbrad, schneller mit dem Tempo (wie „Scroll“).',
+ solidCol:'Farbe', brMin:'Helligkeit bei „Von“ (%)', brMax:'Helligkeit (%)', brMaxTo:'Helligkeit bei „Bis“ (%)', invert:'Umkehren',
+ breath:'Sanftes „Atmen“', breathSec:'Dauer eines Zyklus (s, min. 2)', breathDepth:'Tiefe (%)',
+ brakeOn:'Beim Bremsen sofort umschalten', brightPct:'Helligkeit (%)',
+ brakeWarn:'Achtung: Rotes Licht beim Bremsen kann wie eine Bremsleuchte wirken. Das ist eine Gestaltungsfrage, keine Bremsleuchte – bitte <a href="https://github.com/Matze89x/mib2q-ambient-fx/blob/main/docs/RECHT_LEGAL.md" target="_blank" rel="noopener">Recht &amp; Haftung</a> lesen.',
+ nightF:'Nachts dimmen auf (%)', smoothMs:'Glättung (ms)', period:'Sende-Intervall (ms)',
+ snap:'Auf Werksfarben des Fahrzeugs runden (empfohlen)',
+ snapHint:'Frei gestreamte Zwischenfarben können auf manchen LED-Streifen flackern. Mit „Runden“ nimmt AmbientFX die nächste Werksfarbe und dimmt erst danach.',
+ copy:'Kopieren', apply:'Text übernehmen', textHint:'Zum Teilen im Chat oder zum Speichern. Der Name steht nicht im Text, er kommt aus dem Namensfeld.',
+ howTitle:'So kommt dein Design ins Auto',
+ howSteps:'<li>Design bauen, Namen vergeben, <b>Exportieren</b> – du bekommst eine Datei <code>name.ambiente</code>.</li><li>Die Datei in den Ordner <code>build/plugins/</code> deines AmbientFX-Projekts legen (neben die anderen <code>.ambiente</code>).</li><li>Mit dem SD-Menü <b>Installieren/Updaten</b> – es nimmt alle Plugins aus <code>build/plugins/</code> mit. Jar und <b>alle</b> Plugins gehören immer zusammen aufs Gerät.</li><li>MMI neu starten: dein Design steht unter <b>Ambientebeleuchtung</b> hinter den bisherigen Einträgen.</li><li>Nur auf <b>privatem Grundstück</b> testen. Der Name muss eindeutig sein (nicht wie ein vorhandener Effekt).</li>',
+ legal:'Recht & Haftung', offline:'läuft komplett offline im Browser, nichts wird hochgeladen',
+ dropHere:'.ambiente hier ablegen zum Importieren',
+ fileHintNew:'Wird exportiert als', newId:'Neue ID', newIdTitle:'Jedes Design hat eine feste, zufällige ID. Sie bleibt bei Import und Export erhalten. Für eine eigene Kopie eines fremden Designs: neue ID erzeugen.', toastNewId:'Neue ID',
+ src_speed:'Tempo', src_throttle:'Gaspedal', src_steer:'Lenkwinkel (Betrag)', src_brake:'Bremse', src_rpm:'Drehzahl', src_accel:'Längsbeschleunigung', src_lat:'Querbeschleunigung', src_temp:'Außentemperatur', src_none:'– keine (konstant) –',
+ sl_speed:'Tempo', sl_throttle:'Gaspedal', sl_steer:'Lenkwinkel', sl_rpm:'Drehzahl', sl_accel:'Längsbeschl.', sl_lat:'Querbeschl.', sl_temp:'Außentemp.',
+ nameEmpty:'Bitte einen Namen eingeben.', nameChars:'Nur Buchstaben, Ziffern, Leerzeichen und . _ - (max. 24 Zeichen).', nameBuiltin:'Der Name gehört schon zu einem eingebauten Effekt.',
+ toastNew:'Neues Design', toastImported:'Importiert', toastExported:'Exportiert', toastCopied:'Kopiert', toastApplied:'Übernommen', toastEx:'Beispiel geladen',
+ errCompiled:'Das ist ein fertig kompilierter Effekt (z. B. Momentum). Er lässt sich hier nicht bearbeiten – nur Designs aus dem Design Studio.',
+ errNotAmb:'Keine gültige .ambiente-Datei.', errInflate:'Dieser Browser kann die Datei nicht entpacken (DecompressionStream fehlt).', errFormat:'Design nicht lesbar: ',
+ techSha:'Laufzeit-Klasse', techBytes:'Bytes', techContract:'Vertragsversion', techCheck:'Prüfsumme (SHA-256) der eingebauten Klasse – vergleichbar mit dem Bauergebnis von designer/build_runtime.sh.',
+ ex_tempo:'Tempo-Verlauf', ex_tempoD:'Farbe folgt dem Tempo, Helligkeit dem Gas',
+ ex_breath:'Ruhiges Atmen', ex_breathD:'Violett, langsames Atmen',
+ ex_rainbow:'Regenbogen', ex_rainbowD:'Dreht sich, schneller mit dem Tempo',
+ ex_gas:'Gas-Glühen', ex_gasD:'Blau → Amber über das Gaspedal',
+ ex_curve:'Kurvenspiel', ex_curveD:'Farbe folgt dem Lenkwinkel',
+ ex_temp:'Temperatur', ex_tempD:'Kalt = Blau, warm = Amber, ruhig atmend'
+},
+en:{
+ eyebrow:'Design Studio · for mib2q',
+ caution:'<b>For testing on private property only</b> – may not be permitted in road traffic (German StVO/StVZO). Your own designs run <b>unchecked</b> in the vehicle: do not dazzle, do not distract, no indicator or brake-light imitation. Use at your own risk. <a href="https://github.com/Matze89x/mib2q-ambient-fx/blob/main/docs/RECHT_LEGAL.md" target="_blank" rel="noopener">Law &amp; liability</a>',
+ new:'New', import:'Import', examples:'Examples', export:'Export (.ambiente)',
+ namePh:'Name in the MMI menu', preview:'Live preview', brightness:'Brightness',
+ previewNote:'The preview shows the wanted colour. In the vehicle it is rounded to the nearest factory colour (if “factory colours” is on) and only then dimmed.',
+ sim:'Driving simulator', demo:'Demo drive', demoStop:'Stop demo', night:'Night', brakePedal:'Brake',
+ secColor:'Colour', secBright:'Brightness', secBrake:'Braking', secFine:'Fine tuning', secText:'Design as text',
+ mode_ramp:'Ramp', mode_cycle:'Rainbow', mode_solid:'Solid',
+ source:'Source', rangeFrom:'From', rangeTo:'To',
+ gradient:'Colour ramp (click = add colour, drag = move)', delStop:'Remove', smoothRamp:'Smooth transitions between the colours',
+ cycBase:'Rotation at standstill (°/s)', cycSpeed:'Extra at 130 km/h (°/s)', cycSat:'Saturation (%)',
+ cycHint:'The hue rotates endlessly around the colour wheel, faster with speed (like “Scroll”).',
+ solidCol:'Colour', brMin:'Brightness at “From” (%)', brMax:'Brightness (%)', brMaxTo:'Brightness at “To” (%)', invert:'Invert',
+ breath:'Gentle “breathing”', breathSec:'Length of one cycle (s, min. 2)', breathDepth:'Depth (%)',
+ brakeOn:'Switch instantly when braking', brightPct:'Brightness (%)',
+ brakeWarn:'Note: red light when braking can look like a brake light. It is a design choice, not a brake light – please read <a href="https://github.com/Matze89x/mib2q-ambient-fx/blob/main/docs/RECHT_LEGAL.md" target="_blank" rel="noopener">law &amp; liability</a>.',
+ nightF:'Dim at night to (%)', smoothMs:'Smoothing (ms)', period:'Send interval (ms)',
+ snap:'Round to the vehicle’s factory colours (recommended)',
+ snapHint:'Freely streamed in-between colours can flicker on some LED strips. With “round” AmbientFX takes the nearest factory colour and only then dims.',
+ copy:'Copy', apply:'Apply text', textHint:'For sharing in a chat or saving. The name is not part of the text, it comes from the name field.',
+ howTitle:'How your design gets into the car',
+ howSteps:'<li>Build the design, give it a name, <b>Export</b> – you get a file <code>name.ambiente</code>.</li><li>Put the file into the folder <code>build/plugins/</code> of your AmbientFX project (next to the other <code>.ambiente</code> files).</li><li>Use the SD menu <b>Install/Update</b> – it takes all plugins from <code>build/plugins/</code>. The jar and <b>all</b> plugins always belong on the unit together.</li><li>Reboot the MMI: your design appears under <b>Ambient lighting</b>, after the existing entries.</li><li>Test on <b>private property</b> only. The name must be unique (not the same as an existing effect).</li>',
+ legal:'Law & liability', offline:'runs completely offline in your browser, nothing is uploaded',
+ dropHere:'Drop a .ambiente here to import',
+ fileHintNew:'Will be exported as', newId:'New ID', newIdTitle:'Every design has a fixed, random ID. It is kept on import and export. To make your own copy of someone else’s design: generate a new ID.', toastNewId:'New ID',
+ src_speed:'Speed', src_throttle:'Throttle', src_steer:'Steering angle (absolute)', src_brake:'Brake', src_rpm:'Engine speed', src_accel:'Longitudinal accel.', src_lat:'Lateral accel.', src_temp:'Outside temperature', src_none:'– none (constant) –',
+ sl_speed:'Speed', sl_throttle:'Throttle', sl_steer:'Steering', sl_rpm:'Engine speed', sl_accel:'Long. accel.', sl_lat:'Lat. accel.', sl_temp:'Outside temp.',
+ nameEmpty:'Please enter a name.', nameChars:'Only letters, digits, spaces and . _ - (max. 24 characters).', nameBuiltin:'That name already belongs to a built-in effect.',
+ toastNew:'New design', toastImported:'Imported', toastExported:'Exported', toastCopied:'Copied', toastApplied:'Applied', toastEx:'Example loaded',
+ errCompiled:'This is a precompiled effect (e.g. Momentum). It cannot be edited here – only designs made with the Design Studio.',
+ errNotAmb:'Not a valid .ambiente file.', errInflate:'This browser cannot unpack the file (DecompressionStream missing).', errFormat:'Design not readable: ',
+ techSha:'Runtime class', techBytes:'bytes', techContract:'Contract version', techCheck:'SHA-256 of the built-in class – comparable with the result of designer/build_runtime.sh.',
+ ex_tempo:'Speed ramp', ex_tempoD:'Colour follows speed, brightness follows throttle',
+ ex_breath:'Calm breathing', ex_breathD:'Violet, slow breathing',
+ ex_rainbow:'Rainbow', ex_rainbowD:'Rotates, faster with speed',
+ ex_gas:'Throttle glow', ex_gasD:'Blue → amber over the throttle',
+ ex_curve:'Corner play', ex_curveD:'Colour follows steering angle',
+ ex_temp:'Temperature', ex_tempD:'Cold = blue, warm = amber, calmly breathing'
+}};
+let lang = 'de';
+const t = k => (TXT[lang][k] !== undefined ? TXT[lang][k] : (TXT.de[k] !== undefined ? TXT.de[k] : k));
+
+/* ---------- Design-Modell (UI-Zustand = geparste Konfiguration) ---------- */
+function defaultCfg(){
+  return {id:newId(), name:'My Design', period:100, mode:'ramp', source:'speed', min:0, max:130, smooth:true,
+    stops:[{pos:0,hex:'#3B82F6'},{pos:50,hex:'#22D3EE'},{pos:100,hex:'#A855F7'}],
+    cycBase:10, cycSpeed:60, cycSat:100,
+    brSource:'none', brSrcMin:0, brSrcMax:100, brInvert:false, brMin:30, brMax:100,
+    breath:false, breathSec:6, breathDepth:40, night:40,
+    brakeOn:false, brakeColor:'#FF0000', brakeBright:100, smoothMs:400, snap:true};
+}
+const clone = o => JSON.parse(JSON.stringify(o));
+function newId(){ const a=new Uint8Array(8); (self.crypto||window.crypto).getRandomValues(a); return 'AFX-'+Array.from(a).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase(); }
+const fmt = n => String(Math.round(n*1000)/1000);
+
+function serialize(c){
+  const L = [];
+  L.push('# AmbientFX Design Studio - design file (format 1)');
+  L.push('format=1');
+  L.push('design.id='+c.id);
+  L.push('period='+fmt(c.period));
+  L.push('color.mode='+c.mode);
+  L.push('color.source='+c.source);
+  L.push('color.min='+fmt(c.min));
+  L.push('color.max='+fmt(c.max));
+  L.push('color.smooth='+(c.smooth?1:0));
+  const st = c.stops.slice().sort((a,b)=>a.pos-b.pos);
+  L.push('color.stops='+st.map(s=>fmt(s.pos)+':'+s.hex.toUpperCase()).join(','));
+  L.push('cycle.base='+fmt(c.cycBase));
+  L.push('cycle.speed='+fmt(c.cycSpeed));
+  L.push('cycle.sat='+fmt(c.cycSat));
+  L.push('bright.source='+c.brSource);
+  L.push('bright.srcMin='+fmt(c.brSrcMin));
+  L.push('bright.srcMax='+fmt(c.brSrcMax));
+  L.push('bright.invert='+(c.brInvert?1:0));
+  L.push('bright.min='+fmt(c.brMin));
+  L.push('bright.max='+fmt(c.brMax));
+  L.push('bright.breath='+(c.breath?1:0));
+  L.push('bright.breathSec='+fmt(c.breathSec));
+  L.push('bright.breathDepth='+fmt(c.breathDepth));
+  L.push('night.factor='+fmt(c.night));
+  L.push('brake.on='+(c.brakeOn?1:0));
+  L.push('brake.color='+c.brakeColor.toUpperCase());
+  L.push('brake.bright='+fmt(c.brakeBright));
+  L.push('smooth.ms='+fmt(c.smoothMs));
+  L.push('snap='+(c.snap?1:0));
+  return L.join('\n')+'\n';
+}
+
+/* Spiegel von DesignEffect.parse(): gleiche Grenzen, gleiche Fehler */
+function parseProps(text){
+  const p = {};
+  text.split(/\r?\n/).forEach(line=>{
+    const s = line.replace(/^\s+/,'');
+    if(!s || s[0]==='#' || s[0]==='!') return;
+    const m = s.match(/^([^=:\s]+)\s*[=:]\s*(.*)$/);
+    if(m) p[m[1]] = m[2].trim();
+  });
+  const num = (k,def,lo,hi)=>{
+    let v = def;
+    if(p[k]!==undefined && p[k]!==''){ v = Number(p[k]); if(!isFinite(v) && !isNaN(v)) v=def; if(isNaN(v)) throw new Error('number '+k+': '+p[k]); }
+    return Math.min(hi,Math.max(lo,v));
+  };
+  const flag = (k,def)=> p[k]===undefined ? def : (p[k]==='1'||p[k].toLowerCase()==='true');
+  const src = (k,def)=>{ if(p[k]===undefined) return def; const s=p[k].toLowerCase(); if(s==='none'||SRC[s]) return s; throw new Error('source '+k+': '+s); };
+  const hex = (s,w)=>{ s=s.trim(); if(!/^#[0-9a-fA-F]{6}$/.test(s)) throw new Error('colour '+w+': '+s); return s.toUpperCase(); };
+  if(p.format!=='1') throw new Error('format '+p.format+' (expected 1)');
+  const c = defaultCfg();
+  c.id = /^[A-Za-z0-9-]{4,40}$/.test(p['design.id']||'') ? p['design.id'] : newId();
+  c.period = num('period',100,50,500);
+  const mode = (p['color.mode']||'ramp').toLowerCase();
+  if(!['ramp','cycle','solid'].includes(mode)) throw new Error('color.mode: '+mode);
+  c.mode = mode;
+  c.source = src('color.source','speed'); if(c.source==='none') throw new Error('color.source: none');
+  c.min = num('color.min',0,-100000,100000);
+  c.max = num('color.max',130,-100000,100000);
+  c.smooth = flag('color.smooth',true);
+  const stops = [];
+  let last = -1;
+  (p['color.stops']||'0:#FFFFFF').split(',').forEach(one=>{
+    one=one.trim(); if(!one) return;
+    if(stops.length>=MAX_STOPS) throw new Error('too many colour stops');
+    const i = one.indexOf(':'); if(i<=0) throw new Error('colour stop: '+one);
+    let pos = Number(one.slice(0,i)); if(isNaN(pos)) throw new Error('colour stop position: '+one);
+    pos = Math.min(100,Math.max(0,pos));
+    if(pos<last) throw new Error('colour stops not sorted');
+    last = pos;
+    stops.push({pos, hex:hex(one.slice(i+1),'color.stops')});
+  });
+  if(!stops.length) throw new Error('color.stops empty');
+  c.stops = stops;
+  c.cycBase = num('cycle.base',10,-720,720);
+  c.cycSpeed = num('cycle.speed',60,-720,720);
+  c.cycSat = num('cycle.sat',100,0,100);
+  c.brSource = src('bright.source','none');
+  c.brSrcMin = num('bright.srcMin',0,-100000,100000);
+  c.brSrcMax = num('bright.srcMax',100,-100000,100000);
+  c.brInvert = flag('bright.invert',false);
+  c.brMin = num('bright.min',30,0,100);
+  c.brMax = num('bright.max',100,0,100);
+  c.breath = flag('bright.breath',false);
+  c.breathSec = num('bright.breathSec',6,2,120);
+  c.breathDepth = num('bright.breathDepth',40,0,100);
+  c.night = num('night.factor',40,0,100);
+  c.brakeOn = flag('brake.on',false);
+  c.brakeColor = hex(p['brake.color']||'#FF0000','brake.color');
+  c.brakeBright = num('brake.bright',100,0,100);
+  c.smoothMs = num('smooth.ms',400,0,5000);
+  c.snap = flag('snap',true);
+  return c;
+}
+const compile = c => parseProps(serialize(c));     /* UI-Zustand -> genau das, was das Auto lesen wird */
+
+/* ---------- Engine: Spiegel von DesignEffect.tick() ---------- */
+const hexRgb = h => [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
+const rgbHex = (r,g,b)=>'#'+[r,g,b].map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('').toUpperCase();
+function hsv(h,s,v){
+  h=((h%360)+360)%360; const c=v*s, hp=h/60, x=c*(1-Math.abs((hp%2)-1)); let r=0,g=0,b=0;
+  if(hp<1){r=c;g=x}else if(hp<2){r=x;g=c}else if(hp<3){g=c;b=x}else if(hp<4){g=x;b=c}else if(hp<5){r=x;b=c}else{r=c;b=x}
+  const m=v-c; return [Math.round((r+m)*255),Math.round((g+m)*255),Math.round((b+m)*255)];
+}
+const norm = (v,lo,hi)=>{ if(hi===lo) return 0; const t=(v-lo)/(hi-lo); return t<0?0:t>1?1:t; };
+
+function rampColor(c,t){                       /* c = kompilierte Konfiguration; liefert [r,g,b] (Fliesskomma) */
+  const st = c.stops.slice().sort((a,b)=>a.pos-b.pos);
+  const pos = t*100, n = st.length;
+  const A = hexRgb(st[0].hex);
+  if(n===1 || pos<=st[0].pos) return A;
+  if(pos>=st[n-1].pos) return hexRgb(st[n-1].hex);
+  let i=0; while(i<n-2 && pos>st[i+1].pos) i++;
+  const span = st[i+1].pos-st[i].pos;
+  let f = span<=0 ? 1 : (pos-st[i].pos)/span;
+  if(c.smooth) f = f*f*(3-2*f);
+  const a=hexRgb(st[i].hex), b=hexRgb(st[i+1].hex);
+  return [a[0]+(b[0]-a[0])*f, a[1]+(b[1]-a[1])*f, a[2]+(b[2]-a[2])*f];
+}
+
+class Engine{
+  constructor(cfg){ this.setCfg(cfg); this.start(0); }
+  setCfg(cfg){ this.c = compile(cfg); }
+  start(now){ this.first=true; this.startMs=now; this.last=now; this.hue=0; this.sm=[0,0,0]; this.smB=0; }
+  input(src,inp){
+    switch(src){
+      case 'speed': return inp.speed; case 'throttle': return inp.throttle; case 'steer': return Math.abs(inp.steer);
+      case 'brake': return inp.braking?100:0; case 'rpm': return inp.rpm; case 'accel': return inp.accel; case 'lat': return inp.lat;
+      case 'temp': return inp.temp; default: return 0;
+    }
+  }
+  /* inp: {speed(km/h),throttle,steer,braking,rpm,accel,lat,temp}; palette: [[r,g,b],...] oder null */
+  tick(now, inp, daylight, palette){
+    const c=this.c;
+    let dt = this.first ? 0 : now-this.last; dt = Math.max(0,Math.min(1000,dt)); this.last=now;
+    let bt;
+    if(c.brSource==='none') bt = c.brMax/100;
+    else { let f = norm(this.input(c.brSource,inp),c.brSrcMin,c.brSrcMax); if(c.brInvert) f=1-f; bt = c.brMin/100+(c.brMax/100-c.brMin/100)*f; }
+    if(c.breath){ const ph=(now-this.startMs)/(c.breathSec*1000)*2*Math.PI; const k=0.5+0.5*Math.sin(ph); const d=c.breathDepth/100; bt = bt*((1-d)+d*k); }
+    if(!daylight) bt = bt*(c.night/100);
+    let tc;
+    if(c.mode==='cycle'){
+      const sp = norm(inp.speed,0,130);
+      this.hue += (c.cycBase+c.cycSpeed*sp)*dt/1000; this.hue = this.hue%360; if(this.hue<0) this.hue+=360;
+      tc = hsv(this.hue,c.cycSat/100,1);
+    } else if(c.mode==='solid'){ tc = hexRgb(c.stops[0].hex); }
+    else { tc = rampColor(c, norm(this.input(c.source,inp),c.min,c.max)); }
+    let a = c.smoothMs<=0 ? 1 : 1-Math.exp(-dt/c.smoothMs); if(this.first) a=1;
+    if(c.mode==='cycle') this.sm=[tc[0],tc[1],tc[2]];
+    else this.sm=[this.sm[0]+(tc[0]-this.sm[0])*a, this.sm[1]+(tc[1]-this.sm[1])*a, this.sm[2]+(tc[2]-this.sm[2])*a];
+    this.smB += (bt-this.smB)*a; this.first=false;
+    let o=this.sm.slice(), ob=this.smB;
+    if(c.brakeOn && inp.braking){ o=hexRgb(c.brakeColor); ob=(c.brakeBright/100)*(daylight?1:c.night/100); this.sm=o.slice(); this.smB=ob; }
+    let ideal=[Math.floor(o[0]+0.5),Math.floor(o[1]+0.5),Math.floor(o[2]+0.5)].map(v=>Math.max(0,Math.min(255,v)));
+    if(c.snap && palette && palette.length){ let best=palette[0],bd=1e9; palette.forEach(p=>{ const d=Math.abs(ideal[0]-p[0])+Math.abs(ideal[1]-p[1])+Math.abs(ideal[2]-p[2]); if(d<bd){bd=d;best=p;} }); ideal=best.slice(); }
+    ob = Math.max(0,Math.min(1,ob));
+    const fb = Math.fround(ob);
+    const out = ideal.map(v=>Math.max(0,Math.min(255,Math.round(Math.fround(v*fb)))));
+    return {r:out[0],g:out[1],b:out[2],ideal,bright:ob};
+  }
+}
+
+/* =====================================================================================================================
+   Teil 2: ZIP (.ambiente = Jar = Zip) - schreiben (ohne Kompression) und lesen (auch deflate)
+   ===================================================================================================================== */
+const CRC_T = (()=>{ const t=new Uint32Array(256); for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++) c = c&1 ? 0xEDB88320^(c>>>1) : c>>>1; t[n]=c>>>0; } return t; })();
+function crc32(u8){ let c=0xFFFFFFFF; for(let i=0;i<u8.length;i++) c = CRC_T[(c^u8[i])&255]^(c>>>8); return (c^0xFFFFFFFF)>>>0; }
+const enc = s => new TextEncoder().encode(s);
+function makeZip(files){                      /* files: [{name, data:Uint8Array}] - fester Zeitstempel: gleicher Inhalt = gleiche Datei */
+  const DT=0x0000, DD=((2026-1980)<<9)|(1<<5)|1;
+  const parts=[], central=[]; let off=0;
+  files.forEach(f=>{
+    const nm=enc(f.name), crc=crc32(f.data), sz=f.data.length;
+    const lh=new DataView(new ArrayBuffer(30));
+    lh.setUint32(0,0x04034b50,true); lh.setUint16(4,10,true); lh.setUint16(6,0,true); lh.setUint16(8,0,true);
+    lh.setUint16(10,DT,true); lh.setUint16(12,DD,true); lh.setUint32(14,crc,true); lh.setUint32(18,sz,true); lh.setUint32(22,sz,true);
+    lh.setUint16(26,nm.length,true); lh.setUint16(28,0,true);
+    parts.push(new Uint8Array(lh.buffer),nm,f.data);
+    const ch=new DataView(new ArrayBuffer(46));
+    ch.setUint32(0,0x02014b50,true); ch.setUint16(4,20,true); ch.setUint16(6,10,true); ch.setUint16(8,0,true); ch.setUint16(10,0,true);
+    ch.setUint16(12,DT,true); ch.setUint16(14,DD,true); ch.setUint32(16,crc,true); ch.setUint32(20,sz,true); ch.setUint32(24,sz,true);
+    ch.setUint16(28,nm.length,true); ch.setUint16(30,0,true); ch.setUint16(32,0,true); ch.setUint16(34,0,true); ch.setUint16(36,0,true);
+    ch.setUint32(38,0,true); ch.setUint32(42,off,true);
+    central.push(new Uint8Array(ch.buffer),nm);
+    off += 30+nm.length+sz;
+  });
+  const cdSize = central.reduce((a,b)=>a+b.length,0);
+  const eo=new DataView(new ArrayBuffer(22));
+  eo.setUint32(0,0x06054b50,true); eo.setUint16(4,0,true); eo.setUint16(6,0,true); eo.setUint16(8,files.length,true); eo.setUint16(10,files.length,true);
+  eo.setUint32(12,cdSize,true); eo.setUint32(16,off,true); eo.setUint16(20,0,true);
+  const all=[...parts,...central,new Uint8Array(eo.buffer)];
+  const out=new Uint8Array(all.reduce((a,b)=>a+b.length,0)); let p=0; all.forEach(b=>{out.set(b,p);p+=b.length;});
+  return out;
+}
+async function inflateRaw(u8){
+  if(typeof DecompressionStream==='undefined') throw new Error('INFLATE');
+  const ds=new DecompressionStream('deflate-raw');
+  const stream=new Blob([u8]).stream().pipeThrough(ds);
+  return new Uint8Array(await new Response(stream).arrayBuffer());
+}
+async function readZip(buf){
+  const u8=new Uint8Array(buf), dv=new DataView(buf);
+  let e=-1; for(let i=u8.length-22;i>=Math.max(0,u8.length-65557);i--){ if(dv.getUint32(i,true)===0x06054b50){e=i;break;} }
+  if(e<0) throw new Error('NOTZIP');
+  const n=dv.getUint16(e+10,true); let p=dv.getUint32(e+16,true);
+  const out={};
+  for(let i=0;i<n;i++){
+    if(dv.getUint32(p,true)!==0x02014b50) throw new Error('NOTZIP');
+    const method=dv.getUint16(p+10,true), csz=dv.getUint32(p+20,true), nl=dv.getUint16(p+28,true), el=dv.getUint16(p+30,true), cl=dv.getUint16(p+32,true), lo=dv.getUint32(p+42,true);
+    const name=new TextDecoder().decode(u8.subarray(p+46,p+46+nl));
+    p += 46+nl+el+cl;
+    if(name.endsWith('/')) continue;
+    if(dv.getUint32(lo,true)!==0x04034b50) throw new Error('NOTZIP');
+    const ds=lo+30+dv.getUint16(lo+26,true)+dv.getUint16(lo+28,true);
+    const raw=u8.subarray(ds,ds+csz);
+    if(method===0) out[name]=raw.slice(); else if(method===8) out[name]=await inflateRaw(raw); else throw new Error('NOTZIP');
+  }
+  return out;
+}
+const b64ToU8 = b64 => Uint8Array.from(atob(b64), ch=>ch.charCodeAt(0));
+const escProp = s => s.replace(/[^\x20-\x7e]/g, ch=>'\\u'+ch.charCodeAt(0).toString(16).padStart(4,'0')).replace(/\\(?!u[0-9a-f]{4})/g,'\\\\');
+function unescProp(s){ return s.replace(/\\u([0-9a-fA-F]{4})/g,(m,h)=>String.fromCharCode(parseInt(h,16))).replace(/\\\\/g,'\\'); }
+
+function slugFile(name){ let s=name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''); return (s||'design')+'.ambiente'; }
+function nameProblem(name){
+  const n=name.trim();
+  if(!n) return 'nameEmpty';
+  if(!/^[A-Za-z0-9 ._-]{1,24}$/.test(n)) return 'nameChars';
+  if(BUILTIN.includes(n.toLowerCase())) return 'nameBuiltin';
+  return null;
+}
+function buildAmbiente(cfg){
+  const files=[
+    {name:'META-INF/MANIFEST.MF', data:enc('Manifest-Version: 1.0\r\nCreated-By: AmbientFX Design Studio\r\n\r\n')},
+    {name:'plugin.properties', data:enc('class='+PLUGIN_CLASS+'\nlabel='+escProp(cfg.name.trim())+'\nid='+cfg.id+'\nversion='+CONTRACT_VERSION+'\ndesigner=1\n')},
+    {name:'ambientfx_design.properties', data:enc(serialize(cfg))},
+    {name:RUNTIME_CLASS, data:b64ToU8(RUNTIME_B64)}
+  ];
+  return makeZip(files);
+}
+async function readAmbiente(buf){
+  const z=await readZip(buf);
+  if(z['ambientfx_design.properties']){
+    const cfg=parseProps(new TextDecoder().decode(z['ambientfx_design.properties']));
+    if(z['plugin.properties']){
+      const m=new TextDecoder().decode(z['plugin.properties']).match(/^label\s*[=:]\s*(.*)$/m);
+      if(m) cfg.name=unescProp(m[1].trim());
+    }
+    return cfg;
+  }
+  if(z['plugin.properties']) throw new Error('COMPILED');
+  throw new Error('NOTAMB');
+}
+</script>
+
+<script>
+'use strict';
+/* =====================================================================================================================
+   Teil 3: Oberflaeche
+   ===================================================================================================================== */
+const $ = (s,r)=> (r||document).querySelector(s);
+const $$ = (s,r)=> Array.from((r||document).querySelectorAll(s));
+let cfg = defaultCfg();
+let selStop = cfg.stops[1];
+let engine = new Engine(cfg);
+let demoOn = false, demoT0 = 0;
+
+const SIM = {speed:{min:0,max:250,v:0,step:1}, throttle:{min:0,max:100,v:0,step:1}, steer:{min:-180,max:180,v:0,step:1},
+             rpm:{min:700,max:7000,v:800,step:10}, accel:{min:-6,max:6,v:0,step:0.1}, lat:{min:-6,max:6,v:0,step:0.1}, temp:{min:-20,max:40,v:15,step:1}};
+const SIM_UNIT = {speed:'km/h',throttle:'%',steer:'°',rpm:'rpm',accel:'m/s²',lat:'m/s²',temp:'°C'};
+
+let toastTimer;
+function toast(msg, err){ const el=$('#toast'); el.textContent=msg; el.className='toast show'+(err?' err':''); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.className='toast',2600); }
+
+/* ---------- Sprache ---------- */
+function setLang(l){
+  lang=l; document.documentElement.lang=l;
+  try{ localStorage.setItem('afx-lang',l); }catch(e){}
+  $$('[data-lang]').forEach(b=>b.classList.toggle('on',b.dataset.lang===l));
+  $$('[data-i18n]').forEach(e=>e.textContent=t(e.dataset.i18n));
+  $$('[data-i18n-html]').forEach(e=>e.innerHTML=t(e.dataset.i18nHtml));
+  $$('[data-i18n-ph]').forEach(e=>e.placeholder=t(e.dataset.i18nPh));
+  $$('[data-i18n-title]').forEach(e=>e.title=t(e.dataset.i18nTitle));
+  buildSelects(); buildModeSeg(); buildSliders(); buildExamples(); syncUI(); drawAll();
+}
+
+/* ---------- Bausteine ---------- */
+function buildSelects(){
+  const fill=(sel,none)=>{ const cur=sel.value; sel.innerHTML=''; if(none){ const o=document.createElement('option'); o.value='none'; o.textContent=t('src_none'); sel.appendChild(o); }
+    Object.keys(SRC).forEach(k=>{ const o=document.createElement('option'); o.value=k; o.textContent=t('src_'+k)+' ('+SRC[k].unit+')'; sel.appendChild(o); }); if(cur) sel.value=cur; };
+  fill($('#selSource'),false); fill($('#selBrSource'),true);
+}
+function buildModeSeg(){
+  const seg=$('#modeSeg'); seg.innerHTML='';
+  ['ramp','cycle','solid'].forEach(m=>{ const b=document.createElement('button'); b.type='button'; b.textContent=t('mode_'+m); b.dataset.mode=m; b.onclick=()=>{ cfg.mode=m; changed(); }; seg.appendChild(b); });
+}
+function buildSliders(){
+  const box=$('#sliders'); box.innerHTML='';
+  Object.keys(SIM).forEach(k=>{
+    const s=SIM[k], d=document.createElement('div'); d.className='sl';
+    d.innerHTML='<div class="top"><span>'+t('sl_'+k)+'</span><b id="sv_'+k+'"></b></div><input type="range" id="sr_'+k+'" min="'+s.min+'" max="'+s.max+'" step="'+s.step+'">';
+    box.appendChild(d);
+    const r=$('#sr_'+k,d); r.value=s.v; r.oninput=()=>{ s.v=Number(r.value); $('#sv_'+k).textContent=s.v+' '+SIM_UNIT[k]; };
+    $('#sv_'+k,d).textContent=s.v+' '+SIM_UNIT[k];
+  });
+}
+const EXAMPLES = {
+  tempo: ()=>{ const c=defaultCfg(); c.name='Speed Ramp'; c.stops=[{pos:0,hex:'#2563EB'},{pos:30,hex:'#22D3EE'},{pos:60,hex:'#34D399'},{pos:85,hex:'#FBBF24'},{pos:100,hex:'#F43F8E'}];
+    c.brSource='throttle'; c.brSrcMin=0; c.brSrcMax=100; c.brMin=45; c.brMax=100; return c; },
+  breath: ()=>{ const c=defaultCfg(); c.name='Calm Breath'; c.mode='solid'; c.stops=[{pos:0,hex:'#8B5CF6'}]; c.breath=true; c.breathSec=6; c.breathDepth=45; c.brMax=90; c.smoothMs=0; return c; },
+  rainbow: ()=>{ const c=defaultCfg(); c.name='Rainbow'; c.mode='cycle'; c.cycBase=18; c.cycSpeed=90; c.cycSat=100; c.brMax=85; return c; },
+  gas: ()=>{ const c=defaultCfg(); c.name='Throttle Glow'; c.source='throttle'; c.min=0; c.max=100; c.stops=[{pos:0,hex:'#1D4ED8'},{pos:55,hex:'#A855F7'},{pos:100,hex:'#FB923C'}];
+    c.brSource='throttle'; c.brMin=35; c.brMax=100; c.smoothMs=250; return c; },
+  curve: ()=>{ const c=defaultCfg(); c.name='Corner Play'; c.source='steer'; c.min=0; c.max=120; c.stops=[{pos:0,hex:'#14B8A6'},{pos:100,hex:'#EC4899'}]; c.brMax=80; c.smoothMs=300; return c; },
+  temp: ()=>{ const c=defaultCfg(); c.name='Temperature'; c.source='temp'; c.min=-10; c.max=35; c.stops=[{pos:0,hex:'#3B82F6'},{pos:50,hex:'#A78BFA'},{pos:100,hex:'#F59E0B'}];
+    c.breath=true; c.breathSec=8; c.breathDepth=30; c.brMax=85; c.smoothMs=1000; return c; }
+};
+function buildExamples(){
+  const list=$('#exList'); list.innerHTML='';
+  Object.keys(EXAMPLES).forEach(k=>{ const b=document.createElement('button'); b.type='button'; b.innerHTML=t('ex_'+k)+'<small>'+t('ex_'+k+'D')+'</small>';
+    b.onclick=()=>{ loadCfg(EXAMPLES[k]()); $('#exMenu').classList.remove('open'); toast(t('toastEx')); }; list.appendChild(b); });
+}
+
+/* ---------- Zustand <-> Oberflaeche ---------- */
+function loadCfg(c){ cfg=c; selStop=cfg.stops[Math.min(1,cfg.stops.length-1)]||cfg.stops[0]; engine.setCfg(cfg); engine.start(performance.now()); syncUI(); drawAll(); }
+function changed(){ engine.setCfg(cfg); syncUI(true); drawAll(); }
+function whenOK(expr){ return expr.split(' ').every(cond=>{ const [k,v]=cond.split(':'); if(v===undefined) return !!cfg[k];
+  return v.startsWith('!') ? String(cfg[k])!==v.slice(1) : String(cfg[k])===v; }); }
+function syncUI(keepFocus){
+  const ae=document.activeElement;
+  $$('[data-k]').forEach(e=>{ if(keepFocus&&e===ae) return; const v=cfg[e.dataset.k]; if(e.type==='checkbox') e.checked=!!v; else e.value=v; });
+  $$('[data-when]').forEach(e=>e.hidden=!whenOK(e.dataset.when));
+  $$('[data-unit]').forEach(e=>{ const s=SRC[cfg[e.dataset.unit]]; e.textContent = s ? '('+s.unit+')' : ''; });
+  $$('#modeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.mode===cfg.mode));
+  if(!(keepFocus&&ae===$('#name'))) $('#name').value=cfg.name;
+  const lbl=document.querySelector('[data-i18n="brMax"]'); if(lbl) lbl.textContent = cfg.brSource==='none' ? t('brMax') : t('brMaxTo');
+  const sc=selStop||cfg.stops[0];
+  if(!(keepFocus&&ae===$('#stPos'))) $('#stPos').value=sc.pos;
+  $('#stCol').value=sc.hex.toLowerCase(); if(!(keepFocus&&ae===$('#stHex'))) $('#stHex').value=sc.hex;
+  $('#stDel').disabled = cfg.stops.length<=1;
+  $('#solCol').value=cfg.stops[0].hex.toLowerCase(); if(!(keepFocus&&ae===$('#solHex'))) $('#solHex').value=cfg.stops[0].hex;
+  $('#brkCol').value=cfg.brakeColor.toLowerCase(); if(!(keepFocus&&ae===$('#brkHex'))) $('#brkHex').value=cfg.brakeColor;
+  const np=nameProblem(cfg.name); $('#nameMsg').textContent = np ? t(np) : ''; $('#name').classList.toggle('invalid',!!np);
+  $('#fileHint').textContent = t('fileHintNew')+': '+slugFile(cfg.name)+' · ID: '+cfg.id;
+  if(document.activeElement!==$('#txt')) $('#txt').value=serialize(cfg);
+  buildGradHandles();
+}
+function bindInputs(){
+  $$('[data-k]').forEach(e=>{
+    const k=e.dataset.k;
+    const apply=()=>{
+      if(e.type==='checkbox') cfg[k]=e.checked;
+      else if(e.type==='number'){ if(e.value==='') return; cfg[k]=Number(e.value); }
+      else cfg[k]=e.value;
+      if(k==='source'){ cfg.min=SRC[cfg.source].min; cfg.max=SRC[cfg.source].max; }
+      if(k==='brSource' && cfg.brSource!=='none'){ cfg.brSrcMin=SRC[cfg.brSource].min; cfg.brSrcMax=SRC[cfg.brSource].max; }
+      changed();
+    };
+    e.addEventListener(e.tagName==='SELECT'||e.type==='checkbox'?'change':'input',apply);
+  });
+  $('#name').addEventListener('input',e=>{ cfg.name=e.target.value; changed(); });
+  const hexIn=(id,get,set)=>$(id).addEventListener('input',e=>{ let v=e.target.value.trim(); if(v&&v[0]!=='#') v='#'+v; if(/^#[0-9a-fA-F]{6}$/.test(v)){ set(v.toUpperCase()); changed(); } });
+  $('#stCol').addEventListener('input',e=>{ selStop.hex=e.target.value.toUpperCase(); changed(); });
+  hexIn('#stHex',null,v=>selStop.hex=v);
+  $('#stPos').addEventListener('input',e=>{ if(e.target.value==='') return; selStop.pos=Math.max(0,Math.min(100,Number(e.target.value))); sortStops(); changed(); });
+  $('#stDel').onclick=()=>{ if(cfg.stops.length<=1) return; cfg.stops.splice(cfg.stops.indexOf(selStop),1); selStop=cfg.stops[0]; changed(); };
+  $('#solCol').addEventListener('input',e=>{ cfg.stops=[{pos:0,hex:e.target.value.toUpperCase()}]; selStop=cfg.stops[0]; changed(); });
+  hexIn('#solHex',null,v=>{ cfg.stops=[{pos:0,hex:v}]; selStop=cfg.stops[0]; });
+  $('#brkCol').addEventListener('input',e=>{ cfg.brakeColor=e.target.value.toUpperCase(); changed(); });
+  hexIn('#brkHex',null,v=>cfg.brakeColor=v);
+}
+function sortStops(){ cfg.stops.sort((a,b)=>a.pos-b.pos); }
+
+/* ---------- Verlaufs-Editor ---------- */
+function buildGradHandles(){
+  const w=$('#gradwrap'); $$('.handle',w).forEach(h=>h.remove());
+  if(cfg.mode!=='ramp') return;
+  cfg.stops.forEach(s=>{
+    const h=document.createElement('button'); h.type='button'; h.className='handle'+(s===selStop?' sel':''); h.style.left=s.pos+'%'; h.style.background=s.hex;
+    h.setAttribute('aria-label','Stop '+s.pos+'%');
+    h.addEventListener('pointerdown',ev=>{
+      ev.preventDefault(); ev.stopPropagation(); selStop=s; h.setPointerCapture(ev.pointerId);
+      const rect=$('#grad').getBoundingClientRect();
+      const move=e=>{ s.pos=Math.round(Math.max(0,Math.min(100,(e.clientX-rect.left)/rect.width*100))); h.style.left=s.pos+'%'; engine.setCfg(cfg); $('#stPos').value=s.pos; $('#txt').value=serialize(cfg); drawAll(true); };
+      const up=()=>{ h.removeEventListener('pointermove',move); h.removeEventListener('pointerup',up); h.removeEventListener('pointercancel',up); sortStops(); changed(); };
+      h.addEventListener('pointermove',move); h.addEventListener('pointerup',up); h.addEventListener('pointercancel',up);
+      syncUI(true);
+    });
+    w.appendChild(h);
+  });
+}
+$('#grad').addEventListener('pointerdown',ev=>{
+  if(cfg.stops.length>=MAX_STOPS) return;
+  const r=ev.currentTarget.getBoundingClientRect(); const pos=Math.round(Math.max(0,Math.min(100,(ev.clientX-r.left)/r.width*100)));
+  const c=rampColor(compile(cfg),pos/100); const ns={pos,hex:rgbHex(c[0],c[1],c[2])};
+  cfg.stops.push(ns); sortStops(); selStop=ns; changed();
+});
+
+/* ---------- Zeichnen ---------- */
+function drawRamp(canvas, c, withDim){
+  const ctx=canvas.getContext('2d'), W=canvas.width, H=canvas.height;
+  const img=ctx.createImageData(W,1); const cc=compile(c);
+  for(let x=0;x<W;x++){ const tt=x/(W-1); let col;
+    if(cc.mode==='cycle') col=hsv(tt*360,cc.cycSat/100,1); else if(cc.mode==='solid') col=hexRgb(cc.stops[0].hex); else col=rampColor(cc,tt);
+    img.data[x*4]=col[0]; img.data[x*4+1]=col[1]; img.data[x*4+2]=col[2]; img.data[x*4+3]=255; }
+  for(let y=0;y<H;y++) ctx.putImageData(img,0,y);
+}
+function drawAll(light){
+  drawRamp($('#grad'),cfg);
+  drawRamp($('#rampBar'),cfg);
+  const cc=compile(cfg);
+  const lo = cc.mode==='ramp' ? cc.min : 0, hi = cc.mode==='ramp' ? cc.max : 1;
+  $('#axMin').textContent = cc.mode==='ramp' ? lo+' '+SRC[cc.source].unit : '';
+  $('#axMax').textContent = cc.mode==='ramp' ? hi+' '+SRC[cc.source].unit : '';
+  $('#axSrc').textContent = cc.mode==='ramp' ? t('src_'+cc.source) : (cc.mode==='cycle'?t('mode_cycle'):t('mode_solid'));
+  const tn=$('#techInfo'); if(tn && !tn.dataset.done){ techInfo(); }
+}
+function currentInputs(now){
+  let i={speed:SIM.speed.v,throttle:SIM.throttle.v,steer:SIM.steer.v,rpm:SIM.rpm.v,accel:SIM.accel.v,lat:SIM.lat.v,temp:SIM.temp.v,braking:$('#simBrake').checked};
+  if(demoOn){
+    const T=((now-demoT0)/1000)%38;
+    const K=[[0,0,0,0],[0.8,0,0,0],[8,70,60,0],[14,115,55,0],[18,120,20,0],[21,50,0,1],[23,48,0,1],[29,95,55,0],[33,95,25,0],[38,0,0,1]];
+    let k=0; while(k<K.length-2 && T>K[k+1][0]) k++;
+    const a=K[k], b=K[k+1], f=Math.max(0,Math.min(1,(T-a[0])/(b[0]-a[0])));
+    const sp=a[1]+(b[1]-a[1])*f; const thr=a[2]+(b[2]-a[2])*f; const br=f<1 ? (b[3]?1:a[3]) : b[3];
+    const dv=(b[1]-a[1])/Math.max(0.001,(b[0]-a[0]))/3.6;
+    const st=Math.sin(T*0.9)*Math.min(1,sp/40)*110;
+    i={speed:sp,throttle:thr,steer:st,rpm:800+sp*26,accel:dv,lat:Math.sin(T*0.9)*sp/45,temp:SIM.temp.v,braking:!!br && a[1]>b[1]};
+    ['speed','throttle','steer','rpm','accel','lat'].forEach(k2=>{ const r=$('#sr_'+k2); if(r){ r.value=i[k2]; $('#sv_'+k2).textContent=Math.round(i[k2]*10)/10+' '+SIM_UNIT[k2]; } });
+    $('#simBrake').checked=i.braking;
+  }
+  return i;
+}
+function frame(now){
+  const inp=currentInputs(now);
+  const o=engine.tick(now,inp,!$('#simNight').checked,null);
+  const col=rgbHex(o.r,o.g,o.b), idl=rgbHex(o.ideal[0],o.ideal[1],o.ideal[2]);
+  const cab=$('#cab'); cab.style.setProperty('--led','rgb('+o.ideal[0]+','+o.ideal[1]+','+o.ideal[2]+')'); cab.style.setProperty('--lo',String(Math.max(0.04,o.bright)));
+  $('#swOut').style.background=col; $('#swIdeal').style.background=idl;
+  $('#hexOut').textContent=col; $('#rgbOut').textContent='rgb('+o.r+','+o.g+','+o.b+')'; $('#brOut').textContent=Math.round(o.bright*100)+' %';
+  const cc=engine.c; const mk=$('#marker');
+  if(cc.mode==='ramp'){ const f=norm(engine.input(cc.source,inp),cc.min,cc.max); mk.style.left='calc('+(f*100)+'% - 1px)'; mk.hidden=false; }
+  else mk.hidden = true;
+  requestAnimationFrame(frame);
+}
+
+/* ---------- Aktionen ---------- */
+function download(name,bytes){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([bytes],{type:'application/java-archive'})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500); }
+async function importFile(file){
+  try{
+    const buf=await file.arrayBuffer();
+    let c;
+    if(/\.(properties|txt)$/i.test(file.name)){ c=parseProps(new TextDecoder().decode(buf)); c.name=file.name.replace(/\.[^.]+$/,'').slice(0,24); }
+    else c=await readAmbiente(buf);
+    loadCfg(c); toast(t('toastImported')+': '+c.name);
+  }catch(e){
+    const m=String(e.message||e);
+    toast(m==='COMPILED'?t('errCompiled'):m==='INFLATE'?t('errInflate'):(m==='NOTAMB'||m==='NOTZIP')?t('errNotAmb'):t('errFormat')+m,true);
+  }
+}
+function wire(){
+  $$('[data-lang]').forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
+  $('#bNew').onclick=()=>{ loadCfg(defaultCfg()); toast(t('toastNew')); };
+  $('#bNewId').onclick=()=>{ cfg.id=newId(); changed(); toast(t('toastNewId')+': '+cfg.id); };
+  $('#bImport').onclick=()=>$('#file').click();
+  $('#file').onchange=e=>{ if(e.target.files[0]) importFile(e.target.files[0]); e.target.value=''; };
+  $('#bEx').onclick=e=>{ e.stopPropagation(); $('#exMenu').classList.toggle('open'); };
+  document.addEventListener('click',()=>$('#exMenu').classList.remove('open'));
+  $('#bExport').onclick=()=>{
+    const np=nameProblem(cfg.name); if(np){ toast(t(np),true); $('#name').focus(); return; }
+    sortStops(); let bytes; try{ bytes=buildAmbiente(cfg); }catch(e){ toast(String(e.message||e),true); return; }
+    download(slugFile(cfg.name),bytes); toast(t('toastExported')+': '+slugFile(cfg.name));
+  };
+  $('#bCopy').onclick=async()=>{ try{ await navigator.clipboard.writeText($('#txt').value); toast(t('toastCopied')); }catch(e){ $('#txt').select(); document.execCommand('copy'); toast(t('toastCopied')); } };
+  $('#bApply').onclick=()=>{ try{ const c=parseProps($('#txt').value); c.name=cfg.name; $('#txtMsg').textContent=''; loadCfg(c); toast(t('toastApplied')); }catch(e){ $('#txtMsg').textContent=t('errFormat')+(e.message||e); } };
+  $('#bDemo').onclick=()=>{ demoOn=!demoOn; demoT0=performance.now(); $('#bDemo').lastElementChild.textContent = demoOn ? t('demoStop') : t('demo'); $('#bDemo').firstChild.textContent = demoOn ? '■ ' : '▶ '; };
+  let dragN=0; const drop=$('#drop');
+  addEventListener('dragenter',e=>{ e.preventDefault(); dragN++; drop.classList.add('on'); });
+  addEventListener('dragleave',e=>{ e.preventDefault(); if(--dragN<=0){dragN=0;drop.classList.remove('on');} });
+  addEventListener('dragover',e=>e.preventDefault());
+  addEventListener('drop',e=>{ e.preventDefault(); dragN=0; drop.classList.remove('on'); const f=e.dataTransfer&&e.dataTransfer.files[0]; if(f) importFile(f); });
+}
+async function techInfo(){
+  const tn=$('#techInfo'); tn.dataset.done='1';
+  let sha=RUNTIME_SHA; try{ const d=await crypto.subtle.digest('SHA-256',b64ToU8(RUNTIME_B64)); sha=Array.from(new Uint8Array(d)).map(b=>b.toString(16).padStart(2,'0')).join(''); }catch(e){}
+  tn.innerHTML=t('techSha')+': DesignEffect.class · '+b64ToU8(RUNTIME_B64).length+' '+t('techBytes')+'<br>SHA-256: '+sha+'<br>'+t('techContract')+': '+CONTRACT_VERSION+'<br>'+t('techCheck');
+}
+
+(function init(){
+  let l='de'; try{ l=localStorage.getItem('afx-lang')||''; }catch(e){}
+  if(l!=='de'&&l!=='en') l=(navigator.language||'de').toLowerCase().startsWith('de')?'de':'en';
+  bindInputs(); wire();
+  setLang(l);
+  engine.start(performance.now());
+  requestAnimationFrame(frame);
+  window.__afx={Engine,compile,parseProps,serialize,buildAmbiente,readAmbiente,readZip,makeZip,crc32,rampColor,defaultCfg,EXAMPLES,hsv,get cfg(){return cfg;},setLang};
+})();
+</script>
+</body>
+</html>

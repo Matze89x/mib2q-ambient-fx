@@ -75,9 +75,9 @@ Frei gestreamte Zwischenfarben können auf manchen LED-Streifen flackern. Deshal
 4. `./build_plugin.sh …` und auf einem **privaten Grundstück** testen.
 5. Jar + **alle** Plugins gemeinsam installieren.
 
-## Geplant: Design-Editor im Browser
+## Ohne Programmieren: das Design Studio
 
-Ein **HTML-Editor**, mit dem sich eigene Designs ohne Programmieren zusammenstellen lassen (Farbverläufe über Tempo, Gas, Gang oder Temperatur, Vorschau, Export als `.ambiente`). Er ist noch nicht begonnen. Ideen, Entwürfe und Pull Requests sind willkommen.
+Für einfache Designs (Farbverlauf über Tempo, Gas, Lenkwinkel oder Temperatur, Regenbogen, Helligkeit, Atmen) brauchst du keine Zeile Java: das **[Design Studio](../designer/README.md)** ist ein Editor im Browser (eine HTML-Datei, läuft offline), der **neu erstellen, importieren, bearbeiten und als `.ambiente` exportieren** kann. Es ist **experimentell** und bisher nur am PC getestet. Für Regeln mit eigener Logik (zum Beispiel Gang-abhängig) schreibst du weiterhin einen Effekt in Java wie oben.
 
 ---
 
@@ -133,6 +133,6 @@ Freely streamed in-between colours can flicker on some LED strips. So the proven
 4. `./build_plugin.sh …` and test on **private property**.
 5. Install the jar and **all** plugins together.
 
-## Planned: design editor in the browser
+## Without programming: the Design Studio
 
-An **HTML editor** to assemble your own designs without programming (colour ramps over speed, throttle, gear or temperature, preview, export as `.ambiente`). Not started yet. Ideas, drafts and pull requests are welcome.
+For simple designs (colour ramp over speed, throttle, steering angle or temperature, rainbow, brightness, breathing) you do not need a single line of Java: the **[Design Studio](../designer/README.md)** is an editor in your browser (one HTML file, works offline) that can **create, import, edit and export as `.ambiente`**. It is **experimental** and tested on a computer so far. For rules with logic of their own (for example gear-dependent) you still write an effect in Java as above.

@@ -32,7 +32,7 @@ Die Farben stammen **zur Laufzeit aus der Werksfarbliste, die das Fahrzeug selbs
 
 Ein Effekt ist eine kleine Java-Klasse mit drei Methoden (`start`, `tick`, `periodMs`) und wird als **`.ambiente`-Plugin** gebaut, ohne das Haupt-Jar zu ändern. Schritt für Schritt: **[docs/EIGENE-DESIGNS_CUSTOM-DESIGNS.md](docs/EIGENE-DESIGNS_CUSTOM-DESIGNS.md)**, dazu ein lauffähiges Beispiel in [`examples/MeinEffekt.java`](examples/MeinEffekt.java) und das ausführliche [Handbuch für eigene Effekte](EFFEKTE_HANDBUCH.md) (Deutsch).
 
-**Geplant:** ein **Editor im Browser (HTML)**, mit dem man sich eigene Designs ohne Programmieren zusammenklicken und als Plugin erzeugen kann. Siehe [Roadmap](#roadmap).
+**Neu, experimentell: das [Design Studio](designer/README.md).** Ein Editor im Browser (eine einzige HTML-Datei, läuft offline), mit dem du Designs **ohne Programmieren** neu erstellst, importierst, bearbeitest und als `.ambiente` exportierst, mit Live-Vorschau, dunklem Design, Deutsch/Englisch. Online: https://matze89x.github.io/mib2q-ambient-fx/designer/ (sobald GitHub Pages aktiv ist), sonst [`docs/designer/index.html`](docs/designer/index.html) herunterladen und im Browser öffnen. **Bisher nur am PC getestet, noch nicht im Fahrzeug.**
 
 ## Was dieses Repository nicht enthält
 
@@ -91,6 +91,7 @@ Das SD-Menü hat den Punkt **Deinstallieren**: Es sichert zuerst alles auf die S
 | [SD-ANLEITUNG.md](SD-ANLEITUNG.md), [TEST-ABLAUF.md](TEST-ABLAUF.md) | SD-Menü im Green Engineering Menu (Deutsch) |
 | [DEPLOY_TELNET.md](DEPLOY_TELNET.md) | Weg per Telnet (Deutsch) |
 | [docs/DEBUG.md](docs/DEBUG.md) | Debug-Protokoll nur im RAM, Marker, Obergrenze (DE/EN) |
+| [designer/README.md](designer/README.md) | Design Studio: Designs im Browser bauen, Format, Prüfung (DE/EN) |
 
 ## Debug
 
@@ -98,7 +99,7 @@ AmbientFX kann ein **Protokoll nur im RAM** führen, das du per Telnet ausliest.
 
 ## Roadmap
 
-- 🧪 **HTML-Editor im Browser** zum Zusammenstellen eigener Designs (Farbverläufe, Reaktion auf Tempo/Gas/Gang), mit Vorschau und Export als `.ambiente`-Plugin. Noch nicht begonnen, Ideen und Mithilfe willkommen.
+- **Design Studio erweitern** (mehr Bausteine, etwa Gang-abhängige Regeln oder Zonen), nach dem ersten Test im Fahrzeug. Ideen und Mithilfe willkommen.
 - Weitere Ideen: Einparkhilfe-Effekt, Blinker-Impuls, Helligkeit je Zone.
 - Englische Übersetzung der technischen Detail-Dokumente.
 
@@ -149,7 +150,7 @@ Colours are taken **at runtime from the factory colour list the vehicle itself r
 
 An effect is a small Java class with three methods (`start`, `tick`, `periodMs`), built as a **`.ambiente` plugin** without touching the main jar. Step by step: **[docs/EIGENE-DESIGNS_CUSTOM-DESIGNS.md](docs/EIGENE-DESIGNS_CUSTOM-DESIGNS.md)**, a working example in [`examples/MeinEffekt.java`](examples/MeinEffekt.java), and the detailed [effects handbook](EFFEKTE_HANDBUCH.md) (German).
 
-**Planned:** a **browser-based (HTML) editor** to assemble your own designs without programming and export them as a plugin. See the [roadmap](#roadmap-1).
+**New, experimental: the [Design Studio](designer/README.md).** An editor in your browser (one single HTML file, works offline) to **create, import, edit** and **export** designs as `.ambiente` **without programming**, with live preview, dark design, German/English. Online: https://matze89x.github.io/mib2q-ambient-fx/designer/ (once GitHub Pages is enabled), otherwise download [`docs/designer/index.html`](docs/designer/index.html) and open it in a browser. **Tested on a computer so far, not yet in a vehicle.**
 
 ## What this repository does not contain
 
@@ -208,6 +209,7 @@ The SD menu has an **Uninstall** entry: it backs everything up to the SD card fi
 | [SD-ANLEITUNG.md](SD-ANLEITUNG.md), [TEST-ABLAUF.md](TEST-ABLAUF.md) | SD menu in the Green Engineering Menu (German) |
 | [DEPLOY_TELNET.md](DEPLOY_TELNET.md) | Telnet route (German) |
 | [docs/DEBUG.md](docs/DEBUG.md) | Debug log in RAM only, marker, size limit (DE/EN) |
+| [designer/README.md](designer/README.md) | Design Studio: build designs in the browser, format, verification (DE/EN) |
 
 ## Debug
 
@@ -215,7 +217,7 @@ AmbientFX can keep a **log in RAM only** that you read via telnet. It is **off b
 
 ## Roadmap
 
-- 🧪 **Browser-based HTML editor** to assemble your own designs (colour ramps, reaction to speed/throttle/gear), with preview and export as a `.ambiente` plugin. Not started yet – ideas and help welcome.
+- **Extend the Design Studio** (more building blocks, e.g. gear-dependent rules or zones), after the first test in a vehicle. Ideas and help welcome.
 - More ideas: parking-distance effect, indicator pulse, brightness per zone.
 - English translation of the technical detail documents.
 
