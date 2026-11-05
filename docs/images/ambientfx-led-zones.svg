@@ -62,13 +62,18 @@
   <ellipse class="pass" cx="510" cy="386" rx="44" ry="15"/>
 
   <!-- centre console: contour to be checked, cup holders passive -->
-  <rect class="pass" x="366" y="256" width="68" height="132" rx="14"/>
-  <circle class="pass" cx="384" cy="330" r="9"/>
-  <circle class="pass" cx="416" cy="330" r="9"/>
+  <rect x="358" y="214" width="84" height="174" rx="14" fill="#1b2230" stroke="#2a3242" stroke-width="1.5"/>
+  <rect class="pass" x="346" y="230" width="9" height="140" rx="4"/>
+  <rect class="pass" x="445" y="230" width="9" height="140" rx="4"/>
+  
 
   <!-- controlled contour -->
   <g filter="url(#glow)" fill="none" stroke-linecap="round">
     <path d="M236 134 Q400 114 564 134" stroke="url(#hz)" stroke-width="5.5"/>
+  </g>
+  <g filter="url(#glow)" fill="none">
+    <circle cx="381" cy="242" r="9" stroke="#b45cff" stroke-width="3.5"/>
+    <circle cx="419" cy="242" r="9" stroke="#b45cff" stroke-width="3.5"/>
   </g>
   <g filter="url(#glow)">
     <rect x="194" y="200" width="5" height="124" rx="2.5" fill="url(#vz)"/>
@@ -92,21 +97,21 @@
   <text x="510" y="248" text-anchor="middle" class="s muted" style="font-size:11.5px">Fußraum</text>
   <text x="290" y="390" text-anchor="middle" class="s muted" style="font-size:11.5px">Fußraum</text>
   <text x="510" y="390" text-anchor="middle" class="s muted" style="font-size:11.5px">Fußraum</text>
-  <text x="400" y="272" text-anchor="middle" class="s muted" style="font-size:9.5px">Mittelkonsole</text>
-  <text x="400" y="406" text-anchor="middle" class="s muted" style="font-size:11px">Getränkehalter ×2 · farbig</text>
+  <text x="400" y="410" text-anchor="middle" class="s muted" style="font-size:10.5px">Mittelkonsole · nur seitlich</text>
+  <text x="400" y="270" text-anchor="middle" class="s" style="font-size:9.5px">Getränkehalter ×2</text>
 
   <!-- legend -->
   <g transform="translate(40 524)">
     <rect x="0" y="0" width="720" height="178" rx="14" fill="#10141c" stroke="#2a3242"/>
     <g filter="url(#glow)"><rect x="22" y="20" width="46" height="5.5" rx="2.7" fill="#b45cff"/></g>
     <text x="86" y="27" class="m">Kontur (LED-Streifen) · contour (LED strips)</text>
-    <text x="86" y="45" class="s muted">Tür-Kontur (alle vier Türen) + Armaturenbrett · von AmbientFX gesteuert / controlled by AmbientFX</text>
+    <text x="86" y="45" class="s muted">Tür-Kontur (alle vier Türen), Getränkehalter (2×), Armaturenbrett · von AmbientFX gesteuert</text>
     <text x="86" y="61" class="s muted">Im MMI die eine Farbwahl für alles mit LED-Streifen · the MMI colour choice for everything with LED strips</text>
-    <text x="86" y="77" class="s muted">Armaturenbrett-Streifen: nur nachgerüstet · retrofit only</text>
+    <text x="86" y="77" class="s muted">Armaturenbrett-Streifen: nur nachgerüstet · retrofit only · controlled by AmbientFX</text>
 
     <rect x="22" y="100" width="46" height="14" rx="5" class="pass"/>
     <text x="86" y="112" class="m">Fläche (passiv) · surface (passive)</text>
-    <text x="86" y="130" class="s muted">Türtaschen, Türverkleidung, Fußraum (alle Plätze), Getränkehalter (vorn 2×), Mittelkonsole (auch seitlich)</text>
+    <text x="86" y="130" class="s muted">Türtaschen, Lautsprecher, Fußraum (alle Plätze), Mittelkonsole (nur links und rechts)</text>
     <text x="86" y="146" class="s muted">Im MMI die andere Farbwahl für alles Passive (30 Farben) · the other MMI colour choice</text>
     <text x="86" y="162" class="s muted">Manuell einstellbar, später auch mit AmbientFX · set manually, AmbientFX later</text>
   </g>
