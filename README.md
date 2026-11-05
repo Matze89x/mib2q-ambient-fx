@@ -45,6 +45,7 @@ Dieses Repository enthält nur eigenen Code, eigene Skripte und eigene Dokumenta
 
 ## Voraussetzungen
 
+- **Ein Fahrzeug mit farbiger Ambientebeleuchtung** (Sonderausstattung, beim Testfahrzeug PR-Nr. QQ2). Im MMI muss es unter *MENU › Fahrzeug › Fahrzeugeinstellungen › Ambientebeleuchtung* Farbwahl bzw. Profile (individuell / Audi drive select) geben. AmbientFX steuert nur die Farbe der **Kontur** dieser vorhandenen Beleuchtung. Ohne farbige Ambientebeleuchtung gibt es nichts zu steuern.
 - Audi MHI2Q (MU1329), ein Steuergerät-Zugang, den du selbst eingerichtet hast (Telnet **oder** Toolbox mit Green Engineering Menu). Beides ist nicht Teil dieses Projekts.
 - Mac oder Linux mit **JDK 8** (Java-1.2-Bytecode), `bash`, `patch`, `unzip`, `python3`.
 - **Deine eigene `lsd.jar`**: die `lsd.jxe` deines Geräts, mit einem JXE→JAR-Konverter (z. B. dem Community-Werkzeug *jxe2jar*) umgewandelt.
@@ -161,6 +162,7 @@ This repository contains only original code, scripts and documentation.
 
 ## Requirements
 
+- **A vehicle with coloured ambient lighting** (optional equipment, PR no. QQ2 on the test vehicle). The MMI must offer colour choice or profiles (individual / Audi drive select) under *MENU › Fahrzeug › Fahrzeugeinstellungen › Ambientebeleuchtung* (German MMI wording). AmbientFX only drives the colour of the **contour** of that existing lighting. Without coloured ambient lighting there is nothing to control.
 - Audi MHI2Q (MU1329) and a way into the unit that you set up yourself (telnet **or** toolbox with Green Engineering Menu). Neither is part of this project.
 - Mac or Linux with **JDK 8** (Java 1.2 bytecode), `bash`, `patch`, `unzip`, `python3`.
 - **Your own `lsd.jar`**: the `lsd.jxe` of your unit, converted with a JXE→JAR converter (e.g. the community tool *jxe2jar*).
