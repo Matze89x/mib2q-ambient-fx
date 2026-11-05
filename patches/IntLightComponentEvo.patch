@@ -1,0 +1,114 @@
+--- a/de/audi/app/car/evo/light/IntLightComponentEvo.java
++++ b/de/audi/app/car/evo/light/IntLightComponentEvo.java
+@@ -1,2 +1,21 @@
++/*
++ * PATCHED (AmbientFX) - Ersatz fuer die Stock-Klasse.
++ *
++ * Original: java_stock/de/audi/app/car/evo/light/IntLightComponentEvo.java
++ *
++ * Aenderungen (alle als "AmbientFX" markiert):
++ *   - initModels:               X-Limit des Range2D-Modells 601073 auf die Effekt-IDs erweitern
++ *   - initBusiness:             Engine an DSI/Modell/Application binden
++ *   - updateIntLightViewOptions: Engine informieren (Restore nach Neustart)
++ *   - updateIntLightActiveProfile: Effekt-Markierung nach Fahrzeug-Update wiederherstellen
++ *   - updateIntLightRGBColorListTotalNumberOfElements / responseIntLightRGBColorListRA0:
++ *                                Werksfarbliste an die Engine durchreichen (fuers
++ *                                Werksfarben-Snapping, siehe AmbientFx)
++ *   - deinit:                   Engine loesen
++ * Tag/Nacht kommt NICHT von hier, sondern ueber die eigene Komponente
++ * DaylightData (DSIGeneralVehicleStates, siehe dort) - dieser Screen muss
++ * dafuer nicht angefasst werden.
++ * Der restliche Code ist unveraendert (Bytecode-identisch zum Original).
++ */
+ package de.audi.app.car.evo.light;
+ 
+@@ -8,4 +27,7 @@
+ import de.audi.app.car.core.light.IntLightSetEvaluator$SingleZoneIdentity;
+ import de.audi.atip.hmi.modelaccess.ChoiceModelApp;
++import de.mk.ambientfx.AmbientFx;
++import de.mk.ambientfx.FxCatalog;
++import de.mk.ambientfx.Log;
+ import org.dsi.ifc.carlight.IntLightViewOptions;
+ import org.dsi.ifc.global.CarViewOption;
+@@ -29,4 +51,70 @@
+       super.initBusiness();
+       this.ambientColorListBusiness = new IntLightColorListBusiness(this.getDSI(), this.getLogChannel(), this.ambientColorListModel);
++      /* AmbientFX: Engine binden (DSI ist ab hier verfuegbar) */
++      try {
++         AmbientFx.getInstance().bind(this.getDSI(), this.range2DModelHandler, this.getApplication());
++      } catch (Throwable t) {
++         Log.e("IntLightComponentEvo", "AmbientFx bind failed", t);
++      }
++   }
++
++   /* AmbientFX: Range2D-X darf bis zur letzten Effekt-ID laufen (Stock: 0..8) */
++   protected void initModels() {
++      super.initModels();
++      try {
++         this.range2DModelHandler.updateRangeModel2DLimits(0, FxCatalog.lastWidgetId(), 1, 0, 100, 5);
++         Log.i("IntLightComponentEvo", "range2D X limit extended to " + FxCatalog.lastWidgetId());
++      } catch (Throwable t) {
++         Log.e("IntLightComponentEvo", "extend range2D limits failed", t);
++      }
++   }
++
++   /* AmbientFX: Fahrzeug meldet aktives Profil -> Effekt-Markierung erhalten */
++   public void updateIntLightActiveProfile(int var1, int var2) {
++      super.updateIntLightActiveProfile(var1, var2);
++      if (var2 == 1) {
++         try {
++            AmbientFx.getInstance().restoreSelection();
++         } catch (Throwable t) {
++            Log.e("IntLightComponentEvo", "restoreSelection failed", t);
++         }
++      }
++   }
++
++   /* AmbientFX: Werksfarbliste (Anzahl) durchreichen */
++   public void updateIntLightRGBColorListTotalNumberOfElements(int var1, int var2) {
++      super.updateIntLightRGBColorListTotalNumberOfElements(var1, var2);
++      if (var2 == 1) {
++         try {
++            AmbientFx.getInstance().onColorListCount(var1);
++         } catch (Throwable t) {
++            Log.e("IntLightComponentEvo", "onColorListCount failed", t);
++         }
++      }
++   }
++
++   /* AmbientFX: Werksfarbliste (Eintraege) durchreichen */
++   public void responseIntLightRGBColorListRA0(
++         org.dsi.ifc.carlight.IntLightRGBColorListUpdateInfo var1, org.dsi.ifc.carlight.IntLightRGBColorListRA0[] var2) {
++      super.responseIntLightRGBColorListRA0(var1, var2);
++      if (var2 != null && var1 != null && (var1.getArrayContent() == 1 || var1.getArrayContent() == 2)) {
++         try {
++            AmbientFx.getInstance().onColorListChunk(var2);
++         } catch (Throwable t) {
++            Log.e("IntLightComponentEvo", "onColorListChunk failed", t);
++         }
++      }
++   }
++
++   /* AmbientFX: erste ViewOptions = Lichtsystem bereit -> ggf. gespeicherten Effekt starten */
++   public void updateIntLightViewOptions(org.dsi.ifc.carlight.IntLightViewOptions var1, int var2) {
++      super.updateIntLightViewOptions(var1, var2);
++      if (var2 == 1) {
++         try {
++            AmbientFx.getInstance().onLightReady();
++         } catch (Throwable t) {
++            Log.e("IntLightComponentEvo", "onLightReady failed", t);
++         }
++      }
+    }
+ 
+@@ -36,4 +124,10 @@
+ 
+    public void deinit() {
++      /* AmbientFX */
++      try {
++         AmbientFx.getInstance().unbind();
++      } catch (Throwable t) {
++         Log.e("IntLightComponentEvo", "AmbientFx unbind failed", t);
++      }
+       this.getApplication().getScreenStateDispatcher().removeScreenStateListener(600030, this);
+       super.deinit();

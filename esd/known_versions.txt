@@ -1,0 +1,3 @@
+# Rang Name Pruefsumme Groesse  - bekannte ambient_fx.jar-Staende (cksum). Das SD-Menue zeigt daran "alt -> neu" und verhindert ein versehentliches Zuruecksetzen auf einen AELTEREN Stand.
+# Unbekannte Pruefsummen (fremde/aeltere Staende) werden beim Installieren trotzdem ersetzt (nach Sicherung auf die SD), nur eben ohne Namen angezeigt.
+# Wird von build_sd_package.sh um das aktuelle Jar ergaenzt (Name = AmbientFx.BUILD_ID).

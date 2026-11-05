@@ -1,0 +1,39 @@
+###########################################################################################
+# >>> mib2q-ambientfx BEGIN (Matze89x in cooperation with DEB and LuKa_dev - Namensnennung Pflicht, NICHT kommerziell)
+#
+# Main -> M.I.B. -> ambientfx
+# Angehaengt von mib2q-ambient-fx/deploy/build_sd_package.sh (esd_patch.py), unterhalb der Bloecke anderer Mods - die Toolbox-Datei und die Bloecke anderer Mods bleiben unveraendert.
+# Entfernen: den Block von ">>> mib2q-ambientfx BEGIN" bis "<<< mib2q-ambientfx END" loeschen
+# (oder die Originaldatei aus mib2q-esd-original/ zurueckkopieren).
+###########################################################################################
+screen ambientfx =>M.I.B.<=
+keyValue
+    value   String sys 0x00000000 0
+    label   "mib2q-ambient-fx - Ambientebeleuchtung-Effekte (Jar + 5 Effekte)"
+    poll    0
+keyValue
+    value   String sys 0x00000000 0
+    label   "Jede Aenderung: erst Sicherung auf die SD-Karte, dann Pruefsumme."
+    poll    0
+keyValue
+    value   String sys 0x00000000 0
+    label   "Danach MMI neu starten (Power-Taste ca. 10 s). Lauf nie abbrechen."
+    poll    0
+keyValue
+    value   String sys 0x00000000 0
+    label   "___________________________________________________________________________"
+    poll    0
+script
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/mib2q-ambient-fx/esd/afx_install.sh"
+    label   "1. Installieren / Updaten (Jar + 5 Effekte, mit Sicherung)"
+script
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/mib2q-ambient-fx/esd/afx_uninstall.sh"
+    label   "2. Deinstallieren (nur AmbientFX, Sicherung auf der SD)"
+script
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/mib2q-ambient-fx/esd/afx_status.sh"
+    label   "3. Status anzeigen (nur lesen, empfohlen zuerst)"
+keyValue
+    value   String sys 0x00000000 0
+    label   "___________________________________________________________________________"
+    poll    0
+# <<< mib2q-ambientfx END

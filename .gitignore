@@ -1,0 +1,12 @@
+# nie einchecken / never commit
+.DS_Store
+._*
+vendor/
+java_stock/
+java_patch/de/audi/
+build/
+backups/
+*.jar
+*.ambiente
+*.class
+*_local.md

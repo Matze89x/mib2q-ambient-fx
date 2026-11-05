@@ -1,0 +1,35 @@
+--- a/de/audi/tghu/car/hmi/evohigh/CarScreenBag5.java
++++ b/de/audi/tghu/car/hmi/evohigh/CarScreenBag5.java
+@@ -1,2 +1,12 @@
++/*
++ * PATCHED (AmbientFX) - Ersatz fuer die Stock-Klasse CarScreenBag5.
++ *
++ * Original: java_stock/de/audi/tghu/car/hmi/evohigh/CarScreenBag5.java
++ * (Decompilat, kompiliert Bytecode-identisch zum Original - siehe tools/verify_bytecode.py)
++ *
++ * Einzige Aenderung: cARCARSETTINGSINTLIGHTMAIN (Screen 600028, "Ambientebeleuchtung")
++ * bekommt hinter "Audi drive select" die Effekt-Eintraege aus de.mk.ambientfx.FxCatalog.
++ * Suche nach "AmbientFX" fuer die drei geaenderten Stellen.
++ */
+ package de.audi.tghu.car.hmi.evohigh;
+ 
+@@ -3210,4 +3220,6 @@
+       var99.setWidgetID(2);
+       var99.add(var98);
++      /* AmbientFX: zusaetzliche Effekt-Eintraege (widgetID 9..) */
++      MenuItemController[] fxItems = de.mk.ambientfx.FxMenu.createMenuItems();
+       MenuController var101 = new MenuController();
+       MenuRendererHigh var102 = new MenuRendererHigh(var101);
+@@ -3243,4 +3255,5 @@
+       var101.add(var96);
+       var101.add(var99);
++      de.mk.ambientfx.FxMenu.addToMenu(var101, fxItems);   /* AmbientFX */
+       GlassplateController var103 = new GlassplateController();
+       GlassplateRendererHigh var104 = new GlassplateRendererHigh(var103);
+@@ -3391,5 +3404,5 @@
+             {var6},
+             {var116},
+-            {var5, var77, var80, var83, var86, var89, var92, var96, var99},
++            de.mk.ambientfx.FxMenu.appendViews(new HMIView[]{var5, var77, var80, var83, var86, var89, var92, var96, var99}, fxItems),   /* AmbientFX */
+             {var101},
+             {var98},

@@ -1,0 +1,72 @@
+--- a/de/audi/app/car/core/light/IntLightRange2DBusiness.java
++++ b/de/audi/app/car/core/light/IntLightRange2DBusiness.java
+@@ -1,2 +1,12 @@
++/*
++ * PATCHED (AmbientFX) - Ersatz fuer die Stock-Klasse.
++ *
++ * Original: java_stock/de/audi/app/car/core/light/IntLightRange2DBusiness.java
++ *
++ * Aenderung: processKeyTyped unterscheidet jetzt zwischen Stock-Profilen
++ * (Fokus 1..8 -> dsi.setIntLightActiveProfile wie bisher) und Effekt-
++ * Eintraegen (Fokus >= FxCatalog.FIRST_WIDGET_ID -> AmbientFx.activate).
++ * Beim Wechsel von einem Effekt auf ein Stock-Profil wird die Engine gestoppt.
++ */
+ package de.audi.app.car.core.light;
+ 
+@@ -5,4 +15,7 @@
+ import de.audi.app.car.common.handler.business.Range2DModelEventBusinessAdapter;
+ import de.audi.atip.log.LogChannel;
++import de.mk.ambientfx.AmbientFx;
++import de.mk.ambientfx.FxCatalog;
++import de.mk.ambientfx.Log;
+ import org.dsi.ifc.carlight.DSICarLight;
+ 
+@@ -22,15 +35,41 @@
+ 
+       Range2DModelHandler var3 = (Range2DModelHandler)var2;
++      int currentX = var3.getRange2DModel().getValueX();
++      int focused = this.focus.getFocus();
+       this.getLogChannel()
+          .log(
+             1000000,
+-            "[IntLightRange2DBusiness#processKeyTyped] last profile: %1 current focus on %2 -> mappedProfile %3",
+-            var3.getRange2DModel().getValueX(),
+-            this.focus.getFocus(),
+-            this.profileMapping[this.focus.getFocus()]
++            "[IntLightRange2DBusiness#processKeyTyped] last profile: %1 current focus on %2",
++            currentX,
++            focused
+          );
+-      if (var3.getRange2DModel().getValueX() != this.focus.getFocus()) {
+-         this.getLogChannel().log(1000000, "dsi.setIntLightActiveProfile %1", this.focus.getFocus());
+-         this.getDSICarLight().setIntLightActiveProfile(this.focus.getFocus());
++
++      /* ---------- AmbientFX: Effekt-Eintrag ---------- */
++      if (FxCatalog.isFxWidgetId(focused)) {
++         Log.i("Range2DBusiness", "fx entry pressed: focus=" + focused + " currentX=" + currentX);
++         if (currentX != focused) {
++            AmbientFx.getInstance().activate(focused);
++         } else {
++            /* bereits aktiv -> wie Stock: Event feuern (Helligkeits-Screen) */
++            var2.fireEvent();
++         }
++         return true;
++      }
++
++      /* ---------- Stock-Profil ---------- */
++      if (AmbientFx.getInstance().isActive()) {
++         Log.i("Range2DBusiness", "stock profile pressed while fx active -> deactivate fx");
++         AmbientFx.getInstance().deactivate();
++         /* X sofort setzen: falls das Fahrzeug bereits auf diesem Profil steht,
++          * kommt kein updateIntLightActiveProfile mehr und X bliebe sonst auf dem Effekt. */
++         var3.updateRangeModelValueX(focused);
++         this.getLogChannel().log(1000000, "dsi.setIntLightActiveProfile %1", focused);
++         this.getDSICarLight().setIntLightActiveProfile(focused);
++         return true;
++      }
++
++      if (currentX != focused) {
++         this.getLogChannel().log(1000000, "dsi.setIntLightActiveProfile %1", focused);
++         this.getDSICarLight().setIntLightActiveProfile(focused);
+       } else {
+          var2.fireEvent();
