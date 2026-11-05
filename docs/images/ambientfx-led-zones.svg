@@ -99,8 +99,8 @@
 
     <rect x="22" y="82" width="46" height="14" rx="5" class="pass"/>
     <text x="86" y="94" class="m">Fläche (passiv) · surface (passive)</text>
-    <text x="86" y="112" class="s muted">z. B. Türtaschen, Türverkleidung, Fußraum, Getränkehalter, Mittelkonsole</text>
-    <text x="86" y="128" class="s muted">Weiterhin manuell im Auto einstellbar, später auch mit AmbientFX · still set manually in the car, AmbientFX later</text>
+    <text x="86" y="112" class="s muted">z. B. Türtaschen, Türverkleidung, Fußraum, Getränkehalter, Mittelkonsole (auch seitlich)</text>
+    <text x="86" y="128" class="s muted">Mit QQ2 ebenfalls farbig (30 Farben), manuell im Auto einstellbar, später auch mit AmbientFX</text>
 
   </g>
 </svg>
