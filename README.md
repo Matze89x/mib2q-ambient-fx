@@ -18,6 +18,9 @@ AmbientFX erweitert im Audi-MMI das Menü **Fahrzeugeinstellungen → Ambientebe
 
 Alle Effekte steuern nur die **Kontur/Linie** der Ambientebeleuchtung. Die **Fläche** bleibt beim normalen Farbregler im MMI.
 
+> [!NOTE]
+> **Phase 1: nur die LED-Streifen.** In der ersten Phase sprechen wir ausschließlich die **LED-Streifen** (Kontur/Linie) an. Die übrige, passive LED-Beleuchtung (die flächige Ambientebeleuchtung) bleibt unverändert und lässt sich **weiterhin wie gewohnt manuell** im MMI unter *Ambientebeleuchtung* einstellen. Ob und wie wir sie in einem späteren Update mit einbeziehen, ist offen. Zuerst geht es um die Streifen.
+
 | Effekt | Verhalten |
 |---|---|
 | **Momentum** | Farbe folgt dem Tempo (0–130 km/h in 10-km/h-Stufen, weich überblendet, 0 und 130 km/h = Rot), Helligkeit folgt dem Gaspedal, Bremsen = sofort Werks-Rot. Wechsel D → S am Gangwahlhebel: sofort Weiß 100 %, 1 s halten, 2 s in die normale Farbe ausblenden (nicht im Dynamic-Profil). |
@@ -100,6 +103,7 @@ AmbientFX kann ein **Protokoll nur im RAM** führen, das du per Telnet ausliest.
 ## Roadmap
 
 - **Design Studio erweitern** (mehr Bausteine, etwa Gang-abhängige Regeln oder Zonen), nach dem ersten Test im Fahrzeug. Ideen und Mithilfe willkommen.
+- **Passive LED-Beleuchtung (Fläche)** in einem späteren Update ansprechen. Phase 1 sind nur die LED-Streifen.
 - Weitere Ideen: Einparkhilfe-Effekt, Blinker-Impuls, Helligkeit je Zone.
 - Englische Übersetzung der technischen Detail-Dokumente.
 
@@ -135,6 +139,9 @@ Eigene Effekte, Tests auf anderen Geräten und Korrekturen sind willkommen (Issu
 AmbientFX adds extra, vehicle-reactive light effects to the Audi MMI menu **Vehicle settings → Ambient lighting** (after “Audi drive select”). It is a Java patch for the MHI2Q (HMI “lsd”): an additional jar loaded on the bootclasspath **before** the original HMI – the unit’s original files stay untouched.
 
 All effects only drive the **contour/line** of the ambient lighting. The **surface** stays with the normal colour control in the MMI.
+
+> [!NOTE]
+> **Phase 1: LED strips only.** In the first phase we only address the **LED strips** (contour/line). The remaining passive LED lighting (the area-type ambient lighting) is left untouched and can **still be set manually as usual** in the MMI under *Ambientebeleuchtung* (ambient lighting). Whether and how we include it in a later update is open. The strips come first.
 
 | Effect | Behaviour |
 |---|---|
@@ -218,6 +225,7 @@ AmbientFX can keep a **log in RAM only** that you read via telnet. It is **off b
 ## Roadmap
 
 - **Extend the Design Studio** (more building blocks, e.g. gear-dependent rules or zones), after the first test in a vehicle. Ideas and help welcome.
+- **Passive LED lighting (surface)** to be addressed in a later update. Phase 1 is the LED strips only.
 - More ideas: parking-distance effect, indicator pulse, brightness per zone.
 - English translation of the technical detail documents.
 
