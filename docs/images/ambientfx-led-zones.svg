@@ -41,8 +41,10 @@
   <!-- dashboard -->
   <path d="M224 118 Q400 98 576 118 L576 168 Q400 150 224 168 Z" fill="#1b2230" stroke="#2a3242" stroke-width="1.5"/>
   <!-- steering wheel (left-hand drive) -->
-  <circle cx="256" cy="206" r="18" fill="none" stroke="#2f384a" stroke-width="5"/>
-  <circle cx="256" cy="206" r="4" fill="#2f384a"/>
+  <ellipse cx="290" cy="202" rx="26" ry="13" fill="none" stroke="#3a4458" stroke-width="5"/>
+  <line x1="290" y1="202" x2="290" y2="215" stroke="#3a4458" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="290" cy="202" r="4" fill="#3a4458"/>
+  <text x="290" y="180" text-anchor="middle" class="s muted" style="font-size:10px">Lenkrad</text>
   <!-- seats -->
   <rect class="seat" x="248" y="272" width="84" height="88" rx="18"/>
   <rect class="seat" x="468" y="272" width="84" height="88" rx="18"/>
