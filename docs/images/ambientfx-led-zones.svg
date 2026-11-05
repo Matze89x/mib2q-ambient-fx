@@ -92,7 +92,8 @@
   <text x="510" y="248" text-anchor="middle" class="s muted" style="font-size:11.5px">Fußraum</text>
   <text x="290" y="390" text-anchor="middle" class="s muted" style="font-size:11.5px">Fußraum</text>
   <text x="510" y="390" text-anchor="middle" class="s muted" style="font-size:11.5px">Fußraum</text>
-  <text x="400" y="404" text-anchor="middle" class="s muted" style="font-size:11.5px">Mittelkonsole</text>
+  <text x="400" y="272" text-anchor="middle" class="s muted" style="font-size:9.5px">Mittelkonsole</text>
+  <text x="400" y="406" text-anchor="middle" class="s muted" style="font-size:11px">Getränkehalter ×2 · farbig</text>
 
   <!-- legend -->
   <g transform="translate(40 524)">
@@ -105,7 +106,7 @@
 
     <rect x="22" y="100" width="46" height="14" rx="5" class="pass"/>
     <text x="86" y="112" class="m">Fläche (passiv) · surface (passive)</text>
-    <text x="86" y="130" class="s muted">Türtaschen, Türverkleidung, Fußraum (alle Plätze), Getränkehalter, Mittelkonsole (auch seitlich)</text>
+    <text x="86" y="130" class="s muted">Türtaschen, Türverkleidung, Fußraum (alle Plätze), Getränkehalter (vorn 2×), Mittelkonsole (auch seitlich)</text>
     <text x="86" y="146" class="s muted">Im MMI die andere Farbwahl für alles Passive (30 Farben) · the other MMI colour choice</text>
     <text x="86" y="162" class="s muted">Manuell einstellbar, später auch mit AmbientFX · set manually, AmbientFX later</text>
   </g>
