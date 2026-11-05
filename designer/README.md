@@ -27,7 +27,7 @@ Importieren kannst du **Designs, die das Design Studio erzeugt hat** (`.ambiente
 
 ## Die ID
 
-Jedes Design hat eine **zufällige, feste ID** (`AFX-…`). Sie wird bei **Neu** und bei jedem **Beispiel** neu erzeugt und bei **Import und Export beibehalten**. Mit „Neue ID“ machst du aus einem fremden Design deine eigene Kopie. Wichtig zu wissen:
+Jedes Design hat eine **zufällige, feste ID** (`AFX-XXXX-XXXX`, zum Beispiel `AFX-95A8-F895`). Sie wird bei **Neu** und bei jedem **Beispiel** neu erzeugt und bei **Import und Export beibehalten**. Mit „Neue ID“ machst du aus einem fremden Design deine eigene Kopie. Älteren, längeren IDs (`AFX-` plus 16 Zeichen) bleiben beim Import erhalten. Das Studio erklärt die ID auch direkt auf der Seite („Was ist die ID?“). Wichtig zu wissen:
 
 - Das Fahrzeug merkt sich den zuletzt gewählten Effekt über den **Namen** (Menü-Text). Fehlt dieser Effekt später (Plugin entfernt oder umbenannt), schaltet AmbientFX beim Start auf das Standard-Profil „Kontur-Weiß“ zurück. Das ist ein Rückfall, kein Fehler.
 - Die ID steht in `plugin.properties` und in der Design-Datei und erscheint im Debug-Protokoll ([../docs/DEBUG.md](../docs/DEBUG.md)), damit man sieht, welches Design läuft.
@@ -135,7 +135,7 @@ You can import **designs created by the Design Studio** (`.ambiente`) and the **
 
 ## The ID
 
-Every design has a **random, fixed ID** (`AFX-…`). It is generated anew on **New** and on every **example**, and **kept on import and export**. “New ID” turns someone else’s design into your own copy. Good to know:
+Every design has a **random, fixed ID** (`AFX-XXXX-XXXX`, for example `AFX-95A8-F895`). It is generated anew on **New** and on every **example**, and **kept on import and export**. “New ID” turns someone else’s design into your own copy. Good to know:
 
 - The vehicle remembers the last chosen effect by its **name** (menu text). If that effect is missing later (plugin removed or renamed), AmbientFX falls back to the standard profile “contour white” at start. That is a fallback, not an error.
 - The ID is in `plugin.properties` and in the design file and appears in the debug log ([../docs/DEBUG.md](../docs/DEBUG.md)) so you can see which design is running.
