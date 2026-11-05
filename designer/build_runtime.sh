@@ -23,3 +23,13 @@ rm -rf "$OUT"; mkdir -p "$OUT"
 F="$OUT/de/mk/ambientfx/designer/DesignEffect.class"
 echo "Klasse / class: $F ($(wc -c < "$F" | tr -d ' ') Bytes)"
 echo "SHA-256: $(shasum -a 256 "$F" | cut -d' ' -f1)"
+
+# Effekt-Vorlagen (Tpl*) aus den Original-Effekten erzeugen und mit Java-1.2-Regeln bauen / generate effect templates (Tpl*) from the original effects and build with Java 1.2 rules
+python3 -I designer/tools/gen_templates.py
+TPL=build/tpl_cls
+rm -rf "$TPL"; mkdir -p "$TPL"
+"$JAVA_HOME/bin/javac" -source 1.2 -target 1.2 -encoding UTF-8 -Xlint:-options -nowarn \
+    -cp "$LSD_JAR:build/ambient_fx.jar" -d "$TPL" build/tpl_src/de/mk/ambientfx/designer/*.java designer/src/de/mk/ambientfx/designer/TplEnv.java
+for c in "$TPL"/de/mk/ambientfx/designer/*.class; do
+    echo "Vorlage / template: $(basename "$c") ($(wc -c < "$c" | tr -d ' ') Bytes) SHA-256 $(shasum -a 256 "$c" | cut -d' ' -f1)"
+done

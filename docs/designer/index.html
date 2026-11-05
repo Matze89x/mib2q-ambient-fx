@@ -40,6 +40,24 @@ header{display:flex;align-items:center;justify-content:space-between;gap:12px;fl
 .brand{display:flex;flex-direction:column;gap:2px;min-width:0}
 .brand svg{width:min(430px,78vw);height:auto;display:block;overflow:visible}
 .eyebrow{font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;font-weight:600}
+.tplonly{display:none!important}
+body.tpl .tplonly{display:block!important}
+body.tpl .freeonly,body.tpl .barwrap,body.tpl .axis{display:none!important}
+#tplBody h3{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:20px 0 6px;font-weight:600}
+.prow{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1.1fr) 128px 30px;gap:6px 10px;align-items:center;padding:6px 8px;border-radius:10px;border:1px solid transparent}
+.prow.chg{border-color:rgba(226,0,26,.5);background:rgba(226,0,26,.06)}
+.prow .nm{font-size:13px;line-height:1.25}
+.prow .nm small{display:block;color:var(--muted);font-family:'Space Mono',ui-monospace,monospace;font-size:10.5px;margin-top:2px}
+.prow input[type=range]{width:100%;margin:0}
+.prow input[type=number]{width:100%;min-width:0;padding:7px 8px}
+.prow .rs{border:1px solid var(--border2);background:var(--surface2);color:var(--text);border-radius:8px;width:28px;height:28px;cursor:pointer;visibility:hidden}
+.prow.chg .rs{visibility:visible}
+.prow .uw{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.prow .uw .unit{color:var(--muted);font-size:11px}
+.prow .org{grid-column:2 / span 3;color:var(--muted);font-size:11px;margin-top:-2px}
+@media(max-width:700px){.prow{grid-template-columns:1fr 1fr}.prow .org{grid-column:1 / span 2}}
+.hright{display:flex;align-items:center;gap:10px}
+.ver{font-family:'Space Mono',ui-monospace,monospace;font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--muted);border:1px solid var(--border2);border-radius:999px;padding:6px 11px;background:rgba(255,255,255,.04)}
 .lang{display:inline-flex;border:1px solid var(--border2);border-radius:999px;padding:3px;background:rgba(255,255,255,.04)}
 .lang button{border:0;background:transparent;color:var(--muted);padding:6px 14px;border-radius:999px;font-weight:600;cursor:pointer;letter-spacing:.04em}
 .lang button.on{background:var(--text);color:#0d1016}
@@ -165,8 +183,11 @@ footer a{color:var(--muted)}
     </svg>
     <div class="eyebrow"><span data-i18n="eyebrow">Design Studio · für mib2q</span></div>
   </div>
-  <div class="lang" role="group" aria-label="Language / Sprache">
-    <button type="button" data-lang="de">DE</button><button type="button" data-lang="en">EN</button>
+  <div class="hright">
+    <span class="ver" id="verBadge" title="AmbientFX Design Studio">v1.1</span>
+    <div class="lang" role="group" aria-label="Language / Sprache">
+      <button type="button" data-lang="de">DE</button><button type="button" data-lang="en">EN</button>
+    </div>
   </div>
 </header>
 
@@ -180,6 +201,10 @@ footer a{color:var(--muted)}
   <div class="toolbar">
     <button class="btn" id="bNew" type="button">✦ <span data-i18n="new">Neu</span></button>
     <button class="btn" id="bImport" type="button">⤓ <span data-i18n="import">Importieren</span></button>
+    <div class="menu" id="tplMenu">
+      <button class="btn" id="bTpl" type="button">🧬 <span data-i18n="tplMenu">Original-Vorlagen</span> ▾</button>
+      <div class="list" id="tplList"></div>
+    </div>
     <div class="menu" id="exMenu">
       <button class="btn" id="bEx" type="button">✨ <span data-i18n="examples">Beispiele</span> ▾</button>
       <div class="list" id="exList"></div>
@@ -264,13 +289,24 @@ footer a{color:var(--muted)}
         <label class="sw" style="margin:0"><input type="checkbox" id="simNight"><span data-i18n="night">Nacht</span></label>
         <label class="sw" style="margin:0"><input type="checkbox" id="simBrake"><span data-i18n="brakePedal">Bremse</span></label>
       </div>
+      <div class="tplonly" style="margin-top:10px"><div class="row">
+        <div><label class="f" data-i18n="simGear">Gangwahlhebel</label><select id="simGear"></select></div>
+        <div><label class="f" data-i18n="simProfile">Fahrprofil (Drive Select)</label><select id="simProfile"></select></div>
+      </div></div>
       <div id="sliders"></div>
     </section>
   </div>
 
   <!-- ===== Rechts: Editor ===== -->
   <div>
-    <section class="card">
+    <section class="card tplonly" id="tplCard">
+      <h2><span data-i18n="tplTitle">Werte der Vorlage</span>: <b id="tplName"></b></h2>
+      <div data-i18n-html="tplIntro"></div>
+      <div class="toolbar" style="margin:10px 0 0"><button class="btn small" id="tplResetAll" type="button" data-i18n="tplReset">Alle Werte zurücksetzen</button></div>
+      <div id="tplBody"></div>
+      <div data-i18n-html="tplNote" style="margin-top:14px"></div>
+    </section>
+    <section class="card freeonly">
       <h2><span class="n">1</span><span data-i18n="secColor">Farbe</span></h2>
       <div class="seg" id="modeSeg" role="group"></div>
 
@@ -308,7 +344,7 @@ footer a{color:var(--muted)}
       </div>
     </section>
 
-    <section class="card">
+    <section class="card freeonly">
       <h2><span class="n">2</span><span data-i18n="secBright">Helligkeit</span></h2>
       <div class="row">
         <div><label class="f" data-i18n="source">Quelle</label><select data-k="brSource" id="selBrSource"></select></div>
@@ -327,7 +363,7 @@ footer a{color:var(--muted)}
       </div>
     </section>
 
-    <section class="card">
+    <section class="card freeonly">
       <h2><span class="n">3</span><span data-i18n="secBrake">Bremsen</span></h2>
       <label class="sw" style="margin-top:0"><input type="checkbox" data-k="brakeOn"><span data-i18n="brakeOn">Beim Bremsen sofort umschalten</span></label>
       <div class="row" data-when="brakeOn">
@@ -338,7 +374,7 @@ footer a{color:var(--muted)}
       <p class="hint" data-when="brakeOn" data-i18n-html="brakeWarn"></p>
     </section>
 
-    <section class="card">
+    <section class="card freeonly">
       <h2><span class="n">4</span><span data-i18n="secFine">Feinschliff</span></h2>
       <div class="row">
         <div><label class="f" data-i18n="nightF">Nachts dimmen auf (%)</label><input type="number" min="0" max="100" step="1" data-k="night"></div>
@@ -386,6 +422,1450 @@ footer a{color:var(--muted)}
    Teil 1: Konstanten, Text (DE/EN), Design-Format (parse/serialize, spiegelt DesignEffect.java), Engine (spiegelt DesignEffect.tick)
    ===================================================================================================================== */
 const CONTRACT_VERSION = 1;
+const STUDIO_VERSION = '1.1';
+const TPL_META = {
+ "groups": [
+  {
+   "id": "color",
+   "de": "Farbe",
+   "en": "Colour"
+  },
+  {
+   "id": "speed",
+   "de": "Tempo",
+   "en": "Speed"
+  },
+  {
+   "id": "drive",
+   "de": "Gaspedal und Lenkung",
+   "en": "Throttle and steering"
+  },
+  {
+   "id": "temp",
+   "de": "Außentemperatur",
+   "en": "Outside temperature"
+  },
+  {
+   "id": "breath",
+   "de": "Atmen und Schimmern",
+   "en": "Breathing and shimmer"
+  },
+  {
+   "id": "night",
+   "de": "Nacht",
+   "en": "Night"
+  },
+  {
+   "id": "time",
+   "de": "Glättung (Zeitkonstanten)",
+   "en": "Smoothing (time constants)"
+  },
+  {
+   "id": "flash",
+   "de": "D→S-Blitz (Gangwahlhebel)",
+   "en": "D→S flash (gear lever)"
+  },
+  {
+   "id": "prof_auto",
+   "de": "Fahrprofil Auto / Individual",
+   "en": "Drive profile Auto / Individual"
+  },
+  {
+   "id": "prof_dyn",
+   "de": "Fahrprofil Dynamic",
+   "en": "Drive profile Dynamic"
+  },
+  {
+   "id": "prof_com",
+   "de": "Fahrprofil Comfort / Eco",
+   "en": "Drive profile Comfort / Eco"
+  },
+  {
+   "id": "send",
+   "de": "Takt",
+   "en": "Timing"
+  }
+ ],
+ "templates": {
+  "momentum": {
+   "class": "Momentum",
+   "tpl": "TplMomentum",
+   "label": "Momentum",
+   "params": [
+    {
+     "name": "RAINBOW_SPAN_KMH",
+     "type": "float",
+     "def": 130.0,
+     "group": "color",
+     "min": 20,
+     "max": 300,
+     "step": 1,
+     "unit": "km/h",
+     "de": "Farbkreis komplett bei",
+     "en": "Colour ring complete at"
+    },
+    {
+     "name": "SPEED_STEP_KMH",
+     "type": "float",
+     "def": 10.0,
+     "group": "color",
+     "min": 1,
+     "max": 50,
+     "step": 1,
+     "unit": "km/h",
+     "de": "Stufenbreite (nur ohne weiche Übergänge)",
+     "en": "Step width (only without smooth blending)"
+    },
+    {
+     "name": "SMOOTH_COLORS",
+     "type": "boolean",
+     "def": true,
+     "group": "color",
+     "min": null,
+     "max": null,
+     "step": null,
+     "unit": "",
+     "de": "Weiche Übergänge zwischen Werksfarben",
+     "en": "Smooth blending between factory colours"
+    },
+    {
+     "name": "RING_MIN_SAT",
+     "type": "float",
+     "def": 0.35,
+     "group": "color",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Ring: Mindest-Sättigung einer Werksfarbe",
+     "en": "Ring: min. saturation of a factory colour"
+    },
+    {
+     "name": "RING_MIN_VAL",
+     "type": "float",
+     "def": 0.25,
+     "group": "color",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Ring: Mindest-Helligkeit einer Werksfarbe",
+     "en": "Ring: min. brightness of a factory colour"
+    },
+    {
+     "name": "TC_BRIGHT_UP",
+     "type": "float",
+     "def": 120.0,
+     "group": "time",
+     "min": 10,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Heller werden: Zeitkonstante",
+     "en": "Brightening time constant"
+    },
+    {
+     "name": "TC_BRIGHT_DOWN",
+     "type": "float",
+     "def": 350.0,
+     "group": "time",
+     "min": 10,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Dunkler werden: Zeitkonstante",
+     "en": "Dimming time constant"
+    },
+    {
+     "name": "NIGHT_ACCEL_SATURATE_PCT",
+     "type": "float",
+     "def": 50.0,
+     "group": "night",
+     "min": 1,
+     "max": 100,
+     "step": 1,
+     "unit": "%",
+     "de": "Nacht: volle Helligkeit ab Gas",
+     "en": "Night: full brightness from throttle"
+    },
+    {
+     "name": "NIGHT_BRIGHT_FLOOR",
+     "type": "float",
+     "def": 0.05,
+     "group": "night",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Nacht: Mindesthelligkeit",
+     "en": "Night: minimum brightness"
+    },
+    {
+     "name": "FLASH_HOLD_MS",
+     "type": "long",
+     "def": 1000,
+     "group": "flash",
+     "min": 0,
+     "max": 10000,
+     "step": 50,
+     "unit": "ms",
+     "de": "D→S-Blitz: Weiß halten",
+     "en": "D→S flash: hold white"
+    },
+    {
+     "name": "FLASH_FADE_MS",
+     "type": "long",
+     "def": 2000,
+     "group": "flash",
+     "min": 1,
+     "max": 10000,
+     "step": 50,
+     "unit": "ms",
+     "de": "D→S-Blitz: Überblenden",
+     "en": "D→S flash: fade back"
+    },
+    {
+     "name": "TC_SPEED_MS",
+     "type": "float",
+     "def": 600.0,
+     "group": "time",
+     "min": 1,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Tempo-Glättung",
+     "en": "Speed smoothing"
+    },
+    {
+     "name": "PERIOD_MS",
+     "type": "int",
+     "def": 150,
+     "group": "send",
+     "min": 50,
+     "max": 500,
+     "step": 10,
+     "unit": "ms",
+     "de": "Sende-Takt",
+     "en": "Send interval"
+    }
+   ]
+  },
+  "momentumselect": {
+   "class": "MomentumSelect",
+   "tpl": "TplMomentumSelect",
+   "label": "Momentum select",
+   "params": [
+    {
+     "name": "RAINBOW_SPAN_KMH",
+     "type": "float",
+     "def": 130.0,
+     "group": "color",
+     "min": 20,
+     "max": 300,
+     "step": 1,
+     "unit": "km/h",
+     "de": "Farbkreis komplett bei",
+     "en": "Colour ring complete at"
+    },
+    {
+     "name": "SPEED_STEP_KMH",
+     "type": "float",
+     "def": 10.0,
+     "group": "color",
+     "min": 1,
+     "max": 50,
+     "step": 1,
+     "unit": "km/h",
+     "de": "Stufenbreite (nur ohne weiche Übergänge)",
+     "en": "Step width (only without smooth blending)"
+    },
+    {
+     "name": "SMOOTH_COLORS",
+     "type": "boolean",
+     "def": true,
+     "group": "color",
+     "min": null,
+     "max": null,
+     "step": null,
+     "unit": "",
+     "de": "Weiche Übergänge zwischen Werksfarben",
+     "en": "Smooth blending between factory colours"
+    },
+    {
+     "name": "RING_MIN_SAT",
+     "type": "float",
+     "def": 0.35,
+     "group": "color",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Ring: Mindest-Sättigung einer Werksfarbe",
+     "en": "Ring: min. saturation of a factory colour"
+    },
+    {
+     "name": "RING_MIN_VAL",
+     "type": "float",
+     "def": 0.25,
+     "group": "color",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Ring: Mindest-Helligkeit einer Werksfarbe",
+     "en": "Ring: min. brightness of a factory colour"
+    },
+    {
+     "name": "TC_HUE_DEFAULT",
+     "type": "float",
+     "def": 600.0,
+     "group": "prof_auto",
+     "min": 1,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Auto/Individual: Farbglättung",
+     "en": "Auto/Individual: colour smoothing"
+    },
+    {
+     "name": "TC_BRIGHT_DEFAULT_UP",
+     "type": "float",
+     "def": 120.0,
+     "group": "prof_auto",
+     "min": 10,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Auto/Individual: heller werden",
+     "en": "Auto/Individual: brightening"
+    },
+    {
+     "name": "TC_BRIGHT_DEFAULT_DOWN",
+     "type": "float",
+     "def": 350.0,
+     "group": "prof_auto",
+     "min": 10,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Auto/Individual: dunkler werden",
+     "en": "Auto/Individual: dimming"
+    },
+    {
+     "name": "NIGHT_ACCEL_SATURATE_PCT",
+     "type": "float",
+     "def": 50.0,
+     "group": "night",
+     "min": 1,
+     "max": 100,
+     "step": 1,
+     "unit": "%",
+     "de": "Nacht: volle Helligkeit ab Gas",
+     "en": "Night: full brightness from throttle"
+    },
+    {
+     "name": "NIGHT_BRIGHT_FLOOR",
+     "type": "float",
+     "def": 0.05,
+     "group": "night",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Nacht: Mindesthelligkeit",
+     "en": "Night: minimum brightness"
+    },
+    {
+     "name": "TC_HUE_DYNAMIC",
+     "type": "float",
+     "def": 150.0,
+     "group": "prof_dyn",
+     "min": 1,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Dynamic: Farbglättung",
+     "en": "Dynamic: colour smoothing"
+    },
+    {
+     "name": "TC_BRIGHT_DYNAMIC",
+     "type": "float",
+     "def": 100.0,
+     "group": "prof_dyn",
+     "min": 10,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Dynamic: Helligkeitsglättung",
+     "en": "Dynamic: brightness smoothing"
+    },
+    {
+     "name": "TC_HUE_COMFORT_ECO",
+     "type": "float",
+     "def": 1000.0,
+     "group": "prof_com",
+     "min": 1,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Comfort/Eco: Farbglättung",
+     "en": "Comfort/Eco: colour smoothing"
+    },
+    {
+     "name": "TC_BRIGHT_COMFORT_ECO_UP",
+     "type": "float",
+     "def": 250.0,
+     "group": "prof_com",
+     "min": 10,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Comfort/Eco: heller werden",
+     "en": "Comfort/Eco: brightening"
+    },
+    {
+     "name": "TC_BRIGHT_COMFORT_ECO_DOWN",
+     "type": "float",
+     "def": 700.0,
+     "group": "prof_com",
+     "min": 10,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Comfort/Eco: dunkler werden",
+     "en": "Comfort/Eco: dimming"
+    },
+    {
+     "name": "HUE_START_DEFAULT",
+     "type": "float",
+     "def": 0.0,
+     "group": "prof_auto",
+     "min": -720,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Auto/Individual: Start-Farbton",
+     "en": "Auto/Individual: start hue"
+    },
+    {
+     "name": "HUE_SPAN_DEFAULT",
+     "type": "float",
+     "def": 360.0,
+     "group": "prof_auto",
+     "min": -720,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Auto/Individual: Farbton-Strecke",
+     "en": "Auto/Individual: hue span"
+    },
+    {
+     "name": "HUE_START_DYNAMIC",
+     "type": "float",
+     "def": 0.0,
+     "group": "prof_dyn",
+     "min": -720,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Dynamic: Start-Farbton",
+     "en": "Dynamic: start hue"
+    },
+    {
+     "name": "HUE_SPAN_DYNAMIC",
+     "type": "float",
+     "def": 70.0,
+     "group": "prof_dyn",
+     "min": -720,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Dynamic: Farbton-Strecke",
+     "en": "Dynamic: hue span"
+    },
+    {
+     "name": "HUE_START_COMFORT_ECO",
+     "type": "float",
+     "def": 140.0,
+     "group": "prof_com",
+     "min": -720,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Comfort/Eco: Start-Farbton",
+     "en": "Comfort/Eco: start hue"
+    },
+    {
+     "name": "HUE_SPAN_COMFORT_ECO",
+     "type": "float",
+     "def": 70.0,
+     "group": "prof_com",
+     "min": -720,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Comfort/Eco: Farbton-Strecke",
+     "en": "Comfort/Eco: hue span"
+    },
+    {
+     "name": "DYNAMIC_THROTTLE_PULL",
+     "type": "float",
+     "def": 0.8,
+     "group": "prof_dyn",
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "unit": "",
+     "de": "Dynamic: Gas zieht Richtung Rot",
+     "en": "Dynamic: throttle pulls towards red"
+    },
+    {
+     "name": "TRY_BLENDED_COLORS",
+     "type": "boolean",
+     "def": true,
+     "group": "color",
+     "min": null,
+     "max": null,
+     "step": null,
+     "unit": "",
+     "de": "Bremse/Notfall: zwei Werksfarben mischen",
+     "en": "Brake/fallback: blend two factory colours"
+    },
+    {
+     "name": "FLASH_HOLD_MS",
+     "type": "long",
+     "def": 1000,
+     "group": "flash",
+     "min": 0,
+     "max": 10000,
+     "step": 50,
+     "unit": "ms",
+     "de": "D→S-Blitz: Weiß halten",
+     "en": "D→S flash: hold white"
+    },
+    {
+     "name": "FLASH_FADE_MS",
+     "type": "long",
+     "def": 2000,
+     "group": "flash",
+     "min": 1,
+     "max": 10000,
+     "step": 50,
+     "unit": "ms",
+     "de": "D→S-Blitz: Überblenden",
+     "en": "D→S flash: fade back"
+    },
+    {
+     "name": "COMFORT_BRIGHT_FLOOR",
+     "type": "float",
+     "def": 0.03,
+     "group": "prof_com",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Comfort/Eco: Helligkeit ohne Gas",
+     "en": "Comfort/Eco: brightness at no throttle"
+    },
+    {
+     "name": "COMFORT_BRIGHT_SPAN",
+     "type": "float",
+     "def": 0.97,
+     "group": "prof_com",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Comfort/Eco: Zuwachs bis Vollgas",
+     "en": "Comfort/Eco: increase up to full throttle"
+    },
+    {
+     "name": "PERIOD_MS",
+     "type": "int",
+     "def": 150,
+     "group": "send",
+     "min": 50,
+     "max": 500,
+     "step": 10,
+     "unit": "ms",
+     "de": "Sende-Takt",
+     "en": "Send interval"
+    }
+   ]
+  },
+  "atmosphere": {
+   "class": "Atmosphere",
+   "tpl": "TplAtmosphere",
+   "label": "Atmosphere",
+   "params": [
+    {
+     "name": "TEMP_COLD_C",
+     "type": "float",
+     "def": -5.0,
+     "group": "temp",
+     "min": -40,
+     "max": 60,
+     "step": 1,
+     "unit": "°C",
+     "de": "Kalt bei",
+     "en": "Cold at"
+    },
+    {
+     "name": "TEMP_WARM_C",
+     "type": "float",
+     "def": 30.0,
+     "group": "temp",
+     "min": -40,
+     "max": 60,
+     "step": 1,
+     "unit": "°C",
+     "de": "Warm bei",
+     "en": "Warm at"
+    },
+    {
+     "name": "HUE_COLD",
+     "type": "float",
+     "def": 210.0,
+     "group": "temp",
+     "min": -720,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Farbton kalt",
+     "en": "Hue cold"
+    },
+    {
+     "name": "HUE_WARM",
+     "type": "float",
+     "def": 30.0,
+     "group": "temp",
+     "min": -720,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Farbton warm",
+     "en": "Hue warm"
+    },
+    {
+     "name": "TEMP_FALLBACK_C",
+     "type": "float",
+     "def": 15.0,
+     "group": "temp",
+     "min": -40,
+     "max": 60,
+     "step": 1,
+     "unit": "°C",
+     "de": "Ersatz-Temperatur (ohne Messwert)",
+     "en": "Fallback temperature (no reading)"
+    },
+    {
+     "name": "TC_TEMP_MS",
+     "type": "float",
+     "def": 8000.0,
+     "group": "temp",
+     "min": 1,
+     "max": 60000,
+     "step": 100,
+     "unit": "ms",
+     "de": "Temperatur-Glättung",
+     "en": "Temperature smoothing"
+    },
+    {
+     "name": "BREATHE_PERIOD_MS",
+     "type": "float",
+     "def": 5000.0,
+     "group": "breath",
+     "min": 2000,
+     "max": 60000,
+     "step": 100,
+     "unit": "ms",
+     "de": "Atmen: Periode (mind. 2 s)",
+     "en": "Breathing: period (min. 2 s)"
+    },
+    {
+     "name": "DAY_BREATHE_MIN",
+     "type": "float",
+     "def": 0.5,
+     "group": "breath",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Tag: Helligkeit min.",
+     "en": "Day: brightness min."
+    },
+    {
+     "name": "DAY_BREATHE_MAX",
+     "type": "float",
+     "def": 0.85,
+     "group": "breath",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Tag: Helligkeit max.",
+     "en": "Day: brightness max."
+    },
+    {
+     "name": "NIGHT_BREATHE_MIN",
+     "type": "float",
+     "def": 0.15,
+     "group": "breath",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Nacht: Helligkeit min.",
+     "en": "Night: brightness min."
+    },
+    {
+     "name": "NIGHT_BREATHE_MAX",
+     "type": "float",
+     "def": 0.35,
+     "group": "breath",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Nacht: Helligkeit max.",
+     "en": "Night: brightness max."
+    },
+    {
+     "name": "SNAP_FACTORY",
+     "type": "boolean",
+     "def": true,
+     "group": "color",
+     "min": null,
+     "max": null,
+     "step": null,
+     "unit": "",
+     "de": "Auf Werksfarben einrasten",
+     "en": "Snap to factory colours"
+    },
+    {
+     "name": "PERIOD_MS",
+     "type": "int",
+     "def": 150,
+     "group": "send",
+     "min": 50,
+     "max": 500,
+     "step": 10,
+     "unit": "ms",
+     "de": "Sende-Takt",
+     "en": "Send interval"
+    }
+   ]
+  },
+  "scroll": {
+   "class": "Scroll",
+   "tpl": "TplScroll",
+   "label": "Scroll",
+   "params": [
+    {
+     "name": "HUE_SPEED_FACTOR",
+     "type": "float",
+     "def": 0.36,
+     "group": "speed",
+     "min": 0,
+     "max": 3,
+     "step": 0.01,
+     "unit": "°/(km/h·s)",
+     "de": "Drehung pro km/h und Sekunde",
+     "en": "Rotation per km/h and second"
+    },
+    {
+     "name": "TC_SPEED_MS",
+     "type": "float",
+     "def": 450.0,
+     "group": "time",
+     "min": 1,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Tempo-Glättung",
+     "en": "Speed smoothing"
+    },
+    {
+     "name": "NIGHT_BRIGHTNESS",
+     "type": "float",
+     "def": 0.4,
+     "group": "night",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Nacht-Helligkeit",
+     "en": "Night brightness"
+    },
+    {
+     "name": "IDLE_ROTATION_DEG_PER_SEC",
+     "type": "float",
+     "def": 8.0,
+     "group": "speed",
+     "min": -360,
+     "max": 360,
+     "step": 1,
+     "unit": "°/s",
+     "de": "Drehung im Stand",
+     "en": "Rotation at standstill"
+    },
+    {
+     "name": "TRY_FREE_COLOR",
+     "type": "boolean",
+     "def": true,
+     "group": "color",
+     "min": null,
+     "max": null,
+     "step": null,
+     "unit": "",
+     "de": "Freies Farbstreaming (ohne Werksfarben-Snap)",
+     "en": "Free colour streaming (no factory-colour snap)"
+    },
+    {
+     "name": "TARGET_LUMINANCE",
+     "type": "float",
+     "def": 0.3,
+     "group": "color",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Mindest-Helligkeit je Farbton (Ausgleich)",
+     "en": "Min. perceived brightness per hue (compensation)"
+    },
+    {
+     "name": "MIN_SATURATION_FLOOR",
+     "type": "float",
+     "def": 0.65,
+     "group": "color",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Ausgleich: nie weniger Sättigung als",
+     "en": "Compensation: never less saturation than"
+    },
+    {
+     "name": "SHIMMER_PERIOD_MS",
+     "type": "float",
+     "def": 15000.0,
+     "group": "breath",
+     "min": 2000,
+     "max": 120000,
+     "step": 500,
+     "unit": "ms",
+     "de": "Schimmern: Periode (mind. 2 s)",
+     "en": "Shimmer: period (min. 2 s)"
+    },
+    {
+     "name": "SHIMMER_BRIGHTNESS_MIN",
+     "type": "float",
+     "def": 0.85,
+     "group": "breath",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Schimmern: Helligkeit min.",
+     "en": "Shimmer: brightness min."
+    },
+    {
+     "name": "PERIOD_MS",
+     "type": "int",
+     "def": 150,
+     "group": "send",
+     "min": 50,
+     "max": 500,
+     "step": 10,
+     "unit": "ms",
+     "de": "Sende-Takt",
+     "en": "Send interval"
+    }
+   ]
+  },
+  "drive": {
+   "class": "Drive",
+   "tpl": "TplDrive",
+   "label": "Drive",
+   "params": [
+    {
+     "name": "TC_THROTTLE_UP_MS",
+     "type": "float",
+     "def": 100.0,
+     "group": "time",
+     "min": 1,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Gas: schnell hoch",
+     "en": "Throttle: rise time"
+    },
+    {
+     "name": "TC_THROTTLE_DOWN_MS",
+     "type": "float",
+     "def": 400.0,
+     "group": "time",
+     "min": 1,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Gas: langsam runter",
+     "en": "Throttle: fall time"
+    },
+    {
+     "name": "TC_STEER_MS",
+     "type": "float",
+     "def": 200.0,
+     "group": "time",
+     "min": 1,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Lenkwinkel-Glättung",
+     "en": "Steering smoothing"
+    },
+    {
+     "name": "DRIVE_BASE_HUE",
+     "type": "float",
+     "def": 285.0,
+     "group": "drive",
+     "min": -720,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Farbton in Ruhe",
+     "en": "Hue at rest"
+    },
+    {
+     "name": "DRIVE_THROTTLE_SWEEP",
+     "type": "float",
+     "def": 95.0,
+     "group": "drive",
+     "min": -720,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Farbton-Strecke bis Vollgas",
+     "en": "Hue sweep up to full throttle"
+    },
+    {
+     "name": "DRIVE_SAT_REST",
+     "type": "float",
+     "def": 0.3,
+     "group": "drive",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Sättigung in Ruhe",
+     "en": "Saturation at rest"
+    },
+    {
+     "name": "DRIVE_SPLIT_DEG",
+     "type": "float",
+     "def": 65.0,
+     "group": "drive",
+     "min": -360,
+     "max": 360,
+     "step": 1,
+     "unit": "°",
+     "de": "Zusatz-Farbton bei vollem Lenkeinschlag",
+     "en": "Extra hue at full steering lock"
+    },
+    {
+     "name": "DRIVE_CONTOUR_BOOST",
+     "type": "float",
+     "def": 0.25,
+     "group": "drive",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Zusatz-Helligkeit bei Lenkeinschlag",
+     "en": "Extra brightness with steering"
+    },
+    {
+     "name": "DRIVE_HUE_CAP",
+     "type": "float",
+     "def": 385.0,
+     "group": "drive",
+     "min": 0,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Sicherheits-Deckel Farbton (nicht anheben)",
+     "en": "Safety cap for hue (do not raise)"
+    },
+    {
+     "name": "DRIVE_V_REST",
+     "type": "float",
+     "def": 0.6,
+     "group": "drive",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Helligkeit in Ruhe",
+     "en": "Brightness at rest"
+    },
+    {
+     "name": "DRIVE_V_SWEEP",
+     "type": "float",
+     "def": 0.4,
+     "group": "drive",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Helligkeits-Zuwachs bis Vollgas",
+     "en": "Brightness increase up to full throttle"
+    },
+    {
+     "name": "DRIVE_V_FLOOR",
+     "type": "float",
+     "def": 0.15,
+     "group": "drive",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Mindest-Helligkeit",
+     "en": "Minimum brightness"
+    },
+    {
+     "name": "PEDAL_FULL",
+     "type": "float",
+     "def": 0.66,
+     "group": "drive",
+     "min": 0.05,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Gaspedal gilt als voll bei (Anteil)",
+     "en": "Pedal counts as full at (fraction)"
+    },
+    {
+     "name": "STEER_FULL_DEG",
+     "type": "float",
+     "def": 180.0,
+     "group": "drive",
+     "min": 10,
+     "max": 720,
+     "step": 5,
+     "unit": "°",
+     "de": "Voller Lenkeinschlag bei",
+     "en": "Full steering lock at"
+    },
+    {
+     "name": "NIGHT_FACTOR",
+     "type": "float",
+     "def": 0.5,
+     "group": "night",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Nacht: Faktor auf die Helligkeit",
+     "en": "Night: brightness factor"
+    },
+    {
+     "name": "SNAP_FACTORY",
+     "type": "boolean",
+     "def": true,
+     "group": "color",
+     "min": null,
+     "max": null,
+     "step": null,
+     "unit": "",
+     "de": "Auf Werksfarben einrasten",
+     "en": "Snap to factory colours"
+    },
+    {
+     "name": "PERIOD_MS",
+     "type": "int",
+     "def": 150,
+     "group": "send",
+     "min": 50,
+     "max": 500,
+     "step": 10,
+     "unit": "ms",
+     "de": "Sende-Takt",
+     "en": "Send interval"
+    }
+   ]
+  }
+ }
+};
+const TPL_CLASSES = {"env": "yv66vgAAAC4A0QoAXQBeBwBfBwBgCgACAGEKAAMAYgoAPgBjCQAKAGQIAGUKAAoAZgcAZwgAaAoAXQBpCgBdAGoKAGsAbAoAbQBpBwBuCABvCgAQAGIHAHAKABMAYwoAEwBxCgByAHMHAHQHAHUKABgAYwgAdgoAGAB3CgAYAHgKABgAeQgAeggAewgAfAoAEwB9CgBrAH4KAGsAfwgAgAgAgQgAgggAgwoAEwCECgAKAIUKAIYAhwoAhgCIBwCJCgCGAIoKAIYAiwoAjACNCgCMAI4KAAoAjwgAkAgAkQgAkggAkwoAlACVCgCUAJYJADoAlwkAOgCYBwCZCgCUAJoJAJsAlwkAmwCcBwCdAQALREVTSUdOX0ZJTEUBABJMamF2YS9sYW5nL1N0cmluZzsBAA1Db25zdGFudFZhbHVlAQAlY2xhc3MkZGUkbWskYW1iaWVudGZ4JGRlc2lnbmVyJFRwbEVudgEAEUxqYXZhL2xhbmcvQ2xhc3M7AQAJU3ludGhldGljAQAGPGluaXQ+AQADKClWAQAEQ29kZQEAD0xpbmVOdW1iZXJUYWJsZQEABGxvYWQBACooTGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL3V0aWwvUHJvcGVydGllczsBAANyYXcBADwoTGphdmEvdXRpbC9Qcm9wZXJ0aWVzO0xqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL1N0cmluZzsBAAFmAQAuKExqYXZhL3V0aWwvUHJvcGVydGllcztMamF2YS9sYW5nL1N0cmluZztGRkYpRgEAAWwBAC4oTGphdmEvdXRpbC9Qcm9wZXJ0aWVzO0xqYXZhL2xhbmcvU3RyaW5nO0pKSilKAQABaQEALihMamF2YS91dGlsL1Byb3BlcnRpZXM7TGphdmEvbGFuZy9TdHJpbmc7SUlJKUkBAAFiAQAsKExqYXZhL3V0aWwvUHJvcGVydGllcztMamF2YS9sYW5nL1N0cmluZztaKVoBAAdwcm9maWxlAQADKClJAQAFdGVtcEMBAAQoRilGAQAGY2xhc3MkAQAlKExqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL0NsYXNzOwEAClNvdXJjZUZpbGUBAAtUcGxFbnYuamF2YQcAngwAnwBaAQAgamF2YS9sYW5nL0NsYXNzTm90Rm91bmRFeGNlcHRpb24BAB5qYXZhL2xhbmcvTm9DbGFzc0RlZkZvdW5kRXJyb3IMAKAAoQwARQCiDABFAEYMAEIAQwEAH2RlLm1rLmFtYmllbnRmeC5kZXNpZ25lci5UcGxFbnYMAFkAWgEAH2RlL21rL2FtYmllbnRmeC9kZXNpZ25lci9UcGxFbnYBABwvYW1iaWVudGZ4X2Rlc2lnbi5wcm9wZXJ0aWVzDACjAKQMAKUApgcApwwAqACpBwCqAQAfamF2YS9sYW5nL0lsbGVnYWxTdGF0ZUV4Y2VwdGlvbgEAK2FtYmllbnRmeF9kZXNpZ24ucHJvcGVydGllcyBmZWhsdCBpbSBQbHVnaW4BABRqYXZhL3V0aWwvUHJvcGVydGllcwwASQCrBwCsDACtAEYBABNqYXZhL2lvL0lPRXhjZXB0aW9uAQAWamF2YS9sYW5nL1N0cmluZ0J1ZmZlcgEAKmFtYmllbnRmeF9kZXNpZ24ucHJvcGVydGllcyBuaWNodCBsZXNiYXI6IAwArgCvDACuALAMALEAoQEAATIBAAZmb3JtYXQBAAAMALIAswwAtAChDAC1ALYBAB9EZXNpZ24tRGF0ZWk6IGZvcm1hdD0yIGVyd2FydGV0AQAIdGVtcGxhdGUBAC9EZXNpZ24tRGF0ZWkgZ2Vob2VydCB6dSBlaW5lciBhbmRlcmVuIFZvcmxhZ2U6IAEAAnAuDACyALcMAEsATAcAuAwAuQC6DAC7ALwBAB9qYXZhL2xhbmcvTnVtYmVyRm9ybWF0RXhjZXB0aW9uDAC9AL4MAL8AvgcAwAwAuQDBDADCAMMMAE8AUAEABHRydWUBAAExAQAFZmFsc2UBAAEwBwDEDADFAMYMAMcAyAwAyQDKDABVAMsBAB1kZS9tay9hbWJpZW50ZngvRHJpdmVNb2RlRGF0YQwAzADNBwDODADPANABABBqYXZhL2xhbmcvT2JqZWN0AQAPamF2YS9sYW5nL0NsYXNzAQAHZm9yTmFtZQEACmdldE1lc3NhZ2UBABQoKUxqYXZhL2xhbmcvU3RyaW5nOwEAFShMamF2YS9sYW5nL1N0cmluZzspVgEAE2dldFJlc291cmNlQXNTdHJlYW0BACkoTGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL2lvL0lucHV0U3RyZWFtOwEADmdldENsYXNzTG9hZGVyAQAZKClMamF2YS9sYW5nL0NsYXNzTG9hZGVyOwEAEGphdmEvbGFuZy9TdHJpbmcBAAlzdWJzdHJpbmcBABUoSSlMamF2YS9sYW5nL1N0cmluZzsBABVqYXZhL2xhbmcvQ2xhc3NMb2FkZXIBABgoTGphdmEvaW8vSW5wdXRTdHJlYW07KVYBABNqYXZhL2lvL0lucHV0U3RyZWFtAQAFY2xvc2UBAAZhcHBlbmQBACwoTGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL2xhbmcvU3RyaW5nQnVmZmVyOwEALChMamF2YS9sYW5nL09iamVjdDspTGphdmEvbGFuZy9TdHJpbmdCdWZmZXI7AQAIdG9TdHJpbmcBAAtnZXRQcm9wZXJ0eQEAOChMamF2YS9sYW5nL1N0cmluZztMamF2YS9sYW5nL1N0cmluZzspTGphdmEvbGFuZy9TdHJpbmc7AQAEdHJpbQEABmVxdWFscwEAFShMamF2YS9sYW5nL09iamVjdDspWgEAJihMamF2YS9sYW5nL1N0cmluZzspTGphdmEvbGFuZy9TdHJpbmc7AQAPamF2YS9sYW5nL0Zsb2F0AQAHdmFsdWVPZgEAJShMamF2YS9sYW5nL1N0cmluZzspTGphdmEvbGFuZy9GbG9hdDsBAApmbG9hdFZhbHVlAQADKClGAQAFaXNOYU4BAAQoRilaAQAKaXNJbmZpbml0ZQEAEGphdmEvbGFuZy9Eb3VibGUBACYoTGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL2xhbmcvRG91YmxlOwEAC2RvdWJsZVZhbHVlAQADKClEAQAZZGUvbWsvYW1iaWVudGZ4L0FtYmllbnRGeAEAC2dldEluc3RhbmNlAQAdKClMZGUvbWsvYW1iaWVudGZ4L0FtYmllbnRGeDsBAAxnZXREcml2ZU1vZGUBACEoKUxkZS9tay9hbWJpZW50ZngvRHJpdmVNb2RlRGF0YTsBAAV2YWxpZAEAAVoBAAFJAQAOZ2V0T3V0c2lkZVRlbXABACMoKUxkZS9tay9hbWJpZW50ZngvT3V0c2lkZVRlbXBEYXRhOwEAH2RlL21rL2FtYmllbnRmeC9PdXRzaWRlVGVtcERhdGEBAAdjZWxzaXVzAQABRgAxAAoAPgAAAAIAGQA/AEAAAQBBAAAAAgALAAgAQgBDAAEARAAAAAAACgACAEUARgABAEcAAAAdAAEAAQAAAAUqtwAGsQAAAAEASAAAAAYAAQAAABcACQBJAEoAAQBHAAABiQAEAAYAAADlsgAHxwAPEgi4AAlZswAHpwAGsgAHEgu2AAxMK8cAK7IAB8cADxIIuAAJWbMAB6cABrIAB7YADU0sxgAOLBILBLYADrYAD0wrxwANuwAQWRIRtwASv7sAE1m3ABRNLCu2ABUrtgAWpwAxTqcALU67ABBZuwAYWbcAGRIatgAbLbYAHLYAHbcAEr86BCu2ABanAAU6BRkEvxIeLBIfEiC2ACG2ACK2ACOaAA27ABBZEiS3ABK/LBIlEiC2ACG2ACJOKi22ACOaAB67ABBZuwAYWbcAGRImtgAbLbYAG7YAHbcAEr8ssAAFAGIAZgBpABcAXQBiAG0AFwBdAGIAiQAAAIsAjwCSABcAbQCLAIkAAAABAEgAAABqABoAAAAbABsAHAAfAB0AOAAeADwAHwBHACIASwAjAFUAJQBdACcAYgAsAGYALgBpAC0AagAvAG0AKABuACkAiQArAIsALACPAC4AkgAtAJQALwCXADAAqgAxALQAMwDAADQAyAA1AOMANwAKAEsATAABAEcAAABBAAMAAwAAACUquwAYWbcAGRIntgAbK7YAG7YAHbYAKE0sxwAHAacAByy2ACKwAAAAAQBIAAAACgACAAAAOwAYADwACQBNAE4AAQBHAAAAkAACAAgAAABMKiu4ACk6BRkFxwAFJK4ZBbgAKrYAKzgGpwAHOgckrhcGuAAtmgALFwa4AC6ZAAUkrhcGJZacAAclpwASFwYXBJWeAAgXBKcABRcGrgABAA4AGAAbACwAAQBIAAAAKgAKAAAAQAAHAEEADABCAA4ARgAYAEkAGwBHAB0ASAAfAEoALwBLADEATQAJAE8AUAABAEcAAAB5AAQADAAAAD0qK7gAKToIGQjHAAUgrRkIuAAvtgAwjzcJpwAHOgsgrRYJFgSUnAAIFgSnABIWCRYGlJ4ACBYGpwAFFgmtAAEADgAZABwALAABAEgAAAAiAAgAAABRAAcAUgAMAFMADgBXABkAWgAcAFgAHgBZACAAWwAJAFEAUgABAEcAAAAmAAgABQAAAA4qKxyFHYUVBIW4ADGIrAAAAAEASAAAAAYAAQAAAF8ACQBTAFQAAQBHAAAAagACAAQAAAA2Kiu4AClOLccABRysEjIttgAjmgAMEjMttgAjmQAFBKwSNC22ACOaAAwSNS22ACOZAAUDrBysAAAAAQBIAAAAIgAIAAAAYwAGAGQACgBlAAwAZwAeAGgAIABqADIAawA0AG0ACQBVAFYAAQBHAAAANwABAAEAAAAbuAA2tgA3SyrGABEqtAA4mQAKKrQAOacABAKsAAAAAQBIAAAACgACAAAAcgAHAHMACQBXAFgAAQBHAAAANwABAAIAAAAbuAA2tgA7TCvGABErtAA8mQAKK7QAPacABCKuAAAAAQBIAAAACgACAAAAeAAHAHkACABZAFoAAgBHAAAAMgADAAIAAAASKrgAAbBMuwADWSu2AAS3AAW/AAEAAAAEAAUAAgABAEgAAAAGAAEAAAAbAEQAAAAAAAEAWwAAAAIAXA==", "momentum": "yv66vgAAAC4BCAoAaACfCQBnAKAERBYAAAkAZwChBEMCAAAJAGcAogRBIAAACQBnAKMJAGcApAQ+szMzCQBnAKUEPoAAAAkAZwCmBELwAAAJAGcApwRDrwAACQBnAKgEQkgAAAkAZwCpBD1MzM0JAGcAqgUAAAAAAAAD6AkAZwCrBQAAAAAAAAfQCQBnAKwHAK0KABwAnwkAZwCuCQBnAK8KABwAsAkAZwCxBf//////////CQBnALIJAGcAswgAtAoAtQC2CABuBEGgAAAEQ5YAAAoAtQC3CABvCABwCgC1ALgIAHIIAHMIAHQERZxAAAgAdQgAdgRCyAAACAB3CAB4BQAAAAAAACcQCgC1ALkIAHoIAGwIALoKALUAuwkAZwC8CQBnAL0JAGcAvgoAvwDACgBNAMEJAE0AwgkATQDDBD/N87YJAE0AxAkATQDFCQBNAMYKABwAxwoAZwDICgC1AMkHAMoHAMsJAGcAzAoAZwDNCgBnAM4JAGcAzwkAZwDQCgBnANEKABwA0gRDtAAACgAcANMKABwA1AkAZwDVCQAcANYJABwA1wkAHADYCgC/ANkEQ38AAAoAZwDaCgC/ANsEQMAAAARAgAAABEJwAAAEPwAAAAoAvwDcCgAcAN0HAN4HAN8HAOABAAhwZXJpb2RNcwEAAUkBAAtUQ19TUEVFRF9NUwEAAUYBABBSQUlOQk9XX1NQQU5fS01IAQAOU1BFRURfU1RFUF9LTUgBAA1TTU9PVEhfQ09MT1JTAQABWgEADFJJTkdfTUlOX1NBVAEADFJJTkdfTUlOX1ZBTAEADFRDX0JSSUdIVF9VUAEADlRDX0JSSUdIVF9ET1dOAQAYTklHSFRfQUNDRUxfU0FUVVJBVEVfUENUAQASTklHSFRfQlJJR0hUX0ZMT09SAQANRkxBU0hfSE9MRF9NUwEAAUoBAA1GTEFTSF9GQURFX01TAQAHc21vb3RoVgEAEHNtb290aEJyaWdodG5lc3MBAAZsYXN0TXMBAAZodWVSZWYBABVMZGUvbWsvYW1iaWVudGZ4L1JnYjsBAAlub3JtYWxPdXQBAApmbGFzaFdoaXRlAQAMc3BvcnRTdGFydE1zAQAMd2FzU3BvcnRHZWFyAQAHcmluZ1NyYwEAFltMZGUvbWsvYW1iaWVudGZ4L1JnYjsBAARyaW5nAQAHcmluZ0h1ZQEAAltGAQAJcmluZ0NvdW50AQAGPGluaXQ+AQADKClWAQAEQ29kZQEAD0xpbmVOdW1iZXJUYWJsZQEABXN0YXJ0AQAEKEopVgEABHRpY2sBAE0oSkxkZS9tay9hbWJpZW50ZngvVmVoaWNsZURhdGE7W0xkZS9tay9hbWJpZW50ZngvUmdiO1pMZGUvbWsvYW1iaWVudGZ4L1JnYjspWgEACWJ1aWxkUmluZwEAGShbTGRlL21rL2FtYmllbnRmeC9SZ2I7KVYBAAVodWVPZgEAGChMZGUvbWsvYW1iaWVudGZ4L1JnYjspRgEABnJpbmdBdAEAGihMZGUvbWsvYW1iaWVudGZ4L1JnYjtGWilWAQANc3BlZWRGcmFjdGlvbgEABChGKUYBAApzZXREaXNwbGF5AQBEKExkZS9tay9hbWJpZW50ZngvUmdiO0xkZS9tay9hbWJpZW50ZngvUmdiO1tMZGUvbWsvYW1iaWVudGZ4L1JnYjtGKVYBAAMoKUkBAApTb3VyY2VGaWxlAQAQVHBsTW9tZW50dW0uamF2YQwAigCLDABqAGsMAGwAbQwAbgBtDABvAG0MAHAAcQwAcgBtDABzAG0MAHQAbQwAdQBtDAB2AG0MAHcAbQwAeAB5DAB6AHkBABNkZS9tay9hbWJpZW50ZngvUmdiDAB+AH8MAIAAfwwAigDhDACBAH8MAIIAeQwAgwBxAQAIbW9tZW50dW0HAOIMAOMA5AwA5QDmDADnAOgMAOkA6gEACVBFUklPRF9NUwwA6wDsDAB7AG0MAHwAbQwAfQB5BwDtDADuAO8MAPAA8QwA8gBtDADzAGsMAPQAawwA9QBxDAD2AGsMAPcA+AwAmgCbDAD5AJwBABtkZS9tay9hbWJpZW50ZngvVmVoaWNsZURhdGEBAB1kZS9tay9hbWJpZW50ZngvRHJpdmVNb2RlRGF0YQwAhACFDACSAJMMAJgAmQwAhgCFDACJAGsMAJYAlwwA+gD7DAD8AP0MAP4A/wwAhwCIDAEAAGsMAQEAawwA5wBrDAECAO8MAJQAlQwBAgEDDAEEAQUMAQYBBwEAJGRlL21rL2FtYmllbnRmeC9kZXNpZ25lci9UcGxNb21lbnR1bQEAEGphdmEvbGFuZy9PYmplY3QBABZkZS9tay9hbWJpZW50ZngvRWZmZWN0AQAGKElJSSlWAQAfZGUvbWsvYW1iaWVudGZ4L2Rlc2lnbmVyL1RwbEVudgEABGxvYWQBACooTGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL3V0aWwvUHJvcGVydGllczsBAAFmAQAuKExqYXZhL3V0aWwvUHJvcGVydGllcztMamF2YS9sYW5nL1N0cmluZztGRkYpRgEAAWIBACwoTGphdmEvdXRpbC9Qcm9wZXJ0aWVzO0xqYXZhL2xhbmcvU3RyaW5nO1opWgEAAWwBAC4oTGphdmEvdXRpbC9Qcm9wZXJ0aWVzO0xqYXZhL2xhbmcvU3RyaW5nO0pKSilKAQABaQEALihMamF2YS91dGlsL1Byb3BlcnRpZXM7TGphdmEvbGFuZy9TdHJpbmc7SUlJKUkBAA5qYXZhL2xhbmcvTWF0aAEAA21heAEABShJSSlJAQAHaXNGcmVzaAEABChKKVoBAAhzcGVlZEttaAEACXNwZWVkVW5pdAEADmFjY2VsZXJhdG9yUGN0AQANZHJpdmVyQnJha2luZwEADWdlYXJUcmFuc01vZGUBAAZzZXRIc3YBAAYoRkZGKVYBAAdwcm9maWxlAQAFc2NhbGUBAAQoRilWAQADc2V0AQAYKExkZS9tay9hbWJpZW50ZngvUmdiOylWAQAEbGVycAEALihMZGUvbWsvYW1iaWVudGZ4L1JnYjtMZGUvbWsvYW1iaWVudGZ4L1JnYjtGKVYBAAFyAQABZwEAA21pbgEABShGRilGAQAFcm91bmQBAAQoRilJAQAHbmVhcmVzdAEAQihMZGUvbWsvYW1iaWVudGZ4L1JnYjtbTGRlL21rL2FtYmllbnRmeC9SZ2I7KUxkZS9tay9hbWJpZW50ZngvUmdiOwAhAGcAaAABAGkAGQACAGoAawAAAAIAbABtAAAAAgBuAG0AAAACAG8AbQAAAAIAcABxAAAAAgByAG0AAAACAHMAbQAAAAIAdABtAAAAAgB1AG0AAAACAHYAbQAAAAIAdwBtAAAAAgB4AHkAAAACAHoAeQAAAAIAewBtAAAAAgB8AG0AAAACAH0AeQAAABIAfgB/AAAAEgCAAH8AAAASAIEAfwAAAAIAggB5AAAAAgCDAHEAAAACAIQAhQAAAAIAhgCFAAAAAgCHAIgAAAACAIkAawAAAAkAAQCKAIsAAQCMAAACCwAJ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", "momentumselect": "yv66vgAAAC4BcgoAnQDvCQCcAPAEP3hR7AkAnADxBDz1wo8JAJwA8gRDAgAACQCcAPMEQSAAAAkAnAD0CQCcAPUEPrMzMwkAnAD2BD6AAAAJAJwA9wREFgAACQCcAPgEQvAAAAkAnAD5BEOvAAAJAJwA+gRCSAAACQCcAPsEPUzMzQkAnAD8BEMWAAAJAJwA/QRCyAAACQCcAP4ERHoAAAkAnAD/BEN6AAAJAJwBAARELwAACQCcAQEJAJwBAgRDtAAACQCcAQMJAJwBBARCjAAACQCcAQUEQwwAAAkAnAEGCQCcAQcEP0zMzQkAnAEICQCcAQkFAAAAAAAAA+gJAJwBCgUAAAAAAAAH0AkAnAELBwEMCgA2AO8JAJwBDQkAnAEOCgA2AQ8JAJwBEAX//////////wkAnAERCQCcARIIARMKARQBFQgApARBoAAABEOWAAAKARQBFggApQgApgoBFAEXCACoCACpCACqBEWcQAAIAKsIAKwIAK0IAK4IAK8IALAIALEIALIIALMIALQExDQAAARENAAACAC1CAC2CAC3CAC4CAC5CAC6CAC7CAC8BQAAAAAAACcQCgEUARgIAL4IAKMIAKEIARkKARQBGgkAnAEbCQCcARwJAJwBHQoBHgEfCgB3ASAJAHcBIQkAdwEiBD/N87YJAHcBIwkAdwEkCQB3ASUKADYBJgoAnAEnCgEUASgHASkHASoJAJwBKwoAnAEsCgCcAS0JAJwBLgkAnAEvCQCcATAKAJwBMQkAnAEyCQCcATMJAJwBNAoANgE1CgA2ATYKADYBNwkAnAE4CgCcATkJADYBOgkANgE7CQA2ATwKAR4BPQRDfwAACgCcAT4KAR4BPwoAnAFABEDAAAAEQIAAAARCcAAABD8AAAAKAR4BQQoAnAFCCgEeAUMKAJwBRAoAnAFFBwFGA3////8KADYBRwcBSAcBSQcBSgEACHBlcmlvZE1zAQABSQEAE0NPTUZPUlRfQlJJR0hUX1NQQU4BAAFGAQAUQ09NRk9SVF9CUklHSFRfRkxPT1IBABBSQUlOQk9XX1NQQU5fS01IAQAOU1BFRURfU1RFUF9LTUgBAA1TTU9PVEhfQ09MT1JTAQABWgEADFJJTkdfTUlOX1NBVAEADFJJTkdfTUlOX1ZBTAEADlRDX0hVRV9ERUZBVUxUAQAUVENfQlJJR0hUX0RFRkFVTFRfVVABABZUQ19CUklHSFRfREVGQVVMVF9ET1dOAQAYTklHSFRfQUNDRUxfU0FUVVJBVEVfUENUAQASTklHSFRfQlJJR0hUX0ZMT09SAQAOVENfSFVFX0RZTkFNSUMBABFUQ19CUklHSFRfRFlOQU1JQwEAElRDX0hVRV9DT01GT1JUX0VDTwEAGFRDX0JSSUdIVF9DT01GT1JUX0VDT19VUAEAGlRDX0JSSUdIVF9DT01GT1JUX0VDT19ET1dOAQARSFVFX1NUQVJUX0RFRkFVTFQBABBIVUVfU1BBTl9ERUZBVUxUAQARSFVFX1NUQVJUX0RZTkFNSUMBABBIVUVfU1BBTl9EWU5BTUlDAQAVSFVFX1NUQVJUX0NPTUZPUlRfRUNPAQAUSFVFX1NQQU5fQ09NRk9SVF9FQ08BABVEWU5BTUlDX1RIUk9UVExFX1BVTEwBABJUUllfQkxFTkRFRF9DT0xPUlMBAA1GTEFTSF9IT0xEX01TAQABSgEADUZMQVNIX0ZBREVfTVMBAAdzbW9vdGhWAQAQc21vb3RoQnJpZ2h0bmVzcwEABmxhc3RNcwEABmh1ZVJlZgEAFUxkZS9tay9hbWJpZW50ZngvUmdiOwEACW5vcm1hbE91dAEACmZsYXNoV2hpdGUBAAxzcG9ydFN0YXJ0TXMBAAx3YXNTcG9ydEdlYXIBAAdyaW5nU3JjAQAWW0xkZS9tay9hbWJpZW50ZngvUmdiOwEABHJpbmcBAAdyaW5nSHVlAQACW0YBAAlyaW5nQ291bnQBAAVkeW5MbwEABWR5bkhpAQAGY29vbExvAQAGY29vbEhpAQAGPGluaXQ+AQADKClWAQAEQ29kZQEAD0xpbmVOdW1iZXJUYWJsZQEABXN0YXJ0AQAEKEopVgEABHRpY2sBAE0oSkxkZS9tay9hbWJpZW50ZngvVmVoaWNsZURhdGE7W0xkZS9tay9hbWJpZW50ZngvUmdiO1pMZGUvbWsvYW1iaWVudGZ4L1JnYjspWgEACWJ1aWxkUmluZwEAGShbTGRlL21rL2FtYmllbnRmeC9SZ2I7KVYBAAVodWVPZgEAGChMZGUvbWsvYW1iaWVudGZ4L1JnYjspRgEABnJpbmdBdAEAGihMZGUvbWsvYW1iaWVudGZ4L1JnYjtGWilWAQANc3BlZWRGcmFjdGlvbgEABChGKUYBAAtyZXNldFdvcmxkcwEADWNvbXB1dGVXb3JsZHMBABBuZWFyZXN0UmluZ0luZGV4AQAEKEYpSQEACnNldERpc3BsYXkBAEQoTGRlL21rL2FtYmllbnRmeC9SZ2I7TGRlL21rL2FtYmllbnRmeC9SZ2I7W0xkZS9tay9hbWJpZW50ZngvUmdiO0YpVgEAB25lYXJlc3QBAEIoTGRlL21rL2FtYmllbnRmeC9SZ2I7W0xkZS9tay9hbWJpZW50ZngvUmdiOylMZGUvbWsvYW1iaWVudGZ4L1JnYjsBAA9ibGVuZE5lYXJlc3RUd28BAEMoTGRlL21rL2FtYmllbnRmeC9SZ2I7TGRlL21rL2FtYmllbnRmeC9SZ2I7W0xkZS9tay9hbWJpZW50ZngvUmdiOylWAQADKClJAQAKU291cmNlRmlsZQEAFlRwbE1vbWVudHVtU2VsZWN0LmphdmEMANIA0wwAnwCgDAChAKIMAKMAogwApACiDAClAKIMAKYApwwAqACiDACpAKIMAKoAogwAqwCiDACsAKIMAK0AogwArgCiDACvAKIMALAAogwAsQCiDACyAKIMALMAogwAtACiDAC1AKIMALYAogwAtwCiDAC4AKIMALkAogwAugCiDAC7AKcMALwAvQwAvgC9AQATZGUvbWsvYW1iaWVudGZ4L1JnYgwAwgDDDADEAMMMANIBSwwAxQDDDADGAL0MAMcApwEADm1vbWVudHVtc2VsZWN0BwFMDAFNAU4MAU8BUAwBUQFSDAFTAVQBAAlQRVJJT0RfTVMMAVUBVgwAvwCiDADAAKIMAMEAvQcBVwwBWAFZDAFaAVsMAVwAogwBXQCgDAFeAKAMAV8ApwwBYACgDAFhAWIMAOYA5wwBYwDsAQAbZGUvbWsvYW1iaWVudGZ4L1ZlaGljbGVEYXRhAQAdZGUvbWsvYW1iaWVudGZ4L0RyaXZlTW9kZURhdGEMAMgAyQwA2gDbDADgAOEMAMoAyQwAzgCiDADPAKIMAN4A3wwA0ACiDADRAKIMAM0AoAwBZAFlDAFmAWcMAWgBaQwAywDMDADiANMMAWoAoAwBawCgDAFRAKAMAWwBWQwA3ADdDAFsAW0MAOMA0wwBbgDlDADkAOUMAW8A4QwA6gDrDADoAOkBABFqYXZhL2xhbmcvSW50ZWdlcgwBcAFxAQAqZGUvbWsvYW1iaWVudGZ4L2Rlc2lnbmVyL1RwbE1vbWVudHVtU2VsZWN0AQAQamF2YS9sYW5nL09iamVjdAEAFmRlL21rL2FtYmllbnRmeC9FZmZlY3QBAAYoSUlJKVYBAB9kZS9tay9hbWJpZW50ZngvZGVzaWduZXIvVHBsRW52AQAEbG9hZAEAKihMamF2YS9sYW5nL1N0cmluZzspTGphdmEvdXRpbC9Qcm9wZXJ0aWVzOwEAAWYBAC4oTGphdmEvdXRpbC9Qcm9wZXJ0aWVzO0xqYXZhL2xhbmcvU3RyaW5nO0ZGRilGAQABYgEALChMamF2YS91dGlsL1Byb3BlcnRpZXM7TGphdmEvbGFuZy9TdHJpbmc7WilaAQABbAEALihMamF2YS91dGlsL1Byb3BlcnRpZXM7TGphdmEvbGFuZy9TdHJpbmc7SkpKKUoBAAFpAQAuKExqYXZhL3V0aWwvUHJvcGVydGllcztMamF2YS9sYW5nL1N0cmluZztJSUkpSQEADmphdmEvbGFuZy9NYXRoAQADbWF4AQAFKElJKUkBAAdpc0ZyZXNoAQAEKEopWgEACHNwZWVkS21oAQAJc3BlZWRVbml0AQAOYWNjZWxlcmF0b3JQY3QBAA1kcml2ZXJCcmFraW5nAQANZ2VhclRyYW5zTW9kZQEABnNldEhzdgEABihGRkYpVgEAB3Byb2ZpbGUBAAVzY2FsZQEABChGKVYBAANzZXQBABgoTGRlL21rL2FtYmllbnRmeC9SZ2I7KVYBAARsZXJwAQAuKExkZS9tay9hbWJpZW50ZngvUmdiO0xkZS9tay9hbWJpZW50ZngvUmdiO0YpVgEAAXIBAAFnAQADbWluAQAFKEZGKUYBAAVyb3VuZAEAA2FicwEACGRpc3RhbmNlAQAYKExkZS9tay9hbWJpZW50ZngvUmdiOylJACEAnACdAAEAngAsAAIAnwCgAAAAAgChAKIAAAACAKMAogAAAAIApACiAAAAAgClAKIAAAACAKYApwAAAAIAqACiAAAAAgCpAKIAAAACAKoAogAAAAIAqwCiAAAAAgCsAKIAAAACAK0AogAAAAIArgCiAAAAAgCvAKIAAAACALAAogAAAAIAsQCiAAAAAgCyAKIAAAACALMAogAAAAIAtACiAAAAAgC1AKIA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", "atmosphere": "yv66vgAAAC4AsQoASQByCQBIAHMJAEgAdATAoAAACQBIAHUEQfAAAAkASAB2BENSAAAJAEgAdwkASAB4BEFwAAAJAEgAeQRF+gAACQBIAHoERZxAAAkASAB7BD8AAAAJAEgAfAQ/WZmaCQBIAH0EPhmZmgkASAB+BD6zMzMJAEgAfwcAgAoAGQByCQBIAIEIAIIKAIMAhAgATwTCIAAABEJwAAAKAIMAhQgAUQgAUgTENAAABEQ0AAAIAFMIAFQIAFUER2pgAAgAVgRE+gAACABXCABYCABZCABaCABNCgCDAIYIAIcKAIMAiAkASACJCQBIAIoJAEgAiwoAPQCMCgCDAI0KAEgAjgoAGQCPBkAAAAAAAAAABwCQBkAJIftURC0YCgA9AJEKAEgAkgoASACTCgAZAJQKABkAlQcAlgN/////CgAZAJcHAJgHAJkHAJoBAAhwZXJpb2RNcwEAAUkBAAxTTkFQX0ZBQ1RPUlkBAAFaAQALVEVNUF9DT0xEX0MBAAFGAQALVEVNUF9XQVJNX0MBAAhIVUVfQ09MRAEACEhVRV9XQVJNAQAPVEVNUF9GQUxMQkFDS19DAQAKVENfVEVNUF9NUwEAEUJSRUFUSEVfUEVSSU9EX01TAQAPREFZX0JSRUFUSEVfTUlOAQAPREFZX0JSRUFUSEVfTUFYAQARTklHSFRfQlJFQVRIRV9NSU4BABFOSUdIVF9CUkVBVEhFX01BWAEAC3Ntb290aFRlbXBDAQAGbGFzdE1zAQABSgEAB3N0YXJ0TXMBAAZodWVSZWYBABVMZGUvbWsvYW1iaWVudGZ4L1JnYjsBAAY8aW5pdD4BAAMoKVYBAARDb2RlAQAPTGluZU51bWJlclRhYmxlAQAFc3RhcnQBAAQoSilWAQAEdGljawEATShKTGRlL21rL2FtYmllbnRmeC9WZWhpY2xlRGF0YTtbTGRlL21rL2FtYmllbnRmeC9SZ2I7WkxkZS9tay9hbWJpZW50ZngvUmdiOylaAQAKaHVlRm9yVGVtcAEABChGKUYBAApzZXREaXNwbGF5AQBEKExkZS9tay9hbWJpZW50ZngvUmdiO0xkZS9tay9hbWJpZW50ZngvUmdiO1tMZGUvbWsvYW1iaWVudGZ4L1JnYjtGKVYBAAduZWFyZXN0AQBCKExkZS9tay9hbWJpZW50ZngvUmdiO1tMZGUvbWsvYW1iaWVudGZ4L1JnYjspTGRlL21rL2FtYmllbnRmeC9SZ2I7AQADKClJAQAKU291cmNlRmlsZQEAElRwbEF0bW9zcGhlcmUuamF2YQwAYQBiDABLAEwMAE0ATgwATwBQDABRAFAMAFIAUAwAUwBQDABUAFAMAFUAUAwAVgBQDABXAFAMAFgAUAwAWQBQDABaAFABABNkZS9tay9hbWJpZW50ZngvUmdiDABfAGABAAphdG1vc3BoZXJlBwCbDACcAJ0MAJ4AnwwAoAChAQAJUEVSSU9EX01TDACiAKMMAFsAUAwAXABdDABeAF0MAKQApQwApgBqDABpAGoMAKcAqAEADmphdmEvbGFuZy9NYXRoDACpAKoMAGsAbAwAbQBuDACrAKwMAK0ArgEAEWphdmEvbGFuZy9JbnRlZ2VyDACvALABACZkZS9tay9hbWJpZW50ZngvZGVzaWduZXIvVHBsQXRtb3NwaGVyZQEAEGphdmEvbGFuZy9PYmplY3QBABZkZS9tay9hbWJpZW50ZngvRWZmZWN0AQAfZGUvbWsvYW1iaWVudGZ4L2Rlc2lnbmVyL1RwbEVudgEABGxvYWQBACooTGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL3V0aWwvUHJvcGVydGllczsBAAFmAQAuKExqYXZhL3V0aWwvUHJvcGVydGllcztMamF2YS9sYW5nL1N0cmluZztGRkYpRgEAAWIBACwoTGphdmEvdXRpbC9Qcm9wZXJ0aWVzO0xqYXZhL2xhbmcvU3RyaW5nO1opWgEAAWkBAC4oTGphdmEvdXRpbC9Qcm9wZXJ0aWVzO0xqYXZhL2xhbmcvU3RyaW5nO0lJSSlJAQADbWF4AQAFKElJKUkBAAV0ZW1wQwEABnNldEhzdgEABihGRkYpVgEAA3NpbgEABChEKUQBAANzZXQBABgoTGRlL21rL2FtYmllbnRmeC9SZ2I7KVYBAAVzY2FsZQEABChGKVYBAAhkaXN0YW5jZQEAGChMZGUvbWsvYW1iaWVudGZ4L1JnYjspSQAhAEgASQABAEoAEQACAEsATAAAAAIATQBOAAAAAgBPAFAAAAACAFEAUAAAAAIAUgBQAAAAAgBTAFAAAAACAFQAUAAAAAIAVQBQAAAAAgBWAFAAAAACAFcAUAAAAAIAWABQAAAAAgBZAFAAAAACAFoAUAAAAAIAWwBQAAAAAgBcAF0AAAACAF4AXQAAABIAXwBgAAAABwABAGEAYgABAGMAAAHuAAYAAgAAAVoqtwABKhEAlrUAAioEtQADKhIEtQAFKhIGtQAHKhIItQAJKhIGtQAKKhILtQAMKhINtQAOKhIPtQAQKhIRtQASKhITtQAUKhIVtQAWKhIXtQAYKrsAGVm3ABq1ABsSHLgAHUwqKxIeKrQABRIfEiC4ACG1AAUqKxIiKrQABxIfEiC4ACG1AAcqKxIjKrQACRIkEiW4ACG1AAkqKxImKrQAChIkEiW4ACG1AAoqKxInKrQADBIfEiC4ACG1AAwqKxIoKrQADgwSKbgAIbUADiorEioqtAAQEisSKbgAIbUAECorEiwqtAASCwy4ACG1ABIqKxItKrQAFAsMuAAhtQAUKisSLiq0ABYLDLgAIbUAFiorEi8qtAAYCwy4ACG1ABgqKxIwKrQAA7gAMbUAAyorEjIqtAACEDIRAfS4ADO1AAIqtAAHKrQABWYMlpwADSoqtAAFDGK1AAexAAAAAQBkAAAAggAgAAAAFwAEABUACwAqABAALQAWAC4AHAAvACIAMAAoADIALgA0ADQANwA6ADgAQAA5AEYAOgBMADsAUgBAAF0AGABjABkAdQAaAIcAGwCZABwAqwAdAL0AHgDOAB8A4AAgAPAAIQEAACIBEAAjASAAJAEuACUBQQAmAU8AJwFZACkAAQBlAGYAAQBjAAAANwADAAMAAAATKiq0AAy1ADQqH7UANSoftQA2sQAAAAEAZAAAABIABAAAAEMACABEAA0ARQASAEYAAQBnAGgAAQBjAAABDwAGABEAAAC/BB8qtAA1ZYi4ADeGOAcqH7UANR8qtAA2ZYk4CCq0AAy4ADg4CRcHKrQADhcHYm44CipZtAA0FwkqtAA0ZhcKamK1ADQqKrQANLcAOTgLKrQAGxcLDAy2ADoVBZkACiq0ABKnAAcqtAAWOAwVBZkACiq0ABSnAAcqtAAYOA0XCCq0ABByKrQAEG44DhIREhEXDo0UADtrFAA+a7gAQJBqYjgPFwwXDRcMZhcPamI4ECoZBiq0ABsZBBcQtwBBBKwAAAABAGQAAAA+AA8AAABJAA4ASgATAEwAHABOACUATwAxAFAARABSAE4AUwBZAFUAawBWAH0AVwCLAFgAogBZAK8AWwC9AFwAAgBpAGoAAQBjAAAAXgADAAMAAAAyIyq0AAVmKrQAByq0AAVmbkUkC5acAAULRSQMlZ4ABQxFKrQACSq0AAoqtAAJZiRqYq4AAAABAGQAAAAaAAYAAABgABEAYQAXAGIAGQBkAB8AZQAhAGcAAgBrAGwAAQBjAAAAUQAEAAUAAAApKrQAA5kAGS3GABUtvp4AECsqLC23AEK2AEOnAAgrLLYAQysXBLYARLEAAAABAGQAAAAWAAUAAABuABAAbwAdAHEAIgBzACgAdAACAG0AbgABAGMAAABsAAMABwAAADQsAzJOEkY2BAM2BRUFLL6iACMrLBUFMrYARzYGFQYVBKIADBUGNgQsFQUyToQFAaf/3C2wAAAAAQBkAAAAJgAJAAAAeQAEAHoACAB7ABIAfAAcAH0AIwB+ACcAfwAsAHsAMgCCAAEASwBvAAEAYwAAAB0AAQABAAAABSq0AAKsAAAAAQBkAAAABgABAAAAhgABAHAAAAACAHE=", "scroll": "yv66vgAAAC4AwgoATwB3CQBOAHgEPrhR7AkATgB5BEPhAAAJAE4AegQ+zMzNCQBOAHsEQQAAAAkATgB8CQBOAH0EPpmZmgkATgB+BD8mZmYJAE4AfwRGamAACQBOAIAEP1mZmgkATgCBBwCCCgAUAHcJAE4AgwgAhAoAhQCGCABTBEBAAAAKAIUAhwgAVQRFnEAACABWCABXBMO0AAAEQ7QAAAgAWAoAhQCICABaCABbCABcBET6AAAER+pgAAgAXQgAiQoAhQCKCQBOAIsJAE4AjAkATgCNCgA8AI4KAI8AkAkAjwCRCQCPAJIEP83ztgkAjwCTCgAUAJQKAE4AlQREegAACgBOAJYEPwAAAAZAAAAAAAAAAAcAlwZACSH7VEQtGAoAPACYCgBOAJkEPlmz0AkAFACaBD83F1kJABQAmwQ9k92YCQAUAJwEQ38AAAoATgCdCgAUAJ4KABQAnwcAoAN/////CgAUAKEHAKIHAKMHAKQBAAhwZXJpb2RNcwEAAUkBABBIVUVfU1BFRURfRkFDVE9SAQABRgEAC1RDX1NQRUVEX01TAQAQTklHSFRfQlJJR0hUTkVTUwEAGUlETEVfUk9UQVRJT05fREVHX1BFUl9TRUMBAA5UUllfRlJFRV9DT0xPUgEAAVoBABBUQVJHRVRfTFVNSU5BTkNFAQAUTUlOX1NBVFVSQVRJT05fRkxPT1IBABFTSElNTUVSX1BFUklPRF9NUwEAFlNISU1NRVJfQlJJR0hUTkVTU19NSU4BAAdzbW9vdGhWAQAKY3VycmVudEh1ZQEABmxhc3RNcwEAAUoBAAZodWVSZWYBABVMZGUvbWsvYW1iaWVudGZ4L1JnYjsBAAY8aW5pdD4BAAMoKVYBAARDb2RlAQAPTGluZU51bWJlclRhYmxlAQAFc3RhcnQBAAQoSilWAQAEdGljawEATShKTGRlL21rL2FtYmllbnRmeC9WZWhpY2xlRGF0YTtbTGRlL21rL2FtYmllbnRmeC9SZ2I7WkxkZS9tay9hbWJpZW50ZngvUmdiOylaAQANc2F0dXJhdGlvbkZvcgEABChGKUYBAAxyZWxMdW1pbmFuY2UBABgoTGRlL21rL2FtYmllbnRmeC9SZ2I7KUYBAApzZXREaXNwbGF5AQBEKExkZS9tay9hbWJpZW50ZngvUmdiO0xkZS9tay9hbWJpZW50ZngvUmdiO1tMZGUvbWsvYW1iaWVudGZ4L1JnYjtGKVYBAAduZWFyZXN0AQBCKExkZS9tay9hbWJpZW50ZngvUmdiO1tMZGUvbWsvYW1iaWVudGZ4L1JnYjspTGRlL21rL2FtYmllbnRmeC9SZ2I7AQADKClJAQAKU291cmNlRmlsZQEADlRwbFNjcm9sbC5qYXZhDABkAGUMAFEAUgwAUwBUDABVAFQMAFYAVAwAVwBUDABYAFkMAFoAVAwAWwBUDABcAFQMAF0AVAEAE2RlL21rL2FtYmllbnRmeC9SZ2IMAGIAYwEABnNjcm9sbAcApQwApgCnDACoAKkMAKoAqwEACVBFUklPRF9NUwwArACtDABeAFQMAF8AVAwAYABhDACuAK8HALAMALEAsgwAswBUDAC0AFIMALUAWQwAtgC3DABwAHEMAGwAbQEADmphdmEvbGFuZy9NYXRoDAC4ALkMAG4AbwwAugBSDAC7AFIMAKoAUgwAcgBzDAC8AL0MAL4AvwEAEWphdmEvbGFuZy9JbnRlZ2VyDADAAMEBACJkZS9tay9hbWJpZW50ZngvZGVzaWduZXIvVHBsU2Nyb2xsAQAQamF2YS9sYW5nL09iamVjdAEAFmRlL21rL2FtYmllbnRmeC9FZmZlY3QBAB9kZS9tay9hbWJpZW50ZngvZGVzaWduZXIvVHBsRW52AQAEbG9hZAEAKihMamF2YS9sYW5nL1N0cmluZzspTGphdmEvdXRpbC9Qcm9wZXJ0aWVzOwEAAWYBAC4oTGphdmEvdXRpbC9Qcm9wZXJ0aWVzO0xqYXZhL2xhbmcvU3RyaW5nO0ZGRilGAQABYgEALChMamF2YS91dGlsL1Byb3BlcnRpZXM7TGphdmEvbGFuZy9TdHJpbmc7WilaAQABaQEALihMamF2YS91dGlsL1Byb3BlcnRpZXM7TGphdmEvbGFuZy9TdHJpbmc7SUlJKUkBAANtYXgBAAUoSUkpSQEAG2RlL21rL2FtYmllbnRmeC9WZWhpY2xlRGF0YQEAB2lzRnJlc2gBAAQoSilaAQAIc3BlZWRLbWgBAAlzcGVlZFVuaXQBAA1kcml2ZXJCcmFraW5nAQAGc2V0SHN2AQAGKEZGRilWAQADc2luAQAEKEQpRAEAAXIBAAFnAQADc2V0AQAYKExkZS9t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", "drive": "yv66vgAAAC4A0woAVgCDCQBVAIQJAFUAhQQ/AAAACQBVAIYEQzQAAAkAVQCHBELIAAAJAFUAiARDyAAACQBVAIkEQ0gAAAkAVQCKBEOOgAAJAFUAiwRCvgAACQBVAIwEPpmZmgkAVQCNBEKCAAAJAFUAjgQ+gAAACQBVAI8EQ8CAAAkAVQCQBD8ZmZoJAFUAkQQ+zMzNCQBVAJIEPhmZmgkAVQCTBD8o9cMJAFUAlAcAlQoAIgCDCQBVAJYIAJcKAJgAmQgAXwRFnEAACgCYAJoIAGAIAGEIAGIExDQAAARENAAACABjCABkCABlBMO0AAAEQ7QAAAgAZggAZwgAaAgAaQgAaggAawQ9TMzNCABeBEEgAAAIAFwIAFoKAJgAmwgAnAoAmACdCQBVAJ4JAFUAnwkAVQCgCgChAKIKAKMApAkAowClCQCjAKYJAKMApwoAIgCoCgBVAKkKAFUAqgoAoQCrCgChAKwKAFUArQoAIgCuCgAiAK8HALADf////woAIgCxBwCyBwCzBwC0AQAIcGVyaW9kTXMBAAFJAQAMU05BUF9GQUNUT1JZAQABWgEADE5JR0hUX0ZBQ1RPUgEAAUYBAA5TVEVFUl9GVUxMX0RFRwEAEVRDX1RIUk9UVExFX1VQX01TAQATVENfVEhST1RUTEVfRE9XTl9NUwEAC1RDX1NURUVSX01TAQAORFJJVkVfQkFTRV9IVUUBABREUklWRV9USFJPVFRMRV9TV0VFUAEADkRSSVZFX1NBVF9SRVNUAQAPRFJJVkVfU1BMSVRfREVHAQATRFJJVkVfQ09OVE9VUl9CT09TVAEADURSSVZFX0hVRV9DQVABAAxEUklWRV9WX1JFU1QBAA1EUklWRV9WX1NXRUVQAQANRFJJVkVfVl9GTE9PUgEAClBFREFMX0ZVTEwBAAt0aHJvdHRsZUVtYQEACHN0ZWVyRW1hAQAGbGFzdE1zAQABSgEABmh1ZVJlZgEAFUxkZS9tay9hbWJpZW50ZngvUmdiOwEABjxpbml0PgEAAygpVgEABENvZGUBAA9MaW5lTnVtYmVyVGFibGUBAAVzdGFydAEABChKKVYBAAR0aWNrAQBNKEpMZGUvbWsvYW1iaWVudGZ4L1ZlaGljbGVEYXRhO1tMZGUvbWsvYW1iaWVudGZ4L1JnYjtaTGRlL21rL2FtYmllbnRmeC9SZ2I7KVoBAAdjbGFtcDAxAQAEKEYpRgEACnNldERpc3BsYXkBAEQoTGRlL21rL2FtYmllbnRmeC9SZ2I7TGRlL21rL2FtYmllbnRmeC9SZ2I7W0xkZS9tay9hbWJpZW50ZngvUmdiO0YpVgEAB25lYXJlc3QBAEIoTGRlL21rL2FtYmllbnRmeC9SZ2I7W0xkZS9tay9hbWJpZW50ZngvUmdiOylMZGUvbWsvYW1iaWVudGZ4L1JnYjsBAAMoKUkBAApTb3VyY2VGaWxlAQANVHBsRHJpdmUuamF2YQwAcgBzDABYAFkMAFoAWwwAXABdDABeAF0MAF8AXQwAYABdDABhAF0MAGIAXQwAYwBdDABkAF0MAGUAXQwAZgBdDABnAF0MAGgAXQwAaQBdDABqAF0MAGsAXQEAE2RlL21rL2FtYmllbnRmeC9SZ2IMAHAAcQEABWRyaXZlBwC1DAC2ALcMALgAuQwAugC7AQAJUEVSSU9EX01TDAC8AL0MAGwAXQwAbQBdDABuAG8HAL4MAL8AwAcAwQwAwgDDDADEAFkMAMUAWQwAxgBbDADHAMgMAHwAfQwAegB7DADJAMoMAMsAzAwAfgB/DADNAM4MAM8A0AEAEWphdmEvbGFuZy9JbnRlZ2VyDADRANIBACFkZS9tay9hbWJpZW50ZngvZGVzaWduZXIvVHBsRHJpdmUBABBqYXZhL2xhbmcvT2JqZWN0AQAWZGUvbWsvYW1iaWVudGZ4L0VmZmVjdAEAH2RlL21rL2FtYmllbnRmeC9kZXNpZ25lci9UcGxFbnYBAARsb2FkAQAqKExqYXZhL2xhbmcvU3RyaW5nOylMamF2YS91dGlsL1Byb3BlcnRpZXM7AQABZgEALihMamF2YS91dGlsL1Byb3BlcnRpZXM7TGphdmEvbGFuZy9TdHJpbmc7RkZGKUYBAAFiAQAsKExqYXZhL3V0aWwvUHJvcGVydGllcztMamF2YS9sYW5nL1N0cmluZztaKVoBAAFpAQAuKExqYXZhL3V0aWwvUHJvcGVydGllcztMamF2YS9sYW5nL1N0cmluZztJSUkpSQEADmphdmEvbGFuZy9NYXRoAQADbWF4AQAFKElJKUkBABtkZS9tay9hbWJpZW50ZngvVmVoaWNsZURhdGEBAAdpc0ZyZXNoAQAEKEopWgEA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"};
+const TPL_ORIG = {"momentum": {"cls": "de.mk.ambientfx.effects.Momentum", "sha": "c88ff0dd8e65596e4b8ba61554a39f25be7f2483c6914a62efea25223c93f27c"}, "momentumselect": {"cls": "de.mk.ambientfx.effects.MomentumSelect", "sha": "1774952b5a7330792d86f43f97dda683f7b23f6adeb8cb8363f247421e90585d"}, "atmosphere": {"cls": "de.mk.ambientfx.effects.Atmosphere", "sha": "598f5e8c552f3ca0526b76789a61405918cc7b2c019da4d4366a3674c014f51f"}, "scroll": {"cls": "de.mk.ambientfx.effects.Scroll", "sha": "b93f7e560325bcea4e4fdc11a5fb3993235e6d98013e7e553bc66740c9d5d9d0"}, "drive": {"cls": "de.mk.ambientfx.effects.Drive", "sha": "72f48945ade372488a2b68dc9ad1b16c581cfd93355c0ee6a94530847b94c644"}};
+/* Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
+ * Lizenz: siehe LICENSE.md / License: see LICENSE.md
+ *
+ * DE: JavaScript-Nachbau der Effekt-Vorlagen (Momentum, Momentum select, Atmosphere, Scroll, Drive) fuer die Vorschau im Design Studio. Zeile fuer Zeile
+ *     nach den Java-Originalen (java_patch/.../effects/*.java), mit Float-Genauigkeit wie in Java (Math.fround). Geprueft per Takt-Vergleich gegen die
+ *     erzeugten Java-Vorlagen (designer/tests/tpl_parity.sh), diese wiederum gegen die echten Effekte (TplEquivTest).
+ *     Erwartet die globale Variable TPL_META (= designer/templates_params.json).
+ * EN: JavaScript replica of the effect templates for the Design Studio preview. Line by line after the Java originals, with Java float precision
+ *     (Math.fround). Checked tick by tick against the generated Java templates, which in turn are checked against the real effects.
+ *     Expects the global variable TPL_META (= designer/templates_params.json).
+ */
+const TplEngine = (function () {
+  'use strict';
+  const F = Math.fround;
+  const jround = x => Math.floor(x + 0.5);                       /* Java Math.round(float) */
+  const c255 = v => v < 0 ? 0 : (v > 255 ? 255 : v);
+  const PROFILE_UNKNOWN = -1, PROFILE_COMFORT = 1, PROFILE_DYNAMIC = 3, PROFILE_EFFICIENCY = 5;
+  const GEAR_S = 5;
+
+  class Rgb {
+    constructor(r, g, b) { this.r = 0; this.g = 0; this.b = 0; if (r !== undefined) this.set(r, g, b); }
+    set(r, g, b) { if (r instanceof Rgb) { this.r = r.r; this.g = r.g; this.b = r.b; } else { this.r = c255(r); this.g = c255(g); this.b = c255(b); } }
+    distance(o) { return Math.abs(this.r - o.r) + Math.abs(this.g - o.g) + Math.abs(this.b - o.b); }
+    scale(f) { this.set(jround(F(this.r * f)), jround(F(this.g * f)), jround(F(this.b * f))); }
+    setHsv(h, s, v) {
+      h = F(h % 360); if (h < 0) h = F(h + 360);
+      const c = F(v * s), hp = F(h / 60);
+      const x = F(c * F(1 - Math.abs(F(F(hp % 2) - 1))));
+      let r1 = 0, g1 = 0, b1 = 0;
+      if (hp < 1) { r1 = c; g1 = x; } else if (hp < 2) { r1 = x; g1 = c; } else if (hp < 3) { g1 = c; b1 = x; }
+      else if (hp < 4) { g1 = x; b1 = c; } else if (hp < 5) { r1 = x; b1 = c; } else { r1 = c; b1 = x; }
+      const m = F(v - c);
+      this.set(jround(F(F(r1 + m) * 255)), jround(F(F(g1 + m) * 255)), jround(F(F(b1 + m) * 255)));
+    }
+    lerp(a, b, t) {
+      if (t < 0) t = 0; if (t > 1) t = 1;
+      this.set(jround(F(a.r + F((b.r - a.r) * t))), jround(F(a.g + F((b.g - a.g) * t))), jround(F(a.b + F((b.b - a.b) * t))));
+    }
+  }
+  function nearest(target, pal) {
+    let best = pal[0], bd = 2147483647;
+    for (let i = 0; i < pal.length; i++) { const d = target.distance(pal[i]); if (d < bd) { bd = d; best = pal[i]; } }
+    return best;
+  }
+
+  /* ---- Werte laden (Begrenzung wie TplEnv) / load values (clamping like TplEnv) ---- */
+  function loadParams(key, over) {
+    const t = TPL_META.templates[key]; const P = {};
+    t.params.forEach(p => {
+      let v = over && Object.prototype.hasOwnProperty.call(over, p.name) ? over[p.name] : undefined;
+      if (p.type === 'boolean') { P[p.name] = (v === undefined || v === null) ? p.def : (v === true || v === 1 || v === 'true' || v === '1') ? true : (v === false || v === 0 || v === 'false' || v === '0') ? false : p.def; return; }
+      if (v === undefined || v === null || v === '' || !isFinite(Number(v))) v = p.def; else v = Number(v);
+      if (p.type === 'float') { v = F(v); v = v < p.min ? F(p.min) : (v > p.max ? F(p.max) : v); }
+      else { v = Math.trunc(v); v = v < p.min ? p.min : (v > p.max ? p.max : v); }
+      P[p.name] = v;
+    });
+    if (key === 'atmosphere' && F(P.TEMP_WARM_C - P.TEMP_COLD_C) < 1) P.TEMP_WARM_C = F(P.TEMP_COLD_C + 1);
+    return P;
+  }
+  const fresh = (v, now) => !!v && v.valid && (now - v.lastUpdateMs) < 3000;
+
+  /* ---- gemeinsamer Teil von Momentum / Momentum select / Farbring / shared ring code ---- */
+  function hueOf(p) {
+    const max = Math.max(p.r, Math.max(p.g, p.b)), min = Math.min(p.r, Math.min(p.g, p.b));
+    const d = F(max - min);
+    if (d === 0) return 0;
+    let h;
+    if (max === p.r) { h = F(F(p.g - p.b) / d); if (h < 0) h = F(h + 6); }
+    else if (max === p.g) h = F(2 + F(F(p.b - p.r) / d));
+    else h = F(4 + F(F(p.r - p.g) / d));
+    return F(h * 60);
+  }
+  function Ring(P, onBuilt, onReset) {
+    const R = { src: null, ring: null, hue: null, count: 0 };
+    R.build = function (pal) {
+      R.src = pal; R.ring = null; R.hue = null; R.count = 0; if (onReset) onReset();
+      if (pal === null || pal === undefined) return;
+      const c = new Array(pal.length), h = new Array(pal.length); let n = 0;
+      for (let i = 0; i < pal.length; i++) {
+        const p = pal[i]; if (p === null || p === undefined) continue;
+        const max = Math.max(p.r, Math.max(p.g, p.b)), min = Math.min(p.r, Math.min(p.g, p.b));
+        const sat = max === 0 ? 0 : F(F(max - min) / max), val = F(max / 255);
+        if (sat >= P.RING_MIN_SAT && val >= P.RING_MIN_VAL) { c[n] = p; h[n] = hueOf(p); n++; }
+      }
+      if (n < 2) return;
+      let start = 0, bestD = 360;
+      for (let i = 0; i < n; i++) { const d = Math.min(h[i], F(360 - h[i])); if (d < bestD) { bestD = d; start = i; } }
+      const rel = new Array(n);
+      for (let i = 0; i < n; i++) { let r = F(h[i] - h[start]); if (r < 0) r = F(r + 360); rel[i] = r; }
+      for (let i = 1; i < n; i++) {
+        const kc = c[i], kr = rel[i]; let j = i - 1;
+        while (j >= 0 && rel[j] > kr) { c[j + 1] = c[j]; rel[j + 1] = rel[j]; j--; }
+        c[j + 1] = kc; rel[j + 1] = kr;
+      }
+      R.ring = c.slice(0, n); R.hue = rel.slice(0, n); R.count = n;
+      if (onBuilt) onBuilt(R);
+    };
+    R.at = function (out, pos, snap) {
+      let i0 = Math.trunc(pos); if (i0 >= R.count) i0 = R.count - 1; if (i0 < 0) i0 = 0;
+      let f = F(pos - i0); if (f > 1) f = 1; if (f < 0) f = 0;
+      const a = R.ring[i0], b = R.ring[(i0 + 1) % R.count];
+      if (snap) out.set(f < 0.5 ? a : b); else out.lerp(a, b, f);
+    };
+    return R;
+  }
+  function speedFraction(P, kmh) {
+    let k = kmh;
+    if (!P.SMOOTH_COLORS) k = F(jround(F(k / P.SPEED_STEP_KMH)) * P.SPEED_STEP_KMH);
+    let u = F(k / P.RAINBOW_SPAN_KMH); if (u < 0) u = 0; if (u > 1) u = 1; return u;
+  }
+
+  /* ---- Momentum ---- */
+  function Momentum(P) {
+    const E = { periodMs: P.PERIOD_MS };
+    let smoothV = 0, smoothB = 0, lastMs = 0, sportStart = -1, wasSport = false;
+    const hueRef = new Rgb(), normalOut = new Rgb(), white = new Rgb(255, 255, 255);
+    const ring = Ring(P);
+    function setDisplay(out, ideal, pal, br) {
+      if (pal && pal.length > 0) out.set(nearest(ideal, pal)); else out.set(ideal);
+      out.scale(br);
+    }
+    E.start = function (now) { smoothV = 0; smoothB = 0; lastMs = now; sportStart = -1; wasSport = false; };
+    E.tick = function (now, v, pal, daylight, out, env) {
+      const dt = F(Math.max(1, (now - lastMs) | 0)); lastMs = now;
+      let kmh = 0, accelPct = 0, braking = false, gearMode = 0;
+      if (fresh(v, now)) { kmh = F(v.speedKmh); if (v.speedUnit === 1) kmh = F(kmh * F(1.609)); accelPct = v.acceleratorPct; braking = v.driverBraking; gearMode = v.gearTransMode; }
+      const night = !daylight;
+      if (braking) { smoothV = kmh; smoothB = 1; hueRef.setHsv(0, 1, 1); setDisplay(out, hueRef, pal, 1); return true; }
+      const profile = env.profile;
+      const sportGear = gearMode === GEAR_S && profile !== PROFILE_DYNAMIC;
+      const alphaV = F(dt / F(P.TC_SPEED_MS + dt));
+      smoothV = F(smoothV + F(F(kmh - smoothV) * alphaV));
+      let accelT = F(accelPct / P.NIGHT_ACCEL_SATURATE_PCT); if (accelT > 1) accelT = 1;
+      const target = night ? F(P.NIGHT_BRIGHT_FLOOR + F(F(1 - P.NIGHT_BRIGHT_FLOOR) * accelT)) : 1;
+      const tcB = target > smoothB ? P.TC_BRIGHT_UP : P.TC_BRIGHT_DOWN;
+      const alphaB = F(dt / F(tcB + dt));
+      smoothB = F(smoothB + F(F(target - smoothB) * alphaB));
+      if (pal !== ring.src) ring.build(pal);
+      const u = speedFraction(P, smoothV);
+      if (ring.ring !== null) { ring.at(normalOut, F(u * ring.count), !P.SMOOTH_COLORS); normalOut.scale(smoothB); }
+      else { hueRef.setHsv(F(u * 360), 1, 1); setDisplay(normalOut, hueRef, pal, smoothB); }
+      if (sportGear) {
+        if (!wasSport) sportStart = now;
+        const el = now - sportStart;
+        if (el < P.FLASH_HOLD_MS) out.set(white);
+        else if (el < P.FLASH_HOLD_MS + P.FLASH_FADE_MS) { const t = F(F(el - P.FLASH_HOLD_MS) / F(P.FLASH_FADE_MS)); out.lerp(white, normalOut, t); }
+        else out.set(normalOut);
+      } else out.set(normalOut);
+      wasSport = sportGear;
+      return true;
+    };
+    return E;
+  }
+
+  /* ---- Momentum select ---- */
+  function MomentumSelect(P) {
+    const E = { periodMs: P.PERIOD_MS };
+    let smoothV = 0, smoothB = 0, lastMs = 0, sportStart = -1, wasSport = false;
+    let dynLo = 0, dynHi = 0, coolLo = 0, coolHi = 0;
+    const hueRef = new Rgb(), normalOut = new Rgb(), white = new Rgb(255, 255, 255);
+    function nearestRingIndex(R, hue) {
+      let best = 0, bd = 1000;
+      for (let i = 0; i < R.count; i++) { const d = Math.abs(F(R.hue[i] - hue)); if (d < bd) { bd = d; best = i; } }
+      return best;
+    }
+    const ring = Ring(P, R => {
+      dynLo = nearestRingIndex(R, P.HUE_START_DYNAMIC); dynHi = nearestRingIndex(R, F(P.HUE_START_DYNAMIC + P.HUE_SPAN_DYNAMIC));
+      coolLo = nearestRingIndex(R, P.HUE_START_COMFORT_ECO); coolHi = nearestRingIndex(R, F(P.HUE_START_COMFORT_ECO + P.HUE_SPAN_COMFORT_ECO));
+    }, () => { dynLo = 0; dynHi = 0; coolLo = 0; coolHi = 0; });
+    function blendNearestTwo(out, target, pal) {
+      let best = pal[0], second = pal[0], bestD = 2147483647, secondD = 2147483647;
+      for (let i = 0; i < pal.length; i++) {
+        const d = target.distance(pal[i]);
+        if (d < bestD) { secondD = bestD; second = best; bestD = d; best = pal[i]; }
+        else if (d < secondD) { secondD = d; second = pal[i]; }
+      }
+      const sum = bestD + secondD;
+      const t = sum > 0 ? F(F(bestD) / F(sum)) : 0;
+      out.lerp(best, second, t);
+    }
+    function setDisplay(out, ideal, pal, br) {
+      if (pal && pal.length > 0) { if (P.TRY_BLENDED_COLORS && pal.length > 1) blendNearestTwo(out, ideal, pal); else out.set(nearest(ideal, pal)); }
+      else out.set(ideal);
+      out.scale(br);
+    }
+    E.start = function (now) { smoothV = 0; smoothB = 0; lastMs = now; sportStart = -1; wasSport = false; };
+    E.tick = function (now, v, pal, daylight, out, env) {
+      const dt = F(Math.max(1, (now - lastMs) | 0)); lastMs = now;
+      let kmh = 0, accelPct = 0, braking = false, gearMode = 0;
+      if (fresh(v, now)) { kmh = F(v.speedKmh); if (v.speedUnit === 1) kmh = F(kmh * F(1.609)); accelPct = v.acceleratorPct; braking = v.driverBraking; gearMode = v.gearTransMode; }
+      if (braking) { smoothV = kmh; smoothB = 1; hueRef.setHsv(0, 1, 1); setDisplay(out, hueRef, pal, 1); return true; }
+      const profile = env.profile;
+      const sportGear = gearMode === GEAR_S && profile !== PROFILE_DYNAMIC;
+      let tcHue = P.TC_HUE_DEFAULT, tcUp = P.TC_BRIGHT_DEFAULT_UP, tcDown = P.TC_BRIGHT_DEFAULT_DOWN;
+      let hueStart = P.HUE_START_DEFAULT, hueSpan = P.HUE_SPAN_DEFAULT, dynamic = false, cool = false, target;
+      if (profile === PROFILE_DYNAMIC) {
+        tcHue = P.TC_HUE_DYNAMIC; tcUp = P.TC_BRIGHT_DYNAMIC; tcDown = P.TC_BRIGHT_DYNAMIC;
+        hueStart = P.HUE_START_DYNAMIC; hueSpan = P.HUE_SPAN_DYNAMIC; dynamic = true; target = 1;
+      } else if (profile === PROFILE_COMFORT || profile === PROFILE_EFFICIENCY) {
+        tcHue = P.TC_HUE_COMFORT_ECO; tcUp = P.TC_BRIGHT_COMFORT_ECO_UP; tcDown = P.TC_BRIGHT_COMFORT_ECO_DOWN;
+        hueStart = P.HUE_START_COMFORT_ECO; hueSpan = P.HUE_SPAN_COMFORT_ECO; cool = true;
+        target = F(P.COMFORT_BRIGHT_FLOOR + F(P.COMFORT_BRIGHT_SPAN * F(accelPct / 100)));
+      } else {
+        let accelT = F(accelPct / P.NIGHT_ACCEL_SATURATE_PCT); if (accelT > 1) accelT = 1;
+        target = daylight ? 1 : F(P.NIGHT_BRIGHT_FLOOR + F(F(1 - P.NIGHT_BRIGHT_FLOOR) * accelT));
+      }
+      const alphaV = F(dt / F(tcHue + dt));
+      smoothV = F(smoothV + F(F(kmh - smoothV) * alphaV));
+      const tcB = target > smoothB ? tcUp : tcDown;
+      const alphaB = F(dt / F(tcB + dt));
+      smoothB = F(smoothB + F(F(target - smoothB) * alphaB));
+      let clamped = smoothV; if (clamped < 0) clamped = 0; if (clamped > P.RAINBOW_SPAN_KMH) clamped = P.RAINBOW_SPAN_KMH;
+      if (pal !== ring.src) ring.build(pal);
+      let u = speedFraction(P, clamped);
+      if (ring.ring !== null) {
+        if (dynamic) { u = F(u * F(1 - F(P.DYNAMIC_THROTTLE_PULL * F(accelPct / 100)))); ring.at(normalOut, F(dynLo + F(u * F(dynHi - dynLo))), !P.SMOOTH_COLORS); }
+        else if (cool) ring.at(normalOut, F(coolLo + F(u * F(coolHi - coolLo))), !P.SMOOTH_COLORS);
+        else ring.at(normalOut, F(u * ring.count), !P.SMOOTH_COLORS);
+        normalOut.scale(smoothB);
+      } else {
+        let hue = F(hueStart + F(u * hueSpan));
+        if (dynamic) hue = F(hue * F(1 - F(P.DYNAMIC_THROTTLE_PULL * F(accelPct / 100))));
+        if (hue >= 360) hue = F(hue - 360); if (hue < 0) hue = F(hue + 360);
+        hueRef.setHsv(hue, 1, 1); setDisplay(normalOut, hueRef, pal, smoothB);
+      }
+      if (sportGear) {
+        if (!wasSport) sportStart = now;
+        const el = now - sportStart;
+        if (el < P.FLASH_HOLD_MS) out.set(white);
+        else if (el < P.FLASH_HOLD_MS + P.FLASH_FADE_MS) { const t = F(F(el - P.FLASH_HOLD_MS) / F(P.FLASH_FADE_MS)); out.lerp(white, normalOut, t); }
+        else out.set(normalOut);
+      } else out.set(normalOut);
+      wasSport = sportGear;
+      return true;
+    };
+    return E;
+  }
+
+  /* ---- Atmosphere ---- */
+  function Atmosphere(P) {
+    const E = { periodMs: P.PERIOD_MS };
+    let smoothT = 0, lastMs = 0, startMs = 0;
+    const hueRef = new Rgb();
+    function setDisplay(out, ideal, pal, br) {
+      if (P.SNAP_FACTORY && pal && pal.length > 0) out.set(nearest(ideal, pal)); else out.set(ideal);
+      out.scale(br);
+    }
+    E.start = function (now) { smoothT = P.TEMP_FALLBACK_C; lastMs = now; startMs = now; };
+    E.tick = function (now, v, pal, daylight, out, env) {
+      const dt = F(Math.max(1, (now - lastMs) | 0)); lastMs = now;
+      const elapsed = F(now - startMs);
+      const target = (env.tempC !== null && env.tempC !== undefined) ? F(env.tempC) : P.TEMP_FALLBACK_C;
+      const alphaT = F(dt / F(P.TC_TEMP_MS + dt));
+      smoothT = F(smoothT + F(F(target - smoothT) * alphaT));
+      let t = F(F(smoothT - P.TEMP_COLD_C) / F(P.TEMP_WARM_C - P.TEMP_COLD_C)); if (t < 0) t = 0; if (t > 1) t = 1;
+      const hue = F(P.HUE_COLD + F(F(P.HUE_WARM - P.HUE_COLD) * t));
+      hueRef.setHsv(hue, 1, 1);
+      const bMin = daylight ? P.DAY_BREATHE_MIN : P.NIGHT_BREATHE_MIN, bMax = daylight ? P.DAY_BREATHE_MAX : P.NIGHT_BREATHE_MAX;
+      const phase = F(F(elapsed % P.BREATHE_PERIOD_MS) / P.BREATHE_PERIOD_MS);
+      const breathe = F(0.5 + F(0.5 * F(Math.sin(phase * 2.0 * Math.PI))));
+      const br = F(bMin + F(F(bMax - bMin) * breathe));
+      setDisplay(out, hueRef, pal, br);
+      return true;
+    };
+    return E;
+  }
+
+  /* ---- Scroll ---- */
+  function Scroll(P) {
+    const E = { periodMs: P.PERIOD_MS };
+    let smoothV = 0, curHue = 0, lastMs = 0;
+    const hueRef = new Rgb();
+    const LR = F(0.2126), LG = F(0.7152), LB = F(0.0722);
+    function relLum(c) { return F(F(F(F(LR * c.r) + F(LG * c.g)) + F(LB * c.b)) / 255); }
+    function satFor(hue) {
+      const probe = new Rgb(); probe.setHsv(hue, 1, 1);
+      const y1 = relLum(probe);
+      if (y1 >= P.TARGET_LUMINANCE) return 1;
+      let s = F(F(1 - P.TARGET_LUMINANCE) / F(1 - y1));
+      if (s < P.MIN_SATURATION_FLOOR) s = P.MIN_SATURATION_FLOOR;
+      return s;
+    }
+    function setDisplay(out, ideal, pal, br) {
+      if (!P.TRY_FREE_COLOR && pal && pal.length > 0) out.set(nearest(ideal, pal)); else out.set(ideal);
+      out.scale(br);
+    }
+    E.start = function (now) { smoothV = 0; curHue = 0; lastMs = now; };
+    E.tick = function (now, v, pal, daylight, out, env) {
+      const dt = F(Math.max(1, (now - lastMs) | 0)); lastMs = now;
+      let kmh = 0, braking = false;
+      if (fresh(v, now)) { kmh = F(v.speedKmh); if (v.speedUnit === 1) kmh = F(kmh * F(1.609)); braking = v.driverBraking; }
+      if (braking) { hueRef.setHsv(0, 1, 1); setDisplay(out, hueRef, pal, 1); return true; }
+      if (kmh < 0) kmh = 0;
+      const alphaV = F(dt / F(P.TC_SPEED_MS + dt));
+      smoothV = F(smoothV + F(F(kmh - smoothV) * alphaV));
+      const dtSec = F(dt / 1000);
+      curHue = F(curHue + F(F(P.IDLE_ROTATION_DEG_PER_SEC + F(smoothV * P.HUE_SPEED_FACTOR)) * dtSec));
+      while (curHue >= 360) curHue = F(curHue - 360);
+      hueRef.setHsv(curHue, satFor(curHue), 1);
+      const shimmerPhase = F(F(now % Math.trunc(P.SHIMMER_PERIOD_MS)) / P.SHIMMER_PERIOD_MS);
+      const shimmer = F(0.5 + F(0.5 * F(Math.sin(shimmerPhase * 2.0 * Math.PI))));
+      const shimmerFactor = F(P.SHIMMER_BRIGHTNESS_MIN + F(F(1 - P.SHIMMER_BRIGHTNESS_MIN) * shimmer));
+      const br = F((daylight ? 1 : P.NIGHT_BRIGHTNESS) * shimmerFactor);
+      setDisplay(out, hueRef, pal, br);
+      return true;
+    };
+    return E;
+  }
+
+  /* ---- Drive ---- */
+  function Drive(P) {
+    const E = { periodMs: P.PERIOD_MS };
+    let thrEma = 0, steerEma = 0, lastMs = 0;
+    const hueRef = new Rgb();
+    const clamp01 = x => x < 0 ? 0 : (x > 1 ? 1 : x);
+    function setDisplay(out, ideal, pal, br) {
+      if (P.SNAP_FACTORY && pal && pal.length > 0) out.set(nearest(ideal, pal)); else out.set(ideal);
+      out.scale(br);
+    }
+    E.start = function (now) { thrEma = 0; steerEma = 0; lastMs = now; };
+    E.tick = function (now, v, pal, daylight, out, env) {
+      const dt = F(Math.max(1, (now - lastMs) | 0)); lastMs = now;
+      let accelPct = 0, wheel = 0, braking = false;
+      if (fresh(v, now)) { accelPct = v.acceleratorPct; wheel = v.wheelAngle; braking = v.driverBraking; }
+      if (braking) { hueRef.setHsv(0, 1, 1); setDisplay(out, hueRef, pal, 1); return true; }
+      const targetThr = clamp01(F(accelPct / 100));
+      const tcThr = targetThr > thrEma ? P.TC_THROTTLE_UP_MS : P.TC_THROTTLE_DOWN_MS;
+      thrEma = F(thrEma + F(F(dt / F(tcThr + dt)) * F(targetThr - thrEma)));
+      const targetSteer = F(Math.sqrt(clamp01(F(Math.abs(wheel) / P.STEER_FULL_DEG))));
+      steerEma = F(steerEma + F(F(dt / F(P.TC_STEER_MS + dt)) * F(targetSteer - steerEma)));
+      const t = clamp01(F(thrEma / P.PEDAL_FULL));
+      const h = F(P.DRIVE_BASE_HUE + F(P.DRIVE_THROTTLE_SWEEP * t));
+      const satDrv = t > steerEma ? t : steerEma;
+      const sat = F(P.DRIVE_SAT_REST + F(F(1 - P.DRIVE_SAT_REST) * satDrv));
+      let val = F(P.DRIVE_V_REST + F(P.DRIVE_V_SWEEP * t));
+      if (val < P.DRIVE_V_FLOOR) val = P.DRIVE_V_FLOOR; if (val > 1) val = 1;
+      let hc = F(h + F(P.DRIVE_SPLIT_DEG * steerEma)); if (hc > P.DRIVE_HUE_CAP) hc = P.DRIVE_HUE_CAP;
+      let cv = F(val + F(P.DRIVE_CONTOUR_BOOST * steerEma)); if (cv > 1) cv = 1;
+      const br = daylight ? cv : F(cv * P.NIGHT_FACTOR);
+      hueRef.setHsv(hc, sat, 1);
+      setDisplay(out, hueRef, pal, br);
+      return true;
+    };
+    return E;
+  }
+
+  const MAKERS = { momentum: Momentum, momentumselect: MomentumSelect, atmosphere: Atmosphere, scroll: Scroll, drive: Drive };
+
+  /** Geschaetzte Werksfarbliste (gleiche wie TplEquivTest.palette()) / estimated factory colour list (same as TplEquivTest.palette()). */
+  function palette() {
+    const p = [], t = new Rgb();
+    for (let i = 0; i < 28; i++) {
+      let hue = F(F(F(i * 360) / 28) + F(((i % 3) - 1) * 2)); if (hue < 0) hue = F(hue + 360);
+      t.setHsv(hue, F(F(0.92) - F((i % 4) * F(0.02))), F(F(0.97) - F((i % 5) * F(0.01))));
+      p.push(new Rgb(t.r, t.g, t.b));
+    }
+    p.push(new Rgb(255, 255, 255)); p.push(new Rgb(250, 248, 240));
+    return p;
+  }
+
+  return {
+    Rgb, palette, loadParams,
+    make: (key, over) => MAKERS[key](loadParams(key, over)),
+    PROFILE_UNKNOWN
+  };
+})();
+
+
 const RUNTIME_B64 = "yv66vgAAAC4CiwoBaQFqBwFrBwFsCgACAW0KAAMBbgoA+QFvCAFwCQAJAXEHAXIJAAkBcwkACQF0CQAJAXUJAAkBdgkACQF3BwF4CgAPAW8JAAkBeQoADwF6CQAJAXsJAAkBfAkACQF9CAF+CgAJAX8IAYAKAWkBgQoBaQGCCgGDAYQKAYUBgQcBhggBhwoAHQFuBwGICgAgAW8KACABiQoBigGLBwGMBwGNCgAlAW8IAY4KACUBjwoAJQGQCgAlAZEKAAkBkgoAIAGTCgGDAZQKAYMBlQoBlgGXCgGWAZgHAZkIAZoIAZsIAZwKAYMBnQgBngoBgwGfCgGDAaAIAaEIAaIIAaMIAaQIAaUIAaYIAacIAagIAakIAaoKAYMBqwgBrAgBrQgBrgoBrwGwCAGxCAGyCAGzCAG0CAG1CgAgAbYKAYMBtwgBGQZAWQAAAAAAAAZASQAAAAAAAAZAf0AAAAAAAAoACQG4CQAJAbkIAboIAWEJAAkBuwgBvAgBvQgBvggBvwoACQHACQAJAcEIAcIGwPhqAAAAAAAGQPhqAAAAAAAJAAkBwwgBxAZAYEAAAAAAAAkACQHFCAHGCgAJAccJAAkByAgByQgBygcBywgBzAoAcAHNCQAJAc4Gv/AAAAAAAAAKAHABzwoAcAHQCAHRCgGDAdIIAdMIAdQIAdUIAdYIAdcKAAkB2AgB2QgB2gZAJAAAAAAAAAbAhoAAAAAAAAZAhoAAAAAAAAkACQHbCAHcBkBOAAAAAAAACQAJAd0IAd4JAAkB3wgB4AkACQHhCAHiCQAJAeMIAeQJAAkB5QgB5gkACQHnCAHoBkA+AAAAAAAACQAJAekIAeoJAAkB6wgB7AkACQHtCAHuBkAYAAAAAAAABkAAAAAAAAAABkBeAAAAAAAACQAJAe8IAfAGQEQAAAAAAAAJAAkB8QgB8gkACQHzCAH0CQAJAfUIAfYIAfcJAAkB+AkACQH5CQAJAfoIAfsJAAkB/AgB/QZAeQAAAAAAAAZAs4gAAAAAAAkACQH+CAE5CQAJAf8KAgACAQgCAggCAwoCAAIECQAJAgUJAAkCBgkACQIHCQAJAggKAA8CCQkCCgILCQIKAgwGP/m+dsi0OVgJAgoCDQkCCgIOCgDgAg8JAgoCEAkCCgIRCQIKAhIJAgoCEwoCFAIVCgIUAhYJAhcCGAkCFwIZBkAuAAAAAAAABwIaBkAIAAAAAAAACgIKAhsGQI9AAAAAAAAKAAkCHAoACQIdBwIeBkAJIftURC0YBj/gAAAAAAAACgDgAh8GQHaAAAAAAAAKAA8CIAkADwIhCQAPAiIJAA8CIwoACQIkCgDgAiUJAAkCJgkACQInCQAJAigJAAkCKQoA4AIqCgAPAisKAA8CLAoADwItCgAPAi4FAAAAAAAAA+gHAi8HAjABAAtERVNJR05fRklMRQEAEkxqYXZhL2xhbmcvU3RyaW5nOwEADUNvbnN0YW50VmFsdWUBAAhTUkNfTk9ORQEAAUkDAAAAAAEACVNSQ19TUEVFRAMAAAABAQAMU1JDX1RIUk9UVExFAwAAAAIBAAlTUkNfU1RFRVIDAAAAAwEACVNSQ19CUkFLRQMAAAAEAQAHU1JDX1JQTQMAAAAFAQAJU1JDX0FDQ0VMAwAAAAYBAAdTUkNfTEFUAwAAAAcBAAhTUkNfVEVNUAMAAAAIAQAJTU9ERV9SQU1QAQAKTU9ERV9DWUNMRQEACk1PREVfU09MSUQBAA9URU1QX0ZBTExCQUNLX0MBAAFEAQAJTUFYX1NUT1BTAwAAABABAAJpZAEABnBlcmlvZAEACWNvbG9yTW9kZQEACGNvbG9yU3JjAQAIY29sb3JNaW4BAAhjb2xvck1heAEABm5TdG9wcwEAB3N0b3BQb3MBAAJbRAEABXN0b3BSAQAFc3RvcEcBAAVzdG9wQgEACnN0b3BTbW9vdGgBAAFaAQAHY3ljQmFzZQEACGN5Y1NwZWVkAQAGY3ljU2F0AQAFYnJTcmMBAAhiclNyY01pbgEACGJyU3JjTWF4AQAIYnJJbnZlcnQBAAVick1pbgEABWJyTWF4AQAGYnJlYXRoAQAJYnJlYXRoU2VjAQALYnJlYXRoRGVwdGgBAAtuaWdodEZhY3RvcgEAB2JyYWtlT24BAAZicmFrZVIBAAZicmFrZUcBAAZicmFrZUIBAAticmFrZUJyaWdodAEACHNtb290aE1zAQAEc25hcAEABWZpcnN0AQAHc3RhcnRNcwEAAUoBAAZsYXN0TXMBAApsYXN0U2VudE1zAQADaHVlAQADc21SAQADc21HAQADc21CAQAIc21CcmlnaHQBAAR3b3JrAQAVTGRlL21rL2FtYmllbnRmeC9SZ2I7AQAHbGFzdE91dAEAA3RtcAEAK2NsYXNzJGRlJG1rJGFtYmllbnRmeCRkZXNpZ25lciREZXNpZ25FZmZlY3QBABFMamF2YS9sYW5nL0NsYXNzOwEACVN5bnRoZXRpYwEABjxpbml0PgEAAygpVgEABENvZGUBAA9MaW5lTnVtYmVyVGFibGUBABkoTGphdmEvdXRpbC9Qcm9wZXJ0aWVzOylWAQADbnVtAQAuKExqYXZhL3V0aWwvUHJvcGVydGllcztMamF2YS9sYW5nL1N0cmluZztEREQpRAEABGZsYWcBACwoTGphdmEvdXRpbC9Qcm9wZXJ0aWVzO0xqYXZhL2xhbmcvU3RyaW5nO1opWgEABnNvdXJjZQEALChMamF2YS91dGlsL1Byb3BlcnRpZXM7TGphdmEvbGFuZy9TdHJpbmc7SSlJAQADaGV4AQAnKExqYXZhL2xhbmcvU3RyaW5nO0xqYXZhL2xhbmcvU3RyaW5nOylJAQAFcGFyc2UBAAVzdGFydAEABChKKVYBAAhwZXJpb2RNcwEAAygpSQEABG5vcm0BAAYoREREKUQBAAVpbnB1dAEAIihJTGRlL21rL2FtYmllbnRmeC9WZWhpY2xlRGF0YTtaKUQBAARyYW1wAQAGKERbRClWAQAEdGljawEATShKTGRlL21rL2FtYmllbnRmeC9WZWhpY2xlRGF0YTtbTGRlL21rL2FtYmllbnRmeC9SZ2I7WkxkZS9tay9hbWJpZW50ZngvUmdiOylaAQAGY2xhc3MkAQAlKExqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL0NsYXNzOwEAClNvdXJjZUZpbGUBABFEZXNpZ25FZmZlY3QuamF2YQcCMQwCMgFmAQAgamF2YS9sYW5nL0NsYXNzTm90Rm91bmRFeGNlcHRpb24BAB5qYXZhL2xhbmcvTm9DbGFzc0RlZkZvdW5kRXJyb3IMAjMCNAwBSwI1DAFLAUwBAAAMARgA/AEAJWRlL21rL2FtYmllbnRmeC9kZXNpZ25lci9EZXNpZ25FZmZlY3QMAR8BIAwBIQEgDAEiASAMASMBIAwBOgElAQATZGUvbWsvYW1iaWVudGZ4L1JnYgwBRAFFDAFLAjYMAUYBRQwBRwEgDAFIAUkBACVkZS5tay5hbWJpZW50ZnguZGVzaWduZXIuRGVzaWduRWZmZWN0DAFlAWYBABwvYW1iaWVudGZ4X2Rlc2lnbi5wcm9wZXJ0aWVzDAI3AjgMAjkCOgcCOwwCPAI9BwI+AQAfamF2YS9sYW5nL0lsbGVnYWxTdGF0ZUV4Y2VwdGlvbgEAK2FtYmllbnRmeF9kZXNpZ24ucHJvcGVydGllcyBmZWhsdCBpbSBQbHVnaW4BABRqYXZhL3V0aWwvUHJvcGVydGllcwwCPwJABwJBDAJCAUwBABNqYXZhL2lvL0lPRXhjZXB0aW9uAQAWamF2YS9sYW5nL1N0cmluZ0J1ZmZlcgEAFURlc2lnbiBuaWNodCBsZXNiYXI6IAwCQwJEDAJDAkUMAkYCNAwBWAFPDAJHAkgMAkkCNAwCSgFcBwJLDAJMAk0MAk4CTwEAH2phdmEvbGFuZy9OdW1iZXJGb3JtYXRFeGNlcHRpb24BABR1bmd1ZWx0aWdlIFphaGwgYmVpIAEAAjogAQABMQwCUAJRAQAEdHJ1ZQwCUgJTDAJUAjQBAARub25lAQAFc3BlZWQBAAh0aHJvdHRsZQEABXN0ZWVyAQAFYnJha2UBAANycG0BAAVhY2NlbAEAA2xhdAEABHRlbXABABZ1bmJla2FubnRlIFF1ZWxsZSBiZWkgDAJVAlYBAAdGYXJiZSAnAQADJyAoAQATKSBtdXNzICNSUkdHQkIgc2VpbgcCVwwCWAJZAQALKSB1bmd1ZWx0aWcBAAZmb3JtYXQBAA5EZXNpZ24tRm9ybWF0IAEAJSB3aXJkIG5pY2h0IHVudGVyc3R1ZXR6dCAoZXJ3YXJ0ZXQgMSkBAAlkZXNpZ24uaWQMAkcCWgwCPAJbDAFQAVEMARkA/wEACmNvbG9yLm1vZGUMARoA/wEABWN5Y2xlAQAFc29saWQBABd1bmJla2FubnRlciBGYXJibW9kdXM6IAEADGNvbG9yLnNvdXJjZQwBVAFVDAEbAP8BAAljb2xvci5taW4MARwBFQEACWNvbG9yLm1heAwBHQEVAQAMY29sb3Iuc21vb3RoDAFSAVMMASQBJQEAC2NvbG9yLnN0b3BzAQAJMDojRkZGRkZGAQAZamF2YS91dGlsL1N0cmluZ1Rva2VuaXplcgEAASwMAUsCXAwBHgD/DAJdAl4MAl8CNAEAHHp1IHZpZWxlIEZhcmJzdG9wcHMgKG1heCAxNikMAmACYQEAC0ZhcmJzdG9wcCAnAQAcJyBtdXNzIFBvc2l0aW9uOiNSUkdHQkIgc2VpbgEAF1Bvc2l0aW9uIGltIEZhcmJzdG9wcCAnAQALJyB1bmd1ZWx0aWcBAC5GYXJic3RvcHBzIG11ZXNzZW4gbmFjaCBQb3NpdGlvbiBzb3J0aWVydCBzZWluDAFWAVcBABRjb2xvci5zdG9wcyBpc3QgbGVlcgEACmN5Y2xlLmJhc2UMASYBFQEAC2N5Y2xlLnNwZWVkDAEnARUBAAljeWNsZS5zYXQMASgBFQEADWJyaWdodC5zb3VyY2UMASkA/wEADWJyaWdodC5zcmNNaW4MASoBFQEADWJyaWdodC5zcmNNYXgMASsBFQEADWJyaWdodC5pbnZlcnQMASwBJQEACmJyaWdodC5taW4MAS0BFQEACmJyaWdodC5tYXgMAS4BFQEADWJyaWdodC5icmVhdGgMAS8BJQEAEGJyaWdodC5icmVhdGhTZWMMATABFQEAEmJyaWdodC5icmVhdGhEZXB0aAwBMQEVAQAMbmlnaHQuZmFjdG9yDAEyARUBAAhicmFrZS5vbgwBMwElAQALYnJha2UuY29sb3IBAAcjRkYwMDAwDAE0ARUMATUBFQwBNgEVAQAMYnJha2UuYnJpZ2h0DAE3ARUBAAlzbW9vdGgubXMMATgBFQwBOQElBwJiDAJjAl4BAAxEZXNpZ25FZmZlY3QBABBzdGFydCBkZXNpZ24uaWQ9DAJkAlwMATsBPAwBPQE8DAE+ATwMAT8BFQwCZQI2BwJmDAJnAP8MAmgCaQwCagD/DAJrAP8MAmwCYQwCbQElDAJuAP8MAm8CaQwCcAJpBwJxDAJyAnMMAnQCdQcCdgwCdwElDAJ4AmkBABNqYXZhL2xhbmcvVGhyb3dhYmxlDAJ5AnoMAV8BYAwBXQFeAQAOamF2YS9sYW5nL01hdGgMAnsCfAwCfQJ+DAJ/AP8MAoAA/wwCgQD/DAFhAWIMAoICfAwBQAEVDAFBARUMAUIBFQwBQwEVDAKDAnwMAoQChQwCZQKGDAKHAogMAokCigEAEGphdmEvbGFuZy9PYmplY3QBABZkZS9tay9hbWJpZW50ZngvRWZmZWN0AQAPamF2YS9sYW5nL0NsYXNzAQAHZm9yTmFtZQEACmdldE1lc3NhZ2UBABQoKUxqYXZhL2xhbmcvU3RyaW5nOwEAFShMamF2YS9sYW5nL1N0cmluZzspVgEABihJSUkpVgEAE2dldFJlc291cmNlQXNTdHJlYW0BACkoTGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL2lvL0lucHV0U3RyZWFtOwEADmdldENsYXNzTG9hZGVyAQAZKClMamF2YS9sYW5nL0NsYXNzTG9hZGVyOwEAEGphdmEvbGFuZy9TdHJpbmcBAAlzdWJzdHJpbmcBABUoSSlMamF2YS9sYW5nL1N0cmluZzsBABVqYXZhL2xhbmcvQ2xhc3NMb2FkZXIBAARsb2FkAQAYKExqYXZhL2lvL0lucHV0U3RyZWFtOylWAQATamF2YS9pby9JbnB1dFN0cmVhbQEABWNsb3NlAQAGYXBwZW5kAQAsKExqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL1N0cmluZ0J1ZmZlcjsBACwoTGphdmEvbGFuZy9PYmplY3Q7KUxqYXZhL2xhbmcvU3RyaW5nQnVmZmVyOwEACHRvU3RyaW5nAQALZ2V0UHJvcGVydHkBACYoTGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL2xhbmcvU3RyaW5nOwEABHRyaW0BAAZsZW5ndGgBABBqYXZhL2xhbmcvRG91YmxlAQAHdmFsdWVPZgEAJihMamF2YS9sYW5nL1N0cmluZzspTGphdmEvbGFuZy9Eb3VibGU7AQALZG91YmxlVmFsdWUBAAMoKUQBAAZlcXVhbHMBABUoTGphdmEvbGFuZy9PYmplY3Q7KVoBABBlcXVhbHNJZ25vcmVDYXNlAQAVKExqYXZhL2xhbmcvU3RyaW5nOylaAQALdG9Mb3dlckNhc2UBAAZjaGFyQXQBAAQoSSlDAQARamF2YS9sYW5nL0ludGVnZXIBAAhwYXJzZUludAEAFihMamF2YS9sYW5nL1N0cmluZztJKUkBADgoTGphdmEvbGFuZy9TdHJpbmc7TGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL2xhbmcvU3RyaW5nOwEAFihJSSlMamF2YS9sYW5nL1N0cmluZzsBACcoTGphdmEvbGFuZy9TdHJpbmc7TGphdmEvbGFuZy9TdHJpbmc7KVYBAA1oYXNNb3JlVG9rZW5zAQADKClaAQAJbmV4dFRva2VuAQAHaW5k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";
 const RUNTIME_SHA = "dadc1a4b5bda6aaf72d8037872b24cceff30206a630ac9ed3c743f72958a4fdd";
 const RUNTIME_CLASS = "de/mk/ambientfx/designer/DesignEffect.class";
@@ -439,15 +1919,21 @@ de:{
  sl_speed:'Tempo', sl_throttle:'Gaspedal', sl_steer:'Lenkwinkel', sl_rpm:'Drehzahl', sl_accel:'Längsbeschl.', sl_lat:'Querbeschl.', sl_temp:'Außentemp.',
  nameEmpty:'Bitte einen Namen eingeben.', nameChars:'Nur Buchstaben, Ziffern, Leerzeichen und . _ - (max. 24 Zeichen).', nameBuiltin:'Der Name ist schon vergeben (eingebauter Effekt oder Werksauswahl im MMI).',
  toastNew:'Neues Design', toastImported:'Importiert', toastExported:'Exportiert', toastCopied:'Kopiert', toastApplied:'Übernommen', toastEx:'Beispiel geladen',
- errCompiled:'Das ist ein fertig kompilierter Effekt (z. B. Momentum) und lässt sich hier nicht öffnen – nur Designs aus dem Design Studio. Nachbauten der mitgelieferten Effekte findest du unter „Beispiele“.',
+ errCompiled:'Das ist ein fertig kompilierter Effekt, den das Studio nicht kennt. Öffnen lassen sich Designs aus dem Studio und die fünf mitgelieferten Effekte (Momentum, Momentum select, Atmosphere, Scroll, Drive).',
  errNotAmb:'Keine gültige .ambiente-Datei.', errInflate:'Dieser Browser kann die Datei nicht entpacken (DecompressionStream fehlt).', errFormat:'Design nicht lesbar: ',
  techSha:'Laufzeit-Klasse', techBytes:'Bytes', techContract:'Vertragsversion', techCheck:'Prüfsumme (SHA-256) der eingebauten Klasse – vergleichbar mit dem Bauergebnis von designer/build_runtime.sh.',
- ex_mom:'Momentum (Nachbau)', ex_momD:'Regenbogen über das Tempo, Bremse = Rot. Ohne D→S-Blitz, Nacht vereinfacht',
- ex_dyn:'Momentum select · Dynamic', ex_dynD:'Warme Welt Rot→Gelb, immer hell, schnell. Ohne Gas-Zug zu Rot',
- ex_com:'Momentum select · Comfort', ex_comD:'Kühle Welt Grün→Blau, Helligkeit folgt dem Gas, ruhig',
- ex_atm:'Atmosphere (Nachbau)', ex_atmD:'Außentemperatur → Farbe, langsames Atmen, Nacht dunkler',
- ex_scr:'Scroll (Nachbau)', ex_scrD:'Farbrad dreht sich, schneller mit dem Tempo, Bremse = Rot',
- ex_drv:'Drive (Nachbau)', ex_drvD:'Gaspedal: Lavendel → Violett → Ember. Ohne Lenkwinkel',
+ tplMenu:'Original-Vorlagen', toastTpl:'Vorlage geladen',
+ tpl_momentum:'Momentum', tpl_momentumD:'Regenbogen über das Tempo, D→S-Blitz, Nacht nach Gas',
+ tpl_momentumselect:'Momentum select', tpl_momentumselectD:'Wie Momentum, plus Farbwelten je Fahrprofil',
+ tpl_atmosphere:'Atmosphere', tpl_atmosphereD:'Außentemperatur → Farbe, langsames Atmen',
+ tpl_scroll:'Scroll', tpl_scrollD:'Farbrad dreht sich, schneller mit dem Tempo',
+ tpl_drive:'Drive', tpl_driveD:'Gaspedal und Lenkwinkel bestimmen Farbton und Sättigung',
+ tplTitle:'Werte der Vorlage', tplReset:'Alle Werte zurücksetzen', tplResetOne:'Auf Original zurücksetzen', tplOrig:'Original',
+ tplIntro:'<p>Das ist der <b>mitgelieferte Effekt</b> mit allen seinen Einstellwerten. Ohne Änderung verhält er sich <b>exakt wie das Original</b> (Takt für Takt gegen die echte Effekt-Klasse geprüft). Jeder Wert lässt sich ändern. Geänderte Werte sind markiert und einzeln zurücksetzbar.</p>',
+ tplNote:'<p class="hint"><b>Hinweis:</b> Die Vorschau benutzt eine <b>geschätzte Werksfarbliste</b>; im Auto liest der Effekt die echte Liste des Fahrzeugs. Fahrprofil, Gangwahlhebel D/S und Außentemperatur stellst du im Fahrsimulator ein. Eigene Werte sind nur am PC geprüft, nicht im Auto.</p>',
+ simGear:'Gangwahlhebel', simProfile:'Fahrprofil (Drive Select)', gear_D:'D (Drive)', gear_S:'S (Sport)', gear_X:'P / R / N',
+ prof_unknown:'unbekannt', prof_auto:'Auto', prof_comfort:'Comfort', prof_dynamic:'Dynamic', prof_eco:'Eco', prof_individual:'Individual',
+ toastTplOrig:'Original erkannt – Vorlage mit den Standardwerten geladen', toastTplOrigDiff:'Anderer Stand als die Vorlage – Standardwerte der aktuellen Vorlage geladen',
  ex_tempo:'Tempo-Verlauf', ex_tempoD:'Farbe folgt dem Tempo, Helligkeit dem Gas',
  ex_breath:'Ruhiges Atmen', ex_breathD:'Violett, langsames Atmen',
  ex_rainbow:'Regenbogen', ex_rainbowD:'Dreht sich, schneller mit dem Tempo',
@@ -489,15 +1975,21 @@ en:{
  sl_speed:'Speed', sl_throttle:'Throttle', sl_steer:'Steering', sl_rpm:'Engine speed', sl_accel:'Long. accel.', sl_lat:'Lat. accel.', sl_temp:'Outside temp.',
  nameEmpty:'Please enter a name.', nameChars:'Only letters, digits, spaces and . _ - (max. 24 characters).', nameBuiltin:'That name is already taken (built-in effect or factory choice in the MMI).',
  toastNew:'New design', toastImported:'Imported', toastExported:'Exported', toastCopied:'Copied', toastApplied:'Applied', toastEx:'Example loaded',
- errCompiled:'This is a precompiled effect (e.g. Momentum) and cannot be opened here – only designs made with the Design Studio. Replicas of the bundled effects are under “Examples”.',
+ errCompiled:'This is a precompiled effect the Studio does not know. You can open designs made with the Studio and the five bundled effects (Momentum, Momentum select, Atmosphere, Scroll, Drive).',
  errNotAmb:'Not a valid .ambiente file.', errInflate:'This browser cannot unpack the file (DecompressionStream missing).', errFormat:'Design not readable: ',
  techSha:'Runtime class', techBytes:'bytes', techContract:'Contract version', techCheck:'SHA-256 of the built-in class – comparable with the result of designer/build_runtime.sh.',
- ex_mom:'Momentum (replica)', ex_momD:'Rainbow over speed, brake = red. No D→S flash, night simplified',
- ex_dyn:'Momentum select · Dynamic', ex_dynD:'Warm range red→yellow, always bright, fast. No throttle pull to red',
- ex_com:'Momentum select · Comfort', ex_comD:'Cool range green→blue, brightness follows throttle, calm',
- ex_atm:'Atmosphere (replica)', ex_atmD:'Outside temperature → colour, slow breathing, dimmer at night',
- ex_scr:'Scroll (replica)', ex_scrD:'Colour wheel rotates, faster with speed, brake = red',
- ex_drv:'Drive (replica)', ex_drvD:'Throttle: lavender → violet → ember. No steering angle',
+ tplMenu:'Original templates', toastTpl:'Template loaded',
+ tpl_momentum:'Momentum', tpl_momentumD:'Rainbow over speed, D→S flash, night by throttle',
+ tpl_momentumselect:'Momentum select', tpl_momentumselectD:'Like Momentum, plus colour ranges per drive profile',
+ tpl_atmosphere:'Atmosphere', tpl_atmosphereD:'Outside temperature → colour, slow breathing',
+ tpl_scroll:'Scroll', tpl_scrollD:'Colour wheel rotates, faster with speed',
+ tpl_drive:'Drive', tpl_driveD:'Throttle and steering angle drive hue and saturation',
+ tplTitle:'Template values', tplReset:'Reset all values', tplResetOne:'Reset to original', tplOrig:'Original',
+ tplIntro:'<p>This is the <b>bundled effect</b> with all of its settings. Unchanged, it behaves <b>exactly like the original</b> (checked tick by tick against the real effect class). Every value can be changed. Changed values are highlighted and can be reset one by one.</p>',
+ tplNote:'<p class="hint"><b>Note:</b> The preview uses an <b>estimated factory colour list</b>; in the car the effect reads the vehicle’s real list. Set drive profile, gear lever D/S and outside temperature in the driving simulator. Your own values are only tested on a PC, not in the car.</p>',
+ simGear:'Gear lever', simProfile:'Drive profile (Drive Select)', gear_D:'D (Drive)', gear_S:'S (Sport)', gear_X:'P / R / N',
+ prof_unknown:'unknown', prof_auto:'Auto', prof_comfort:'Comfort', prof_dynamic:'Dynamic', prof_eco:'Eco', prof_individual:'Individual',
+ toastTplOrig:'Original recognised – template loaded with its default values', toastTplOrigDiff:'Different build than the template – loaded the default values of the current template',
  ex_tempo:'Speed ramp', ex_tempoD:'Colour follows speed, brightness follows throttle',
  ex_breath:'Calm breathing', ex_breathD:'Violet, slow breathing',
  ex_rainbow:'Rainbow', ex_rainbowD:'Rotates, faster with speed',
@@ -515,13 +2007,40 @@ function defaultCfg(){
     cycBase:10, cycSpeed:60, cycSat:100,
     brSource:'none', brSrcMin:0, brSrcMax:100, brInvert:false, brMin:30, brMax:100,
     breath:false, breathSec:6, breathDepth:40, night:40,
-    brakeOn:false, brakeColor:'#FF0000', brakeBright:100, smoothMs:400, snap:true};
+    brakeOn:false, brakeColor:'#FF0000', brakeBright:100, smoothMs:400, snap:true, tpl:null, tplP:{}};
 }
 const clone = o => JSON.parse(JSON.stringify(o));
 function newId(){ const a=new Uint8Array(4); (self.crypto||window.crypto).getRandomValues(a); const h=Array.from(a).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase(); return 'AFX-'+h.slice(0,4)+'-'+h.slice(4); }
 const fmt = n => String(Math.round(n*1000)/1000);
 
+const fmtP = x => typeof x==='boolean' ? (x?'true':'false') : String(Number(Number(x).toFixed(6)));
+function tplCfg(key){ const c=defaultCfg(); c.tpl=key; c.tplP={}; c.name=(TPL_META.templates[key].label+'-Mod').slice(0,24); return c; }
+function tplMeta(key,name){ return TPL_META.templates[key].params.find(p=>p.name===name); }
+function setTplParam(c,name,raw){
+  const m=tplMeta(c.tpl,name); if(!m) return;
+  let v;
+  if(m.type==='boolean') v=!!raw; else { v=Number(raw); if(!isFinite(v)) return; v=Math.min(m.max,Math.max(m.min,m.type==='float'?v:Math.trunc(v))); }
+  if(v===m.def) delete c.tplP[name]; else c.tplP[name]=v;
+}
+function serializeTpl(c){
+  const L=['# AmbientFX Design Studio - design file (format 2, template)','format=2','template='+c.tpl,'design.id='+c.id];
+  TPL_META.templates[c.tpl].params.forEach(p=>{ if(Object.prototype.hasOwnProperty.call(c.tplP,p.name)) L.push('p.'+p.name+'='+fmtP(c.tplP[p.name])); });
+  return L.join('\n')+'\n';
+}
+function parseTpl(p){
+  const key=(p.template||'').trim();
+  if(!TPL_META.templates[key]) throw new Error('template '+key);
+  const c=tplCfg(key);
+  c.id = /^[A-Za-z0-9-]{4,40}$/.test(p['design.id']||'') ? p['design.id'] : newId();
+  TPL_META.templates[key].params.forEach(m=>{
+    const raw=p['p.'+m.name]; if(raw===undefined) return;
+    if(m.type==='boolean'){ const b=raw.toLowerCase(); if(b==='true'||b==='1') setTplParam(c,m.name,true); else if(b==='false'||b==='0') setTplParam(c,m.name,false); else throw new Error('p.'+m.name+': '+raw); }
+    else { const v=Number(raw); if(isNaN(v)) throw new Error('p.'+m.name+': '+raw); setTplParam(c,m.name,v); }
+  });
+  return c;
+}
 function serialize(c){
+  if(c.tpl) return serializeTpl(c);
   const L = [];
   L.push('# AmbientFX Design Studio - design file (format 1)');
   L.push('format=1');
@@ -572,7 +2091,8 @@ function parseProps(text){
   const flag = (k,def)=> p[k]===undefined ? def : (p[k]==='1'||p[k].toLowerCase()==='true');
   const src = (k,def)=>{ if(p[k]===undefined) return def; const s=p[k].toLowerCase(); if(s==='none'||SRC[s]) return s; throw new Error('source '+k+': '+s); };
   const hex = (s,w)=>{ s=s.trim(); if(!/^#[0-9a-fA-F]{6}$/.test(s)) throw new Error('colour '+w+': '+s); return s.toUpperCase(); };
-  if(p.format!=='1') throw new Error('format '+p.format+' (expected 1)');
+  if(p.format==='2') return parseTpl(p);
+  if(p.format!=='1') throw new Error('format '+p.format+' (expected 1 or 2)');
   const c = defaultCfg();
   c.id = /^[A-Za-z0-9-]{4,40}$/.test(p['design.id']||'') ? p['design.id'] : newId();
   c.period = num('period',100,50,500);
@@ -755,6 +2275,16 @@ function nameProblem(name){
   return null;
 }
 function buildAmbiente(cfg){
+  if(cfg.tpl){
+    const info=TPL_META.templates[cfg.tpl], cls='de.mk.ambientfx.designer.'+info.tpl;
+    return makeZip([
+      {name:'META-INF/MANIFEST.MF', data:enc('Manifest-Version: 1.0\r\nCreated-By: AmbientFX Design Studio '+STUDIO_VERSION+'\r\n\r\n')},
+      {name:'plugin.properties', data:enc('class='+cls+'\nlabel='+escProp(cfg.name.trim())+'\nid='+cfg.id+'\nversion='+CONTRACT_VERSION+'\ndesigner=2\ntemplate='+cfg.tpl+'\n')},
+      {name:'ambientfx_design.properties', data:enc(serializeTpl(cfg))},
+      {name:'de/mk/ambientfx/designer/'+info.tpl+'.class', data:b64ToU8(TPL_CLASSES[cfg.tpl])},
+      {name:'de/mk/ambientfx/designer/TplEnv.class', data:b64ToU8(TPL_CLASSES.env)}
+    ]);
+  }
   const files=[
     {name:'META-INF/MANIFEST.MF', data:enc('Manifest-Version: 1.0\r\nCreated-By: AmbientFX Design Studio\r\n\r\n')},
     {name:'plugin.properties', data:enc('class='+PLUGIN_CLASS+'\nlabel='+escProp(cfg.name.trim())+'\nid='+cfg.id+'\nversion='+CONTRACT_VERSION+'\ndesigner=1\n')},
@@ -773,7 +2303,20 @@ async function readAmbiente(buf){
     }
     return cfg;
   }
-  if(z['plugin.properties']) throw new Error('COMPILED');
+  if(z['plugin.properties']){
+    const txt=new TextDecoder().decode(z['plugin.properties']);
+    const cm=txt.match(/^class\s*[=:]\s*(.*)$/m), lm=txt.match(/^label\s*[=:]\s*(.*)$/m);
+    const cls=cm?cm[1].trim():'';
+    const key=Object.keys(TPL_ORIG).find(k=>TPL_ORIG[k].cls===cls);
+    if(key){
+      const c=tplCfg(key);
+      if(lm){ const nm=(unescProp(lm[1].trim()).replace(/[^A-Za-z0-9 ._-]/g,'')+'-Mod').slice(0,24); if(nm.length>4) c.name=nm; }
+      const ent=z[cls.replace(/\./g,'/')+'.class']; c._orig='diff';
+      if(ent){ try{ const d=await crypto.subtle.digest('SHA-256',ent); if(Array.from(new Uint8Array(d)).map(b=>b.toString(16).padStart(2,'0')).join('')===TPL_ORIG[key].sha) c._orig='same'; }catch(e){} }
+      return c;
+    }
+    throw new Error('COMPILED');
+  }
   throw new Error('NOTAMB');
 }
 </script>
@@ -806,7 +2349,7 @@ function setLang(l){
   $$('[data-i18n-html]').forEach(e=>e.innerHTML=t(e.dataset.i18nHtml));
   $$('[data-i18n-ph]').forEach(e=>e.placeholder=t(e.dataset.i18nPh));
   $$('[data-i18n-title]').forEach(e=>e.title=t(e.dataset.i18nTitle));
-  buildSelects(); buildModeSeg(); buildSliders(); buildExamples(); syncUI(); drawAll();
+  buildSelects(); buildModeSeg(); buildSliders(); buildExamples(); buildTplMenu(); buildSimExtras(); tplBuilt=''; syncUI(); drawAll();
 }
 
 /* ---------- Bausteine ---------- */
@@ -830,24 +2373,6 @@ function buildSliders(){
   });
 }
 const EXAMPLES = {
-  /* Nachbauten der mitgelieferten Effekte (Naeherung mit den Mitteln des Studios - siehe Beschreibung im Menue) */
-  mom: ()=>{ const c=defaultCfg(); c.name='Momentum-Nachbau'; c.period=150; c.mode='ramp'; c.source='speed'; c.min=0; c.max=130;
-    c.stops=[{pos:0,hex:'#FF0000'},{pos:16.67,hex:'#FFFF00'},{pos:33.33,hex:'#00FF00'},{pos:50,hex:'#00FFFF'},{pos:66.67,hex:'#0000FF'},{pos:83.33,hex:'#FF00FF'},{pos:100,hex:'#FF0000'}];
-    c.brSource='none'; c.brMax=100; c.night=40; c.brakeOn=true; c.brakeColor='#FF0000'; c.brakeBright=100; c.smoothMs=600; c.snap=false; return c; },
-  dyn: ()=>{ const c=defaultCfg(); c.name='Select-Dynamic-Nachbau'; c.period=150; c.mode='ramp'; c.source='speed'; c.min=0; c.max=130;
-    c.stops=[{pos:0,hex:'#FF0000'},{pos:50,hex:'#FF9500'},{pos:100,hex:'#D4FF00'}];
-    c.brSource='none'; c.brMax=100; c.night=100; c.brakeOn=true; c.brakeColor='#FF0000'; c.brakeBright=100; c.smoothMs=100; c.snap=false; return c; },
-  com: ()=>{ const c=defaultCfg(); c.name='Select-Comfort-Nachbau'; c.period=150; c.mode='ramp'; c.source='speed'; c.min=0; c.max=130;
-    c.stops=[{pos:0,hex:'#00FF55'},{pos:50,hex:'#00FFEA'},{pos:100,hex:'#0080FF'}];
-    c.brSource='throttle'; c.brSrcMin=0; c.brSrcMax=100; c.brMin=3; c.brMax=100; c.night=100; c.brakeOn=true; c.brakeColor='#FF0000'; c.brakeBright=100; c.smoothMs=450; c.snap=false; return c; },
-  atm: ()=>{ const c=defaultCfg(); c.name='Atmosphere-Nachbau'; c.period=150; c.mode='ramp'; c.source='temp'; c.min=-5; c.max=30;
-    c.stops=[{pos:0,hex:'#0080FF'},{pos:16.67,hex:'#00FFFC'},{pos:33.33,hex:'#00FF82'},{pos:50,hex:'#00FF00'},{pos:66.67,hex:'#82FF00'},{pos:83.33,hex:'#FCFF00'},{pos:100,hex:'#FF8000'}];
-    c.brSource='none'; c.brMax=85; c.breath=true; c.breathSec=5; c.breathDepth=41; c.night=41; c.brakeOn=false; c.smoothMs=600; c.snap=true; return c; },
-  scr: ()=>{ const c=defaultCfg(); c.name='Scroll-Nachbau'; c.period=150; c.mode='cycle'; c.cycBase=8; c.cycSpeed=47; c.cycSat=100;
-    c.brSource='none'; c.brMax=100; c.breath=true; c.breathSec=15; c.breathDepth=15; c.night=40; c.brakeOn=true; c.brakeColor='#FF0000'; c.brakeBright=100; c.smoothMs=450; c.snap=false; return c; },
-  drv: ()=>{ const c=defaultCfg(); c.name='Drive-Nachbau'; c.period=150; c.mode='ramp'; c.source='throttle'; c.min=0; c.max=66;
-    c.stops=[{pos:0,hex:'#ECB2FF'},{pos:25,hex:'#FF86ED'},{pos:50,hex:'#FF59A5'},{pos:75,hex:'#FF2D3A'},{pos:100,hex:'#FF5500'}];
-    c.brSource='throttle'; c.brSrcMin=0; c.brSrcMax=66; c.brMin=60; c.brMax=100; c.night=50; c.brakeOn=true; c.brakeColor='#FF0000'; c.brakeBright=100; c.smoothMs=250; c.snap=true; return c; },
   tempo: ()=>{ const c=defaultCfg(); c.name='Speed Ramp'; c.stops=[{pos:0,hex:'#2563EB'},{pos:30,hex:'#22D3EE'},{pos:60,hex:'#34D399'},{pos:85,hex:'#FBBF24'},{pos:100,hex:'#F43F8E'}];
     c.brSource='throttle'; c.brSrcMin=0; c.brSrcMax=100; c.brMin=45; c.brMax=100; return c; },
   breath: ()=>{ const c=defaultCfg(); c.name='Calm Breath'; c.mode='solid'; c.stops=[{pos:0,hex:'#8B5CF6'}]; c.breath=true; c.breathSec=6; c.breathDepth=45; c.brMax=90; c.smoothMs=0; return c; },
@@ -864,6 +2389,81 @@ function buildExamples(){
     b.onclick=()=>{ loadCfg(EXAMPLES[k]()); $('#exMenu').classList.remove('open'); toast(t('toastEx')); }; list.appendChild(b); });
 }
 
+/* ---------- Vorlagen (Version 1.1) ---------- */
+const SIMX = {gear:4, profile:2};
+const TPL_PAL = TplEngine.palette();
+let tplEng=null, tplSig='', tplBuilt='';
+function tplTick(now,inp){
+  const sig=cfg.tpl+'|'+JSON.stringify(cfg.tplP);
+  if(sig!==tplSig){ tplEng=TplEngine.make(cfg.tpl,cfg.tplP); tplEng.start(Math.floor(now)); tplSig=sig; }
+  const out=new TplEngine.Rgb(), nowI=Math.floor(now);
+  const v={valid:true,lastUpdateMs:nowI,speedKmh:Math.fround(inp.speed),speedUnit:0,acceleratorPct:Math.round(inp.throttle),wheelAngle:Math.round(inp.steer),gearTransMode:SIMX.gear,driverBraking:!!inp.braking};
+  tplEng.tick(nowI,v,TPL_PAL,!$('#simNight').checked,out,{profile:SIMX.profile,tempC:inp.temp});
+  return {r:out.r,g:out.g,b:out.b,ideal:[out.r,out.g,out.b],bright:1};
+}
+function buildTplMenu(){
+  const list=$('#tplList'); list.innerHTML='';
+  Object.keys(TPL_META.templates).forEach(k=>{ const b=document.createElement('button'); b.type='button'; b.innerHTML=t('tpl_'+k)+'<small>'+t('tpl_'+k+'D')+'</small>';
+    b.onclick=()=>{ loadCfg(tplCfg(k)); $('#tplMenu').classList.remove('open'); toast(t('toastTpl')+': '+t('tpl_'+k)); }; list.appendChild(b); });
+}
+function buildSimExtras(){
+  const g=$('#simGear'), p=$('#simProfile');
+  g.innerHTML=''; [[4,'gear_D'],[5,'gear_S'],[0,'gear_X']].forEach(([v,k])=>{ const o=document.createElement('option'); o.value=v; o.textContent=t(k); g.appendChild(o); });
+  p.innerHTML=''; [[2,'prof_auto'],[1,'prof_comfort'],[3,'prof_dynamic'],[5,'prof_eco'],[7,'prof_individual'],[-1,'prof_unknown']].forEach(([v,k])=>{ const o=document.createElement('option'); o.value=v; o.textContent=t(k); p.appendChild(o); });
+  g.value=SIMX.gear; p.value=SIMX.profile;
+}
+function buildTplEditor(){
+  const info=TPL_META.templates[cfg.tpl], box=$('#tplBody'); box.innerHTML='';
+  $('#tplName').textContent=t('tpl_'+cfg.tpl);
+  TPL_META.groups.forEach(g=>{
+    const ps=info.params.filter(p=>p.group===g.id); if(!ps.length) return;
+    const h=document.createElement('h3'); h.textContent=g[lang]; box.appendChild(h);
+    ps.forEach(p=>{
+      const row=document.createElement('div'); row.className='prow'; row.dataset.p=p.name;
+      const nm=document.createElement('div'); nm.className='nm'; nm.innerHTML=''; nm.appendChild(document.createTextNode(p[lang]));
+      const sm=document.createElement('small'); sm.textContent=p.name; nm.appendChild(sm); row.appendChild(nm);
+      if(p.type==='boolean'){
+        const c=document.createElement('input'); c.type='checkbox'; c.dataset.role='bool'; c.onchange=()=>{ setTplParam(cfg,p.name,c.checked); changed(); };
+        const w=document.createElement('div'); w.appendChild(c); row.appendChild(w); row.appendChild(document.createElement('div'));
+      } else {
+        const r=document.createElement('input'); r.type='range'; r.min=p.min; r.max=p.max; r.step=p.step||1; r.dataset.role='rng';
+        const n=document.createElement('input'); n.type='number'; n.step='any'; n.dataset.role='num';
+        r.oninput=()=>{ setTplParam(cfg,p.name,r.value); changed(); };
+        n.oninput=()=>{ if(n.value==='') return; setTplParam(cfg,p.name,n.value); changed(); };
+        n.onchange=()=>{ updateTplValues(false); };
+        row.appendChild(r);
+        const u=document.createElement('div'); u.className='uw'; u.appendChild(n); row.appendChild(u);
+        if(p.unit){ const us=document.createElement('span'); us.className='unit'; us.textContent=' '+p.unit; u.appendChild(us); }
+      }
+      const rs=document.createElement('button'); rs.type='button'; rs.className='rs'; rs.textContent='↺'; rs.title=t('tplResetOne'); rs.onclick=()=>{ delete cfg.tplP[p.name]; changed(); updateTplValues(false); };
+      row.appendChild(rs);
+      const og=document.createElement('div'); og.className='org'; og.dataset.role='org'; row.appendChild(og);
+      box.appendChild(row);
+    });
+  });
+}
+function updateTplValues(keepFocus){
+  const ae=document.activeElement, info=TPL_META.templates[cfg.tpl];
+  $$('#tplBody .prow').forEach(row=>{
+    const name=row.dataset.p, m=tplMeta(cfg.tpl,name), chg=Object.prototype.hasOwnProperty.call(cfg.tplP,name);
+    const val=chg?cfg.tplP[name]:m.def;
+    row.classList.toggle('chg',chg);
+    const b=$('[data-role="bool"]',row), r=$('[data-role="rng"]',row), n=$('[data-role="num"]',row), og=$('[data-role="org"]',row);
+    if(b){ b.checked=!!val; }
+    if(r && !(keepFocus&&ae===r)) r.value=val;
+    if(n && !(keepFocus&&ae===n)) n.value=String(Number(Number(val).toFixed(4)));
+    og.textContent = chg ? t('tplOrig')+': '+(m.type==='boolean'?(m.def?'✓':'–'):String(m.def)+(m.unit?' '+m.unit:'')) : '';
+    og.style.display = chg ? '' : 'none';
+  });
+}
+function syncTpl(keepFocus){
+  document.body.classList.toggle('tpl',!!cfg.tpl);
+  if(!cfg.tpl) return;
+  const sig=cfg.tpl+'|'+lang;
+  if(sig!==tplBuilt){ buildTplEditor(); tplBuilt=sig; }
+  updateTplValues(keepFocus);
+}
+
 /* ---------- Zustand <-> Oberflaeche ---------- */
 function loadCfg(c){ cfg=c; selStop=cfg.stops[Math.min(1,cfg.stops.length-1)]||cfg.stops[0]; engine.setCfg(cfg); engine.start(performance.now()); syncUI(); drawAll(); }
 function changed(){ engine.setCfg(cfg); syncUI(true); drawAll(); }
@@ -871,6 +2471,7 @@ function whenOK(expr){ return expr.split(' ').every(cond=>{ const [k,v]=cond.spl
   return v.startsWith('!') ? String(cfg[k])!==v.slice(1) : String(cfg[k])===v; }); }
 function syncUI(keepFocus){
   const ae=document.activeElement;
+  syncTpl(keepFocus);
   $$('[data-k]').forEach(e=>{ if(keepFocus&&e===ae) return; const v=cfg[e.dataset.k]; if(e.type==='checkbox') e.checked=!!v; else e.value=v; });
   $$('[data-when]').forEach(e=>e.hidden=!whenOK(e.dataset.when));
   $$('[data-unit]').forEach(e=>{ const s=SRC[cfg[e.dataset.unit]]; e.textContent = s ? '('+s.unit+')' : ''; });
@@ -980,13 +2581,13 @@ function currentInputs(now){
 }
 function frame(now){
   const inp=currentInputs(now);
-  const o=engine.tick(now,inp,!$('#simNight').checked,null);
+  const o=cfg.tpl ? tplTick(now,inp) : engine.tick(now,inp,!$('#simNight').checked,null);
   const col=rgbHex(o.r,o.g,o.b), idl=rgbHex(o.ideal[0],o.ideal[1],o.ideal[2]);
   const cab=$('#cab'); cab.style.setProperty('--led','rgb('+o.ideal[0]+','+o.ideal[1]+','+o.ideal[2]+')'); cab.style.setProperty('--lo',String(Math.max(0.04,o.bright)));
   $('#swOut').style.background=col; $('#swIdeal').style.background=idl;
   $('#hexOut').textContent=col; $('#rgbOut').textContent='rgb('+o.r+','+o.g+','+o.b+')'; $('#brOut').textContent=Math.round(o.bright*100)+' %';
   const cc=engine.c; const mk=$('#marker');
-  if(cc.mode==='ramp'){ const f=norm(engine.input(cc.source,inp),cc.min,cc.max); mk.style.left='calc('+(f*100)+'% - 1px)'; mk.hidden=false; }
+  if(!cfg.tpl && cc.mode==='ramp'){ const f=norm(engine.input(cc.source,inp),cc.min,cc.max); mk.style.left='calc('+(f*100)+'% - 1px)'; mk.hidden=false; }
   else mk.hidden = true;
   requestAnimationFrame(frame);
 }
@@ -999,7 +2600,7 @@ async function importFile(file){
     let c;
     if(/\.(properties|txt)$/i.test(file.name)){ c=parseProps(new TextDecoder().decode(buf)); c.name=file.name.replace(/\.[^.]+$/,'').slice(0,24); }
     else c=await readAmbiente(buf);
-    loadCfg(c); toast(t('toastImported')+': '+c.name);
+    loadCfg(c); toast(c._orig==='same' ? t('toastTplOrig')+': '+c.name : c._orig==='diff' ? t('toastTplOrigDiff')+': '+c.name : t('toastImported')+': '+c.name);
   }catch(e){
     const m=String(e.message||e);
     toast(m==='COMPILED'?t('errCompiled'):m==='INFLATE'?t('errInflate'):(m==='NOTAMB'||m==='NOTZIP')?t('errNotAmb'):t('errFormat')+m,true);
@@ -1012,7 +2613,12 @@ function wire(){
   $('#bImport').onclick=()=>$('#file').click();
   $('#file').onchange=e=>{ if(e.target.files[0]) importFile(e.target.files[0]); e.target.value=''; };
   $('#bEx').onclick=e=>{ e.stopPropagation(); $('#exMenu').classList.toggle('open'); };
-  document.addEventListener('click',()=>$('#exMenu').classList.remove('open'));
+  $('#bTpl').onclick=e=>{ e.stopPropagation(); $('#exMenu').classList.remove('open'); $('#tplMenu').classList.toggle('open'); };
+  $('#bEx').addEventListener('click',()=>$('#tplMenu').classList.remove('open'));
+  document.addEventListener('click',()=>{ $('#exMenu').classList.remove('open'); $('#tplMenu').classList.remove('open'); });
+  $('#tplResetAll').onclick=()=>{ cfg.tplP={}; changed(); };
+  $('#simGear').onchange=e=>{ SIMX.gear=Number(e.target.value); };
+  $('#simProfile').onchange=e=>{ SIMX.profile=Number(e.target.value); };
   $('#bExport').onclick=()=>{
     const np=nameProblem(cfg.name); if(np){ toast(t(np),true); $('#name').focus(); return; }
     sortStops(); let bytes; try{ bytes=buildAmbiente(cfg); }catch(e){ toast(String(e.message||e),true); return; }

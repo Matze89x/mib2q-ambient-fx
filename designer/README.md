@@ -25,7 +25,9 @@ Das **Design Studio** ist ein Editor im Browser, mit dem du eigene AmbientFX-Eff
 
 Importieren kannst du **Designs, die das Design Studio erzeugt hat** (`.ambiente`), und den **Design-Text** (Karte „Design als Text“) zum Teilen im Chat. Fertig kompilierte Effekte (Momentum, Atmosphere …) lassen sich hier **nicht** bearbeiten, denn sie enthalten nur Bytecode, kein Design.
 
-**Nachbauten der mitgelieferten Effekte:** Unter **Beispiele** liegen Nachbauten von Momentum, Momentum select (Dynamic und Comfort), Atmosphere, Scroll und Drive. Sie sind **Annäherungen** mit den Mitteln des Studios, keine Kopien: Das Studio hat eine Farbquelle, eine Helligkeitsquelle und einen Nachtfaktor. Es fehlen zum Beispiel der D→S-Blitz, die Nachtkurve nach Gas bei Momentum, das Umschalten nach Fahrprofil bei Momentum select und der Lenkwinkel bei Drive. Zum Ausprobieren und Umbauen sind sie gedacht. Vor dem Export unbedingt umbenennen: Die Namen der echten Effekte sind gesperrt, damit es keine doppelten Menüeinträge gibt.
+**Version 1.1 – die mitgelieferten Effekte bearbeiten (Original-Vorlagen):** Über **Original-Vorlagen** laden sich Momentum, Momentum select, Atmosphere, Scroll und Drive mit **allen ihren Einstellwerten**. Ohne Änderung verhalten sie sich **exakt wie das Original**. Importierst du eine der fünf mitgelieferten `.ambiente`-Dateien, erkennt das Studio sie und öffnet die passende Vorlage mit den Standardwerten. Was du ändern kannst: Farbweg und Tempo-Spanne, Zeitkonstanten (wie schnell heller/dunkler), Nacht-Kurve, D→S-Blitz (Zeiten), je Fahrprofil Farbwelt und Glättung (Momentum select), Temperatur-Grenzen und Atmen (Atmosphere), Drehung und Schimmern (Scroll), Farbton, Sättigung und Lenkwinkel-Einfluss (Drive). Fahrprofil, Gangwahlhebel D/S und Außentemperatur stellst du im Fahrsimulator ein. Die Vorschau benutzt eine **geschätzte** Werksfarbliste, im Auto gilt die echte Liste des Fahrzeugs. Vor dem Export unbedingt umbenennen: Die Namen der echten Effekte sind gesperrt, damit es keine doppelten Menüeinträge gibt.
+
+*Wie „exakt wie das Original“ geprüft wird:* Die Vorlagen-Klassen werden **automatisch aus den Original-Effekten erzeugt** (`designer/tools/gen_templates.py`): jede Konstante wird zu einem Wert, der aus der Design-Datei überschrieben werden kann, der Rest des Codes bleibt Zeichen für Zeichen derselbe. `designer/tests/TplEquivTest.java` lässt jede Vorlage Takt für Takt gegen die **echte Effekt-Klasse** laufen (60 000 Takte, alle Fahrprofile, D/S, Tag/Nacht, Bremse, mph, ungültige Daten, mit und ohne Werksliste: 0 Abweichungen). `designer/tests/tpl_parity.sh` vergleicht außerdem die JavaScript-Vorschau mit den Java-Vorlagen für zufällige Werte-Änderungen (180 000 Takte, 0 Abweichungen). Im Auto sind eigene Werte **nicht** getestet.
 
 ## Die ID
 
@@ -96,10 +98,13 @@ Einheiten: Tempo immer in **km/h** (mph wird umgerechnet), Lenkwinkel als **Betr
 
 ```bash
 ./build_java.sh                       # braucht dein vendor/lsd.jar, siehe docs/BAUEN_BUILD.md
-./designer/build_runtime.sh           # baut DesignEffect.class (Java-1.2-Regeln), zeigt die SHA-256
+./designer/build_runtime.sh           # baut DesignEffect.class + die Vorlagen-Klassen Tpl*.class (Java-1.2-Regeln), zeigt die SHA-256
 python3 tools/embed_designer.py       # setzt Klasse + Schriften + Vertragsversion in docs/designer/index.html ein
 designer/check_ambiente.sh mein.ambiente        # lädt ein exportiertes Design mit dem Original-Plugin-Lader
 designer/tests/parity.sh parity_js.json         # JavaScript-Engine gegen die Java-Klasse (parity_snippet.js erzeugt die Datei)
+designer/tests/parity_auto.sh                   # dasselbe ohne Browser (node oder macOS-JavaScriptCore)
+designer/tests/tpl_parity.sh                    # Vorlagen: JavaScript-Vorschau gegen die erzeugten Java-Vorlagen
+designer/tests/tpl_equiv.sh                     # Vorlagen gegen die ECHTEN Effekt-Klassen (muss "Abweichungen: 0" melden)
 ```
 
 Die **SHA-256** der eingebetteten Klasse steht im Studio unter „So kommt dein Design ins Auto“. Wenn du `build_runtime.sh` mit demselben JDK 8 ausführst, sollte sie übereinstimmen. Du musst dem Binärteil nicht trauen: der Quelltext liegt hier und das Ergebnis lässt sich nachbauen.
@@ -139,7 +144,9 @@ The **Design Studio** is an editor in your browser to build your own AmbientFX e
 
 You can import **designs created by the Design Studio** (`.ambiente`) and the **design text** (card “Design as text”) for sharing in a chat. Precompiled effects (Momentum, Atmosphere …) cannot be edited here because they contain only bytecode, no design.
 
-**Replicas of the bundled effects:** Under **Examples** you find replicas of Momentum, Momentum select (Dynamic and Comfort), Atmosphere, Scroll and Drive. They are **approximations** within what the Studio can do, not copies: the Studio has one colour source, one brightness source and one night factor. Missing, for example: the D→S flash, the night curve by throttle in Momentum, switching by drive profile in Momentum select and the steering angle in Drive. They are meant for trying out and modifying. Rename before exporting: the names of the real effects are reserved so there are no duplicate menu entries.
+**Version 1.1 – edit the bundled effects (original templates):** Under **Original templates** Momentum, Momentum select, Atmosphere, Scroll and Drive load with **all of their settings**. Unchanged they behave **exactly like the original**. If you import one of the five bundled `.ambiente` files the Studio recognises it and opens the matching template with its default values. What you can change: colour path and speed span, time constants (how fast it brightens/dims), night curve, D→S flash (timings), per drive profile colour range and smoothing (Momentum select), temperature limits and breathing (Atmosphere), rotation and shimmer (Scroll), hue, saturation and steering influence (Drive). Drive profile, gear lever D/S and outside temperature are set in the driving simulator. The preview uses an **estimated** factory colour list; in the car the real list of the vehicle applies. Rename before exporting: the names of the real effects are reserved so there are no duplicate menu entries.
+
+*How “exactly like the original” is verified:* the template classes are **generated automatically from the original effects** (`designer/tools/gen_templates.py`): every constant becomes a value the design file can override, the rest of the code stays character for character the same. `designer/tests/TplEquivTest.java` runs every template tick by tick against the **real effect class** (60,000 ticks, all drive profiles, D/S, day/night, brake, mph, invalid data, with and without a factory list: 0 deviations). `designer/tests/tpl_parity.sh` also compares the JavaScript preview with the Java templates for random value changes (180,000 ticks, 0 deviations). Your own values are **not** tested in the car.
 
 ## The ID
 

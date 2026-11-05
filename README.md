@@ -43,6 +43,8 @@ Ein Effekt ist eine kleine Java-Klasse mit drei Methoden (`start`, `tick`, `peri
 
 **Neu, experimentell: das [Design Studio](designer/README.md).** Ein Editor im Browser (eine einzige HTML-Datei, läuft offline), mit dem du Designs **ohne Programmieren** neu erstellst, importierst, bearbeitest und als `.ambiente` exportierst, mit Live-Vorschau, dunklem Design, Deutsch/Englisch. Online: https://matze89x.github.io/mib2q-ambient-fx/designer/ (sobald GitHub Pages aktiv ist), sonst [`docs/designer/index.html`](docs/designer/index.html) herunterladen und im Browser öffnen. **Bisher nur am PC getestet, noch nicht im Fahrzeug.**
 
+**Version 1.1:** Die fünf **mitgelieferten Effekte** (Momentum, Momentum select, Atmosphere, Scroll, Drive) lassen sich jetzt als **Original-Vorlagen** öffnen und mit allen ihren Einstellwerten ändern: Farbweg, Zeitkonstanten, Nacht-Kurve, D→S-Blitz, Farbwelten je Fahrprofil, Temperatur-Grenzen und mehr. Auch ein Import der mitgelieferten `.ambiente`-Dateien ins Studio funktioniert. Ohne Änderung verhält sich eine Vorlage **exakt wie das Original** (Takt für Takt gegen die echten Effekt-Klassen geprüft, siehe [designer/README.md](designer/README.md)). Eigene Werte sind nur am PC getestet.
+
 ## Was dieses Repository nicht enthält
 
 - **Keinen Audi-/VW-/e.solutions-Code und keine Firmware.** Die drei Original-Klassen, die AmbientFX ersetzt, werden **nicht** mitgeliefert. Du erzeugst sie selbst aus **deiner eigenen** `lsd.jar` (`tools/decompile_stock.sh`), das Repository enthält nur die kleinen Änderungen als Patch-Dateien (`patches/`).
@@ -108,7 +110,7 @@ AmbientFX kann ein **Protokoll nur im RAM** führen, das du per Telnet ausliest.
 
 ## Roadmap
 
-- **Design Studio erweitern** (mehr Bausteine, etwa Gang-abhängige Regeln oder Zonen), nach dem ersten Test im Fahrzeug. Ideen und Mithilfe willkommen.
+- **Design Studio erweitern** (mehr Bausteine in den freien Designs, etwa Gang- oder Profil-abhängige Regeln oder Zonen; die Original-Vorlagen können das schon), nach dem ersten Test im Fahrzeug. Ideen und Mithilfe willkommen.
 - **Passive LED-Beleuchtung (Fläche)** demnächst mit aufnehmen. Phase 1 sind nur die LED-Streifen.
 - Weitere Ideen: Einparkhilfe-Effekt, Blinker-Impuls, Helligkeit je Zone.
 - Englische Übersetzung der technischen Detail-Dokumente.
@@ -170,6 +172,8 @@ Colours are taken **at runtime from the factory colour list the vehicle itself r
 An effect is a small Java class with three methods (`start`, `tick`, `periodMs`), built as a **`.ambiente` plugin** without touching the main jar. Step by step: **[docs/EIGENE-DESIGNS_CUSTOM-DESIGNS.md](docs/EIGENE-DESIGNS_CUSTOM-DESIGNS.md)**, a working example in [`examples/MeinEffekt.java`](examples/MeinEffekt.java), and the detailed [effects handbook](EFFEKTE_HANDBUCH.md) (German).
 
 **New, experimental: the [Design Studio](designer/README.md).** An editor in your browser (one single HTML file, works offline) to **create, import, edit** and **export** designs as `.ambiente` **without programming**, with live preview, dark design, German/English. Online: https://matze89x.github.io/mib2q-ambient-fx/designer/ (once GitHub Pages is enabled), otherwise download [`docs/designer/index.html`](docs/designer/index.html) and open it in a browser. **Tested on a computer so far, not yet in a vehicle.**
+
+**Version 1.1:** The five **bundled effects** (Momentum, Momentum select, Atmosphere, Scroll, Drive) can now be opened as **original templates** and changed with all of their settings: colour path, time constants, night curve, D→S flash, colour ranges per drive profile, temperature limits and more. Importing the bundled `.ambiente` files into the Studio works as well. Unchanged, a template behaves **exactly like the original** (checked tick by tick against the real effect classes, see [designer/README.md](designer/README.md)). Your own values are only tested on a computer.
 
 ## What this repository does not contain
 
@@ -236,7 +240,7 @@ AmbientFX can keep a **log in RAM only** that you read via telnet. It is **off b
 
 ## Roadmap
 
-- **Extend the Design Studio** (more building blocks, e.g. gear-dependent rules or zones), after the first test in a vehicle. Ideas and help welcome.
+- **Extend the Design Studio** (more building blocks in the free designs, e.g. gear- or profile-dependent rules or zones; the original templates can already do that), after the first test in a vehicle. Ideas and help welcome.
 - **Passive LED lighting (surface)** to be added soon. Phase 1 is the LED strips only.
 - More ideas: parking-distance effect, indicator pulse, brightness per zone.
 - English translation of the technical detail documents.

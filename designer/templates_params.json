@@ -1,0 +1,1073 @@
+{
+ "groups": [
+  {
+   "id": "color",
+   "de": "Farbe",
+   "en": "Colour"
+  },
+  {
+   "id": "speed",
+   "de": "Tempo",
+   "en": "Speed"
+  },
+  {
+   "id": "drive",
+   "de": "Gaspedal und Lenkung",
+   "en": "Throttle and steering"
+  },
+  {
+   "id": "temp",
+   "de": "Außentemperatur",
+   "en": "Outside temperature"
+  },
+  {
+   "id": "breath",
+   "de": "Atmen und Schimmern",
+   "en": "Breathing and shimmer"
+  },
+  {
+   "id": "night",
+   "de": "Nacht",
+   "en": "Night"
+  },
+  {
+   "id": "time",
+   "de": "Glättung (Zeitkonstanten)",
+   "en": "Smoothing (time constants)"
+  },
+  {
+   "id": "flash",
+   "de": "D→S-Blitz (Gangwahlhebel)",
+   "en": "D→S flash (gear lever)"
+  },
+  {
+   "id": "prof_auto",
+   "de": "Fahrprofil Auto / Individual",
+   "en": "Drive profile Auto / Individual"
+  },
+  {
+   "id": "prof_dyn",
+   "de": "Fahrprofil Dynamic",
+   "en": "Drive profile Dynamic"
+  },
+  {
+   "id": "prof_com",
+   "de": "Fahrprofil Comfort / Eco",
+   "en": "Drive profile Comfort / Eco"
+  },
+  {
+   "id": "send",
+   "de": "Takt",
+   "en": "Timing"
+  }
+ ],
+ "templates": {
+  "momentum": {
+   "class": "Momentum",
+   "tpl": "TplMomentum",
+   "label": "Momentum",
+   "params": [
+    {
+     "name": "RAINBOW_SPAN_KMH",
+     "type": "float",
+     "def": 130.0,
+     "group": "color",
+     "min": 20,
+     "max": 300,
+     "step": 1,
+     "unit": "km/h",
+     "de": "Farbkreis komplett bei",
+     "en": "Colour ring complete at"
+    },
+    {
+     "name": "SPEED_STEP_KMH",
+     "type": "float",
+     "def": 10.0,
+     "group": "color",
+     "min": 1,
+     "max": 50,
+     "step": 1,
+     "unit": "km/h",
+     "de": "Stufenbreite (nur ohne weiche Übergänge)",
+     "en": "Step width (only without smooth blending)"
+    },
+    {
+     "name": "SMOOTH_COLORS",
+     "type": "boolean",
+     "def": true,
+     "group": "color",
+     "min": null,
+     "max": null,
+     "step": null,
+     "unit": "",
+     "de": "Weiche Übergänge zwischen Werksfarben",
+     "en": "Smooth blending between factory colours"
+    },
+    {
+     "name": "RING_MIN_SAT",
+     "type": "float",
+     "def": 0.35,
+     "group": "color",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Ring: Mindest-Sättigung einer Werksfarbe",
+     "en": "Ring: min. saturation of a factory colour"
+    },
+    {
+     "name": "RING_MIN_VAL",
+     "type": "float",
+     "def": 0.25,
+     "group": "color",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Ring: Mindest-Helligkeit einer Werksfarbe",
+     "en": "Ring: min. brightness of a factory colour"
+    },
+    {
+     "name": "TC_BRIGHT_UP",
+     "type": "float",
+     "def": 120.0,
+     "group": "time",
+     "min": 10,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Heller werden: Zeitkonstante",
+     "en": "Brightening time constant"
+    },
+    {
+     "name": "TC_BRIGHT_DOWN",
+     "type": "float",
+     "def": 350.0,
+     "group": "time",
+     "min": 10,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Dunkler werden: Zeitkonstante",
+     "en": "Dimming time constant"
+    },
+    {
+     "name": "NIGHT_ACCEL_SATURATE_PCT",
+     "type": "float",
+     "def": 50.0,
+     "group": "night",
+     "min": 1,
+     "max": 100,
+     "step": 1,
+     "unit": "%",
+     "de": "Nacht: volle Helligkeit ab Gas",
+     "en": "Night: full brightness from throttle"
+    },
+    {
+     "name": "NIGHT_BRIGHT_FLOOR",
+     "type": "float",
+     "def": 0.05,
+     "group": "night",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Nacht: Mindesthelligkeit",
+     "en": "Night: minimum brightness"
+    },
+    {
+     "name": "FLASH_HOLD_MS",
+     "type": "long",
+     "def": 1000,
+     "group": "flash",
+     "min": 0,
+     "max": 10000,
+     "step": 50,
+     "unit": "ms",
+     "de": "D→S-Blitz: Weiß halten",
+     "en": "D→S flash: hold white"
+    },
+    {
+     "name": "FLASH_FADE_MS",
+     "type": "long",
+     "def": 2000,
+     "group": "flash",
+     "min": 1,
+     "max": 10000,
+     "step": 50,
+     "unit": "ms",
+     "de": "D→S-Blitz: Überblenden",
+     "en": "D→S flash: fade back"
+    },
+    {
+     "name": "TC_SPEED_MS",
+     "type": "float",
+     "def": 600.0,
+     "group": "time",
+     "min": 1,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Tempo-Glättung",
+     "en": "Speed smoothing"
+    },
+    {
+     "name": "PERIOD_MS",
+     "type": "int",
+     "def": 150,
+     "group": "send",
+     "min": 50,
+     "max": 500,
+     "step": 10,
+     "unit": "ms",
+     "de": "Sende-Takt",
+     "en": "Send interval"
+    }
+   ]
+  },
+  "momentumselect": {
+   "class": "MomentumSelect",
+   "tpl": "TplMomentumSelect",
+   "label": "Momentum select",
+   "params": [
+    {
+     "name": "RAINBOW_SPAN_KMH",
+     "type": "float",
+     "def": 130.0,
+     "group": "color",
+     "min": 20,
+     "max": 300,
+     "step": 1,
+     "unit": "km/h",
+     "de": "Farbkreis komplett bei",
+     "en": "Colour ring complete at"
+    },
+    {
+     "name": "SPEED_STEP_KMH",
+     "type": "float",
+     "def": 10.0,
+     "group": "color",
+     "min": 1,
+     "max": 50,
+     "step": 1,
+     "unit": "km/h",
+     "de": "Stufenbreite (nur ohne weiche Übergänge)",
+     "en": "Step width (only without smooth blending)"
+    },
+    {
+     "name": "SMOOTH_COLORS",
+     "type": "boolean",
+     "def": true,
+     "group": "color",
+     "min": null,
+     "max": null,
+     "step": null,
+     "unit": "",
+     "de": "Weiche Übergänge zwischen Werksfarben",
+     "en": "Smooth blending between factory colours"
+    },
+    {
+     "name": "RING_MIN_SAT",
+     "type": "float",
+     "def": 0.35,
+     "group": "color",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Ring: Mindest-Sättigung einer Werksfarbe",
+     "en": "Ring: min. saturation of a factory colour"
+    },
+    {
+     "name": "RING_MIN_VAL",
+     "type": "float",
+     "def": 0.25,
+     "group": "color",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Ring: Mindest-Helligkeit einer Werksfarbe",
+     "en": "Ring: min. brightness of a factory colour"
+    },
+    {
+     "name": "TC_HUE_DEFAULT",
+     "type": "float",
+     "def": 600.0,
+     "group": "prof_auto",
+     "min": 1,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Auto/Individual: Farbglättung",
+     "en": "Auto/Individual: colour smoothing"
+    },
+    {
+     "name": "TC_BRIGHT_DEFAULT_UP",
+     "type": "float",
+     "def": 120.0,
+     "group": "prof_auto",
+     "min": 10,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Auto/Individual: heller werden",
+     "en": "Auto/Individual: brightening"
+    },
+    {
+     "name": "TC_BRIGHT_DEFAULT_DOWN",
+     "type": "float",
+     "def": 350.0,
+     "group": "prof_auto",
+     "min": 10,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Auto/Individual: dunkler werden",
+     "en": "Auto/Individual: dimming"
+    },
+    {
+     "name": "NIGHT_ACCEL_SATURATE_PCT",
+     "type": "float",
+     "def": 50.0,
+     "group": "night",
+     "min": 1,
+     "max": 100,
+     "step": 1,
+     "unit": "%",
+     "de": "Nacht: volle Helligkeit ab Gas",
+     "en": "Night: full brightness from throttle"
+    },
+    {
+     "name": "NIGHT_BRIGHT_FLOOR",
+     "type": "float",
+     "def": 0.05,
+     "group": "night",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Nacht: Mindesthelligkeit",
+     "en": "Night: minimum brightness"
+    },
+    {
+     "name": "TC_HUE_DYNAMIC",
+     "type": "float",
+     "def": 150.0,
+     "group": "prof_dyn",
+     "min": 1,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Dynamic: Farbglättung",
+     "en": "Dynamic: colour smoothing"
+    },
+    {
+     "name": "TC_BRIGHT_DYNAMIC",
+     "type": "float",
+     "def": 100.0,
+     "group": "prof_dyn",
+     "min": 10,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Dynamic: Helligkeitsglättung",
+     "en": "Dynamic: brightness smoothing"
+    },
+    {
+     "name": "TC_HUE_COMFORT_ECO",
+     "type": "float",
+     "def": 1000.0,
+     "group": "prof_com",
+     "min": 1,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Comfort/Eco: Farbglättung",
+     "en": "Comfort/Eco: colour smoothing"
+    },
+    {
+     "name": "TC_BRIGHT_COMFORT_ECO_UP",
+     "type": "float",
+     "def": 250.0,
+     "group": "prof_com",
+     "min": 10,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Comfort/Eco: heller werden",
+     "en": "Comfort/Eco: brightening"
+    },
+    {
+     "name": "TC_BRIGHT_COMFORT_ECO_DOWN",
+     "type": "float",
+     "def": 700.0,
+     "group": "prof_com",
+     "min": 10,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Comfort/Eco: dunkler werden",
+     "en": "Comfort/Eco: dimming"
+    },
+    {
+     "name": "HUE_START_DEFAULT",
+     "type": "float",
+     "def": 0.0,
+     "group": "prof_auto",
+     "min": -720,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Auto/Individual: Start-Farbton",
+     "en": "Auto/Individual: start hue"
+    },
+    {
+     "name": "HUE_SPAN_DEFAULT",
+     "type": "float",
+     "def": 360.0,
+     "group": "prof_auto",
+     "min": -720,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Auto/Individual: Farbton-Strecke",
+     "en": "Auto/Individual: hue span"
+    },
+    {
+     "name": "HUE_START_DYNAMIC",
+     "type": "float",
+     "def": 0.0,
+     "group": "prof_dyn",
+     "min": -720,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Dynamic: Start-Farbton",
+     "en": "Dynamic: start hue"
+    },
+    {
+     "name": "HUE_SPAN_DYNAMIC",
+     "type": "float",
+     "def": 70.0,
+     "group": "prof_dyn",
+     "min": -720,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Dynamic: Farbton-Strecke",
+     "en": "Dynamic: hue span"
+    },
+    {
+     "name": "HUE_START_COMFORT_ECO",
+     "type": "float",
+     "def": 140.0,
+     "group": "prof_com",
+     "min": -720,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Comfort/Eco: Start-Farbton",
+     "en": "Comfort/Eco: start hue"
+    },
+    {
+     "name": "HUE_SPAN_COMFORT_ECO",
+     "type": "float",
+     "def": 70.0,
+     "group": "prof_com",
+     "min": -720,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Comfort/Eco: Farbton-Strecke",
+     "en": "Comfort/Eco: hue span"
+    },
+    {
+     "name": "DYNAMIC_THROTTLE_PULL",
+     "type": "float",
+     "def": 0.8,
+     "group": "prof_dyn",
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "unit": "",
+     "de": "Dynamic: Gas zieht Richtung Rot",
+     "en": "Dynamic: throttle pulls towards red"
+    },
+    {
+     "name": "TRY_BLENDED_COLORS",
+     "type": "boolean",
+     "def": true,
+     "group": "color",
+     "min": null,
+     "max": null,
+     "step": null,
+     "unit": "",
+     "de": "Bremse/Notfall: zwei Werksfarben mischen",
+     "en": "Brake/fallback: blend two factory colours"
+    },
+    {
+     "name": "FLASH_HOLD_MS",
+     "type": "long",
+     "def": 1000,
+     "group": "flash",
+     "min": 0,
+     "max": 10000,
+     "step": 50,
+     "unit": "ms",
+     "de": "D→S-Blitz: Weiß halten",
+     "en": "D→S flash: hold white"
+    },
+    {
+     "name": "FLASH_FADE_MS",
+     "type": "long",
+     "def": 2000,
+     "group": "flash",
+     "min": 1,
+     "max": 10000,
+     "step": 50,
+     "unit": "ms",
+     "de": "D→S-Blitz: Überblenden",
+     "en": "D→S flash: fade back"
+    },
+    {
+     "name": "COMFORT_BRIGHT_FLOOR",
+     "type": "float",
+     "def": 0.03,
+     "group": "prof_com",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Comfort/Eco: Helligkeit ohne Gas",
+     "en": "Comfort/Eco: brightness at no throttle"
+    },
+    {
+     "name": "COMFORT_BRIGHT_SPAN",
+     "type": "float",
+     "def": 0.97,
+     "group": "prof_com",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Comfort/Eco: Zuwachs bis Vollgas",
+     "en": "Comfort/Eco: increase up to full throttle"
+    },
+    {
+     "name": "PERIOD_MS",
+     "type": "int",
+     "def": 150,
+     "group": "send",
+     "min": 50,
+     "max": 500,
+     "step": 10,
+     "unit": "ms",
+     "de": "Sende-Takt",
+     "en": "Send interval"
+    }
+   ]
+  },
+  "atmosphere": {
+   "class": "Atmosphere",
+   "tpl": "TplAtmosphere",
+   "label": "Atmosphere",
+   "params": [
+    {
+     "name": "TEMP_COLD_C",
+     "type": "float",
+     "def": -5.0,
+     "group": "temp",
+     "min": -40,
+     "max": 60,
+     "step": 1,
+     "unit": "°C",
+     "de": "Kalt bei",
+     "en": "Cold at"
+    },
+    {
+     "name": "TEMP_WARM_C",
+     "type": "float",
+     "def": 30.0,
+     "group": "temp",
+     "min": -40,
+     "max": 60,
+     "step": 1,
+     "unit": "°C",
+     "de": "Warm bei",
+     "en": "Warm at"
+    },
+    {
+     "name": "HUE_COLD",
+     "type": "float",
+     "def": 210.0,
+     "group": "temp",
+     "min": -720,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Farbton kalt",
+     "en": "Hue cold"
+    },
+    {
+     "name": "HUE_WARM",
+     "type": "float",
+     "def": 30.0,
+     "group": "temp",
+     "min": -720,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Farbton warm",
+     "en": "Hue warm"
+    },
+    {
+     "name": "TEMP_FALLBACK_C",
+     "type": "float",
+     "def": 15.0,
+     "group": "temp",
+     "min": -40,
+     "max": 60,
+     "step": 1,
+     "unit": "°C",
+     "de": "Ersatz-Temperatur (ohne Messwert)",
+     "en": "Fallback temperature (no reading)"
+    },
+    {
+     "name": "TC_TEMP_MS",
+     "type": "float",
+     "def": 8000.0,
+     "group": "temp",
+     "min": 1,
+     "max": 60000,
+     "step": 100,
+     "unit": "ms",
+     "de": "Temperatur-Glättung",
+     "en": "Temperature smoothing"
+    },
+    {
+     "name": "BREATHE_PERIOD_MS",
+     "type": "float",
+     "def": 5000.0,
+     "group": "breath",
+     "min": 2000,
+     "max": 60000,
+     "step": 100,
+     "unit": "ms",
+     "de": "Atmen: Periode (mind. 2 s)",
+     "en": "Breathing: period (min. 2 s)"
+    },
+    {
+     "name": "DAY_BREATHE_MIN",
+     "type": "float",
+     "def": 0.5,
+     "group": "breath",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Tag: Helligkeit min.",
+     "en": "Day: brightness min."
+    },
+    {
+     "name": "DAY_BREATHE_MAX",
+     "type": "float",
+     "def": 0.85,
+     "group": "breath",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Tag: Helligkeit max.",
+     "en": "Day: brightness max."
+    },
+    {
+     "name": "NIGHT_BREATHE_MIN",
+     "type": "float",
+     "def": 0.15,
+     "group": "breath",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Nacht: Helligkeit min.",
+     "en": "Night: brightness min."
+    },
+    {
+     "name": "NIGHT_BREATHE_MAX",
+     "type": "float",
+     "def": 0.35,
+     "group": "breath",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Nacht: Helligkeit max.",
+     "en": "Night: brightness max."
+    },
+    {
+     "name": "SNAP_FACTORY",
+     "type": "boolean",
+     "def": true,
+     "group": "color",
+     "min": null,
+     "max": null,
+     "step": null,
+     "unit": "",
+     "de": "Auf Werksfarben einrasten",
+     "en": "Snap to factory colours"
+    },
+    {
+     "name": "PERIOD_MS",
+     "type": "int",
+     "def": 150,
+     "group": "send",
+     "min": 50,
+     "max": 500,
+     "step": 10,
+     "unit": "ms",
+     "de": "Sende-Takt",
+     "en": "Send interval"
+    }
+   ]
+  },
+  "scroll": {
+   "class": "Scroll",
+   "tpl": "TplScroll",
+   "label": "Scroll",
+   "params": [
+    {
+     "name": "HUE_SPEED_FACTOR",
+     "type": "float",
+     "def": 0.36,
+     "group": "speed",
+     "min": 0,
+     "max": 3,
+     "step": 0.01,
+     "unit": "°/(km/h·s)",
+     "de": "Drehung pro km/h und Sekunde",
+     "en": "Rotation per km/h and second"
+    },
+    {
+     "name": "TC_SPEED_MS",
+     "type": "float",
+     "def": 450.0,
+     "group": "time",
+     "min": 1,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Tempo-Glättung",
+     "en": "Speed smoothing"
+    },
+    {
+     "name": "NIGHT_BRIGHTNESS",
+     "type": "float",
+     "def": 0.4,
+     "group": "night",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Nacht-Helligkeit",
+     "en": "Night brightness"
+    },
+    {
+     "name": "IDLE_ROTATION_DEG_PER_SEC",
+     "type": "float",
+     "def": 8.0,
+     "group": "speed",
+     "min": -360,
+     "max": 360,
+     "step": 1,
+     "unit": "°/s",
+     "de": "Drehung im Stand",
+     "en": "Rotation at standstill"
+    },
+    {
+     "name": "TRY_FREE_COLOR",
+     "type": "boolean",
+     "def": true,
+     "group": "color",
+     "min": null,
+     "max": null,
+     "step": null,
+     "unit": "",
+     "de": "Freies Farbstreaming (ohne Werksfarben-Snap)",
+     "en": "Free colour streaming (no factory-colour snap)"
+    },
+    {
+     "name": "TARGET_LUMINANCE",
+     "type": "float",
+     "def": 0.3,
+     "group": "color",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Mindest-Helligkeit je Farbton (Ausgleich)",
+     "en": "Min. perceived brightness per hue (compensation)"
+    },
+    {
+     "name": "MIN_SATURATION_FLOOR",
+     "type": "float",
+     "def": 0.65,
+     "group": "color",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Ausgleich: nie weniger Sättigung als",
+     "en": "Compensation: never less saturation than"
+    },
+    {
+     "name": "SHIMMER_PERIOD_MS",
+     "type": "float",
+     "def": 15000.0,
+     "group": "breath",
+     "min": 2000,
+     "max": 120000,
+     "step": 500,
+     "unit": "ms",
+     "de": "Schimmern: Periode (mind. 2 s)",
+     "en": "Shimmer: period (min. 2 s)"
+    },
+    {
+     "name": "SHIMMER_BRIGHTNESS_MIN",
+     "type": "float",
+     "def": 0.85,
+     "group": "breath",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Schimmern: Helligkeit min.",
+     "en": "Shimmer: brightness min."
+    },
+    {
+     "name": "PERIOD_MS",
+     "type": "int",
+     "def": 150,
+     "group": "send",
+     "min": 50,
+     "max": 500,
+     "step": 10,
+     "unit": "ms",
+     "de": "Sende-Takt",
+     "en": "Send interval"
+    }
+   ]
+  },
+  "drive": {
+   "class": "Drive",
+   "tpl": "TplDrive",
+   "label": "Drive",
+   "params": [
+    {
+     "name": "TC_THROTTLE_UP_MS",
+     "type": "float",
+     "def": 100.0,
+     "group": "time",
+     "min": 1,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Gas: schnell hoch",
+     "en": "Throttle: rise time"
+    },
+    {
+     "name": "TC_THROTTLE_DOWN_MS",
+     "type": "float",
+     "def": 400.0,
+     "group": "time",
+     "min": 1,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Gas: langsam runter",
+     "en": "Throttle: fall time"
+    },
+    {
+     "name": "TC_STEER_MS",
+     "type": "float",
+     "def": 200.0,
+     "group": "time",
+     "min": 1,
+     "max": 5000,
+     "step": 10,
+     "unit": "ms",
+     "de": "Lenkwinkel-Glättung",
+     "en": "Steering smoothing"
+    },
+    {
+     "name": "DRIVE_BASE_HUE",
+     "type": "float",
+     "def": 285.0,
+     "group": "drive",
+     "min": -720,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Farbton in Ruhe",
+     "en": "Hue at rest"
+    },
+    {
+     "name": "DRIVE_THROTTLE_SWEEP",
+     "type": "float",
+     "def": 95.0,
+     "group": "drive",
+     "min": -720,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Farbton-Strecke bis Vollgas",
+     "en": "Hue sweep up to full throttle"
+    },
+    {
+     "name": "DRIVE_SAT_REST",
+     "type": "float",
+     "def": 0.3,
+     "group": "drive",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Sättigung in Ruhe",
+     "en": "Saturation at rest"
+    },
+    {
+     "name": "DRIVE_SPLIT_DEG",
+     "type": "float",
+     "def": 65.0,
+     "group": "drive",
+     "min": -360,
+     "max": 360,
+     "step": 1,
+     "unit": "°",
+     "de": "Zusatz-Farbton bei vollem Lenkeinschlag",
+     "en": "Extra hue at full steering lock"
+    },
+    {
+     "name": "DRIVE_CONTOUR_BOOST",
+     "type": "float",
+     "def": 0.25,
+     "group": "drive",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Zusatz-Helligkeit bei Lenkeinschlag",
+     "en": "Extra brightness with steering"
+    },
+    {
+     "name": "DRIVE_HUE_CAP",
+     "type": "float",
+     "def": 385.0,
+     "group": "drive",
+     "min": 0,
+     "max": 720,
+     "step": 1,
+     "unit": "°",
+     "de": "Sicherheits-Deckel Farbton (nicht anheben)",
+     "en": "Safety cap for hue (do not raise)"
+    },
+    {
+     "name": "DRIVE_V_REST",
+     "type": "float",
+     "def": 0.6,
+     "group": "drive",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Helligkeit in Ruhe",
+     "en": "Brightness at rest"
+    },
+    {
+     "name": "DRIVE_V_SWEEP",
+     "type": "float",
+     "def": 0.4,
+     "group": "drive",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Helligkeits-Zuwachs bis Vollgas",
+     "en": "Brightness increase up to full throttle"
+    },
+    {
+     "name": "DRIVE_V_FLOOR",
+     "type": "float",
+     "def": 0.15,
+     "group": "drive",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Mindest-Helligkeit",
+     "en": "Minimum brightness"
+    },
+    {
+     "name": "PEDAL_FULL",
+     "type": "float",
+     "def": 0.66,
+     "group": "drive",
+     "min": 0.05,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Gaspedal gilt als voll bei (Anteil)",
+     "en": "Pedal counts as full at (fraction)"
+    },
+    {
+     "name": "STEER_FULL_DEG",
+     "type": "float",
+     "def": 180.0,
+     "group": "drive",
+     "min": 10,
+     "max": 720,
+     "step": 5,
+     "unit": "°",
+     "de": "Voller Lenkeinschlag bei",
+     "en": "Full steering lock at"
+    },
+    {
+     "name": "NIGHT_FACTOR",
+     "type": "float",
+     "def": 0.5,
+     "group": "night",
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "unit": "",
+     "de": "Nacht: Faktor auf die Helligkeit",
+     "en": "Night: brightness factor"
+    },
+    {
+     "name": "SNAP_FACTORY",
+     "type": "boolean",
+     "def": true,
+     "group": "color",
+     "min": null,
+     "max": null,
+     "step": null,
+     "unit": "",
+     "de": "Auf Werksfarben einrasten",
+     "en": "Snap to factory colours"
+    },
+    {
+     "name": "PERIOD_MS",
+     "type": "int",
+     "def": 150,
+     "group": "send",
+     "min": 50,
+     "max": 500,
+     "step": 10,
+     "unit": "ms",
+     "de": "Sende-Takt",
+     "en": "Send interval"
+    }
+   ]
+  }
+ }
+}
