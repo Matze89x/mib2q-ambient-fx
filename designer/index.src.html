@@ -438,9 +438,15 @@ de:{
  sl_speed:'Tempo', sl_throttle:'Gaspedal', sl_steer:'Lenkwinkel', sl_rpm:'Drehzahl', sl_accel:'Längsbeschl.', sl_lat:'Querbeschl.', sl_temp:'Außentemp.',
  nameEmpty:'Bitte einen Namen eingeben.', nameChars:'Nur Buchstaben, Ziffern, Leerzeichen und . _ - (max. 24 Zeichen).', nameBuiltin:'Der Name ist schon vergeben (eingebauter Effekt oder Werksauswahl im MMI).',
  toastNew:'Neues Design', toastImported:'Importiert', toastExported:'Exportiert', toastCopied:'Kopiert', toastApplied:'Übernommen', toastEx:'Beispiel geladen',
- errCompiled:'Das ist ein fertig kompilierter Effekt (z. B. Momentum). Er lässt sich hier nicht bearbeiten – nur Designs aus dem Design Studio.',
+ errCompiled:'Das ist ein fertig kompilierter Effekt (z. B. Momentum) und lässt sich hier nicht öffnen – nur Designs aus dem Design Studio. Nachbauten der mitgelieferten Effekte findest du unter „Beispiele“.',
  errNotAmb:'Keine gültige .ambiente-Datei.', errInflate:'Dieser Browser kann die Datei nicht entpacken (DecompressionStream fehlt).', errFormat:'Design nicht lesbar: ',
  techSha:'Laufzeit-Klasse', techBytes:'Bytes', techContract:'Vertragsversion', techCheck:'Prüfsumme (SHA-256) der eingebauten Klasse – vergleichbar mit dem Bauergebnis von designer/build_runtime.sh.',
+ ex_mom:'Momentum (Nachbau)', ex_momD:'Regenbogen über das Tempo, Bremse = Rot. Ohne D→S-Blitz, Nacht vereinfacht',
+ ex_dyn:'Momentum select · Dynamic', ex_dynD:'Warme Welt Rot→Gelb, immer hell, schnell. Ohne Gas-Zug zu Rot',
+ ex_com:'Momentum select · Comfort', ex_comD:'Kühle Welt Grün→Blau, Helligkeit folgt dem Gas, ruhig',
+ ex_atm:'Atmosphere (Nachbau)', ex_atmD:'Außentemperatur → Farbe, langsames Atmen, Nacht dunkler',
+ ex_scr:'Scroll (Nachbau)', ex_scrD:'Farbrad dreht sich, schneller mit dem Tempo, Bremse = Rot',
+ ex_drv:'Drive (Nachbau)', ex_drvD:'Gaspedal: Lavendel → Violett → Ember. Ohne Lenkwinkel',
  ex_tempo:'Tempo-Verlauf', ex_tempoD:'Farbe folgt dem Tempo, Helligkeit dem Gas',
  ex_breath:'Ruhiges Atmen', ex_breathD:'Violett, langsames Atmen',
  ex_rainbow:'Regenbogen', ex_rainbowD:'Dreht sich, schneller mit dem Tempo',
@@ -482,9 +488,15 @@ en:{
  sl_speed:'Speed', sl_throttle:'Throttle', sl_steer:'Steering', sl_rpm:'Engine speed', sl_accel:'Long. accel.', sl_lat:'Lat. accel.', sl_temp:'Outside temp.',
  nameEmpty:'Please enter a name.', nameChars:'Only letters, digits, spaces and . _ - (max. 24 characters).', nameBuiltin:'That name is already taken (built-in effect or factory choice in the MMI).',
  toastNew:'New design', toastImported:'Imported', toastExported:'Exported', toastCopied:'Copied', toastApplied:'Applied', toastEx:'Example loaded',
- errCompiled:'This is a precompiled effect (e.g. Momentum). It cannot be edited here – only designs made with the Design Studio.',
+ errCompiled:'This is a precompiled effect (e.g. Momentum) and cannot be opened here – only designs made with the Design Studio. Replicas of the bundled effects are under “Examples”.',
  errNotAmb:'Not a valid .ambiente file.', errInflate:'This browser cannot unpack the file (DecompressionStream missing).', errFormat:'Design not readable: ',
  techSha:'Runtime class', techBytes:'bytes', techContract:'Contract version', techCheck:'SHA-256 of the built-in class – comparable with the result of designer/build_runtime.sh.',
+ ex_mom:'Momentum (replica)', ex_momD:'Rainbow over speed, brake = red. No D→S flash, night simplified',
+ ex_dyn:'Momentum select · Dynamic', ex_dynD:'Warm range red→yellow, always bright, fast. No throttle pull to red',
+ ex_com:'Momentum select · Comfort', ex_comD:'Cool range green→blue, brightness follows throttle, calm',
+ ex_atm:'Atmosphere (replica)', ex_atmD:'Outside temperature → colour, slow breathing, dimmer at night',
+ ex_scr:'Scroll (replica)', ex_scrD:'Colour wheel rotates, faster with speed, brake = red',
+ ex_drv:'Drive (replica)', ex_drvD:'Throttle: lavender → violet → ember. No steering angle',
  ex_tempo:'Speed ramp', ex_tempoD:'Colour follows speed, brightness follows throttle',
  ex_breath:'Calm breathing', ex_breathD:'Violet, slow breathing',
  ex_rainbow:'Rainbow', ex_rainbowD:'Rotates, faster with speed',
@@ -817,6 +829,24 @@ function buildSliders(){
   });
 }
 const EXAMPLES = {
+  /* Nachbauten der mitgelieferten Effekte (Naeherung mit den Mitteln des Studios - siehe Beschreibung im Menue) */
+  mom: ()=>{ const c=defaultCfg(); c.name='Momentum-Nachbau'; c.period=150; c.mode='ramp'; c.source='speed'; c.min=0; c.max=130;
+    c.stops=[{pos:0,hex:'#FF0000'},{pos:16.67,hex:'#FFFF00'},{pos:33.33,hex:'#00FF00'},{pos:50,hex:'#00FFFF'},{pos:66.67,hex:'#0000FF'},{pos:83.33,hex:'#FF00FF'},{pos:100,hex:'#FF0000'}];
+    c.brSource='none'; c.brMax=100; c.night=40; c.brakeOn=true; c.brakeColor='#FF0000'; c.brakeBright=100; c.smoothMs=600; c.snap=false; return c; },
+  dyn: ()=>{ const c=defaultCfg(); c.name='Select-Dynamic-Nachbau'; c.period=150; c.mode='ramp'; c.source='speed'; c.min=0; c.max=130;
+    c.stops=[{pos:0,hex:'#FF0000'},{pos:50,hex:'#FF9500'},{pos:100,hex:'#D4FF00'}];
+    c.brSource='none'; c.brMax=100; c.night=100; c.brakeOn=true; c.brakeColor='#FF0000'; c.brakeBright=100; c.smoothMs=100; c.snap=false; return c; },
+  com: ()=>{ const c=defaultCfg(); c.name='Select-Comfort-Nachbau'; c.period=150; c.mode='ramp'; c.source='speed'; c.min=0; c.max=130;
+    c.stops=[{pos:0,hex:'#00FF55'},{pos:50,hex:'#00FFEA'},{pos:100,hex:'#0080FF'}];
+    c.brSource='throttle'; c.brSrcMin=0; c.brSrcMax=100; c.brMin=3; c.brMax=100; c.night=100; c.brakeOn=true; c.brakeColor='#FF0000'; c.brakeBright=100; c.smoothMs=450; c.snap=false; return c; },
+  atm: ()=>{ const c=defaultCfg(); c.name='Atmosphere-Nachbau'; c.period=150; c.mode='ramp'; c.source='temp'; c.min=-5; c.max=30;
+    c.stops=[{pos:0,hex:'#0080FF'},{pos:16.67,hex:'#00FFFC'},{pos:33.33,hex:'#00FF82'},{pos:50,hex:'#00FF00'},{pos:66.67,hex:'#82FF00'},{pos:83.33,hex:'#FCFF00'},{pos:100,hex:'#FF8000'}];
+    c.brSource='none'; c.brMax=85; c.breath=true; c.breathSec=5; c.breathDepth=41; c.night=41; c.brakeOn=false; c.smoothMs=600; c.snap=true; return c; },
+  scr: ()=>{ const c=defaultCfg(); c.name='Scroll-Nachbau'; c.period=150; c.mode='cycle'; c.cycBase=8; c.cycSpeed=47; c.cycSat=100;
+    c.brSource='none'; c.brMax=100; c.breath=true; c.breathSec=15; c.breathDepth=15; c.night=40; c.brakeOn=true; c.brakeColor='#FF0000'; c.brakeBright=100; c.smoothMs=450; c.snap=false; return c; },
+  drv: ()=>{ const c=defaultCfg(); c.name='Drive-Nachbau'; c.period=150; c.mode='ramp'; c.source='throttle'; c.min=0; c.max=66;
+    c.stops=[{pos:0,hex:'#ECB2FF'},{pos:25,hex:'#FF86ED'},{pos:50,hex:'#FF59A5'},{pos:75,hex:'#FF2D3A'},{pos:100,hex:'#FF5500'}];
+    c.brSource='throttle'; c.brSrcMin=0; c.brSrcMax=66; c.brMin=60; c.brMax=100; c.night=50; c.brakeOn=true; c.brakeColor='#FF0000'; c.brakeBright=100; c.smoothMs=250; c.snap=true; return c; },
   tempo: ()=>{ const c=defaultCfg(); c.name='Speed Ramp'; c.stops=[{pos:0,hex:'#2563EB'},{pos:30,hex:'#22D3EE'},{pos:60,hex:'#34D399'},{pos:85,hex:'#FBBF24'},{pos:100,hex:'#F43F8E'}];
     c.brSource='throttle'; c.brSrcMin=0; c.brSrcMax=100; c.brMin=45; c.brMax=100; return c; },
   breath: ()=>{ const c=defaultCfg(); c.name='Calm Breath'; c.mode='solid'; c.stops=[{pos:0,hex:'#8B5CF6'}]; c.breath=true; c.breathSec=6; c.breathDepth=45; c.brMax=90; c.smoothMs=0; return c; },

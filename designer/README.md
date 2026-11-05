@@ -25,6 +25,8 @@ Das **Design Studio** ist ein Editor im Browser, mit dem du eigene AmbientFX-Eff
 
 Importieren kannst du **Designs, die das Design Studio erzeugt hat** (`.ambiente`), und den **Design-Text** (Karte „Design als Text“) zum Teilen im Chat. Fertig kompilierte Effekte (Momentum, Atmosphere …) lassen sich hier **nicht** bearbeiten, denn sie enthalten nur Bytecode, kein Design.
 
+**Nachbauten der mitgelieferten Effekte:** Unter **Beispiele** liegen Nachbauten von Momentum, Momentum select (Dynamic und Comfort), Atmosphere, Scroll und Drive. Sie sind **Annäherungen** mit den Mitteln des Studios, keine Kopien: Das Studio hat eine Farbquelle, eine Helligkeitsquelle und einen Nachtfaktor. Es fehlen zum Beispiel der D→S-Blitz, die Nachtkurve nach Gas bei Momentum, das Umschalten nach Fahrprofil bei Momentum select und der Lenkwinkel bei Drive. Zum Ausprobieren und Umbauen sind sie gedacht. Vor dem Export unbedingt umbenennen: Die Namen der echten Effekte sind gesperrt, damit es keine doppelten Menüeinträge gibt.
+
 ## Die ID
 
 Jedes Design hat eine **zufällige, feste ID** (`AFX-XXXX-XXXX`, zum Beispiel `AFX-95A8-F895`). Sie wird bei **Neu** und bei jedem **Beispiel** neu erzeugt und bei **Import und Export beibehalten**. Mit „Neue ID“ machst du aus einem fremden Design deine eigene Kopie. Älteren, längeren IDs (`AFX-` plus 16 Zeichen) bleiben beim Import erhalten. Das Studio erklärt die ID auch direkt auf der Seite („Was ist die ID?“). Wichtig zu wissen:
@@ -136,6 +138,8 @@ The **Design Studio** is an editor in your browser to build your own AmbientFX e
 ## Import
 
 You can import **designs created by the Design Studio** (`.ambiente`) and the **design text** (card “Design as text”) for sharing in a chat. Precompiled effects (Momentum, Atmosphere …) cannot be edited here because they contain only bytecode, no design.
+
+**Replicas of the bundled effects:** Under **Examples** you find replicas of Momentum, Momentum select (Dynamic and Comfort), Atmosphere, Scroll and Drive. They are **approximations** within what the Studio can do, not copies: the Studio has one colour source, one brightness source and one night factor. Missing, for example: the D→S flash, the night curve by throttle in Momentum, switching by drive profile in Momentum select and the steering angle in Drive. They are meant for trying out and modifying. Rename before exporting: the names of the real effects are reserved so there are no duplicate menu entries.
 
 ## The ID
 
