@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
- * Lizenz: siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
+ * Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
  *
  * "Momentum" - einziger aktiver Effekt (siehe FxCatalog-Kommentar: bewusst
  * auf einen konzentriert). Wirkt NUR auf die Kontur/Linie - die Flaeche

@@ -1,6 +1,6 @@
 #!/bin/sh
 # Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
-# Lizenz: siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
+# Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
 #
 # afx_uninstall.sh - GEM > M.I.B. > ambientfx > "Deinstallieren": entfernt NUR AmbientFX (ambient_fx.jar, alle .ambiente-Plugins samt leerem Ordner
 # ambientfx_effects, den gemerkten Effekt /mnt/persist/ambientfx/ambientfx*.state, den Debug-Marker /mnt/persist/ambientfx/debug samt RAM-Protokoll und den alten Pfad root/hooks/ambientfx.state). Vorher kommt von allem eine

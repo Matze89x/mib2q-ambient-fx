@@ -1,6 +1,6 @@
 #!/bin/sh
 # Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
-# Lizenz: siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
+# Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
 #
 # afx_lib.sh - gemeinsame Funktionen der SD-Menue-Skripte von mib2q-ambient-fx
 # (Gruenes Engineering-Menue "GEM" > M.I.B. > ambientfx). Wird von jedem afx_*.sh

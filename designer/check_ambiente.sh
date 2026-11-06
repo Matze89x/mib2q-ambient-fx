@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
-# Lizenz: siehe LICENSE.md / License: see LICENSE.md
+# Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md / License: CC BY-NC-SA 4.0, see LICENSE.md
 #
 # DE: Prueft .ambiente-Dateien (z. B. aus dem Design Studio) am PC, BEVOR sie ins Fahrzeug kommen: laedt sie mit dem Original-Plugin-Lader und
 #     zeigt ein paar berechnete Farben. Braucht build/ambient_fx.jar (./build_java.sh) und vendor/lsd.jar.

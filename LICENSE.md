@@ -1,74 +1,44 @@
 <a id="english"></a>
 
-# License (English convenience translation)
+# License
 
-🇬🇧 **English** · 🇩🇪 [Deutsch (German, below, legally binding)](#deutsch)
+🇬🇧 **English** · 🇩🇪 [Deutsch (German, below)](#deutsch)
 
-> This is a non-binding translation for convenience. **The German text below prevails.**
+> The binding licence text is the **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)** legal code in the file [LICENSE](LICENSE). This page explains what we mean by it and is **not binding**.
 
 Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
 
-## Summary (TL;DR)
+## Private and non-commercial use only
+
+**This project is for private, non-commercial use.** We are **against selling it**. Nobody may sell this project or derived works, sell flashed or installed devices or SD cards, or offer paid installation or support for it. **This is an open community project, and we will take action against sales of this kind.** If you want to do anything commercial with it, you need our explicit written permission first.
+
+## Summary
 
 - ✅ Look, learn, rebuild and modify for yourself – always allowed.
-- ✅ Share (e.g. fork, contribute your own effect, post a link) – allowed **as long as it is free of charge and with attribution**.
-- ❌ **Selling, charging money, putting it behind a paywall – NOT allowed.** Neither the code itself, nor derived works, nor an “installation service” or similar for payment, without my explicit written permission.
+- ✅ Share (fork, contribute your own effect, post a link) – allowed **as long as it is free of charge, with attribution and under the same licence** (ShareAlike).
+- ❌ **Selling, charging money, putting it behind a paywall – NOT allowed**, neither the code, nor derived works, nor an “installation service” or similar for payment, without our explicit written permission.
 - ❌ Passing it off as your own work (without attribution) – not allowed.
-
-The rest of this document is the detailed version – in case of doubt, that one applies.
 
 ## Scope
 
-This licence covers the original code of this project, namely everything
-under `java_patch/de/mk/ambientfx/**`, as well as the build/deploy scripts
-and tools (`build_java.sh`, `build_plugin.sh`, `verify.sh`,
-`deploy/**`, `tools/**`) and the documentation (`README.md`,
-`EFFEKTE_HANDBUCH.md`, `DEPLOY_TELNET.md`, `docs/**`).
+The licence covers the original code of this project: everything under `java_patch/de/mk/ambientfx/**`, the build/deploy scripts and tools (`build_java.sh`, `build_plugin.sh`, `verify.sh`, `deploy/**`, `tools/**`, `esd/**`, `examples/**`), the Design Studio (`designer/**`, `docs/designer/**`) and the documentation. The files in `patches/` contain only our own changes and a few context lines of Audi code.
 
-**Expressly NOT covered** (because it is not my code): the three
-files under `java_patch/de/audi/...` (they contain decompiled,
-adapted original Audi code) as well as everything under `java_stock/` and
-`vendor/` (neither is shipped in this repository) (pure, unchanged Audi firmware code
-and third-party tools respectively). This licence does not apply to them – anyone
-who plans to do something with them has to take care of the legal position
-towards AUDI AG/Volkswagen AG themselves.
+**Not covered** (not our code):
+- the Audi classes generated from your own firmware (`java_stock/`, `java_patch/de/audi/`) and everything under `vendor/` – unchanged Audi firmware code and third-party tools; they are not shipped here, and anyone who uses them has to take care of the legal position towards AUDI AG/Volkswagen AG themselves;
+- the fonts **Space Grotesk** and **Space Mono** embedded in the Design Studio page – they stay under the [SIL Open Font License 1.1](https://openfontlicense.org);
+- the **M.I.B. toolbox** ([Mr-MIBonk/M.I.B._More-Incredible-Bash](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash)) – a separate project with its own licence, not part of this repository.
 
-## Conditions in detail
+## Work of others
 
-Under the following conditions you may use, copy, modify and pass on the
-licensed code (modelled on
-[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)):
+Parts of this project (the ideas and formulas for Drive and Scroll, and the bootclasspath mechanism) are derived from work by LuKa_dev, whose own project [mib2q-carplay-rgi](https://github.com/luka-dev/mib2q-carplay-rgi) is licensed under the GPL-3.0. They are used here **with his consent**. His project stays under its own licence.
 
-1. **Attribution.** You name the author (“Matze89x in
-   cooperation with DEB and LuKa_dev”) and give a link to this project when you pass on the
-   code or derived works.
-2. **NonCommercial.** You may **not** use this code or
-   derived works **for commercial purposes**. This expressly
-   includes: selling the code or modifications of it, selling
-   flashed/installed devices or SD cards, paid “support”/“installation”
-   offers, or any other way of making money with it directly or
-   indirectly – without my prior, explicit written consent.
-3. **ShareAlike.** If you modify the code and pass it on, the derived
-   work must be under the same licence (same conditions, same
-   restrictions).
+## History
 
-## Why this licence?
+Until 2026-11-06 this project used a licence text of its own with the same intent (attribution, non-commercial, share-alike). Since then the standard text CC BY-NC-SA 4.0 applies. Copies obtained earlier remain under the terms under which they were received.
 
-This project is based on years of reverse-engineering work on a
-specific vehicle, was created entirely in spare time and is meant to
-benefit the community (do-it-yourselfers, tinkerers, other Audi A4 B9 drivers) –
-not to let third parties make money with it without having
-contributed anything themselves.
+## Contributing
 
-## No warranty
-
-This code is provided “as is”, without any warranty.
-Interventions in vehicle software are at your own risk.
-
-## Questions / asking for permission
-
-For anything beyond the rights mentioned above (especially any commercial
-use), please get in touch and ask for permission first.
+Contributions are accepted under the same licence. Questions about the licence or commercial requests: please open an issue.
 
 ---
 
@@ -78,68 +48,38 @@ use), please get in touch and ask for permission first.
 
 🇩🇪 **Deutsch** · 🇬🇧 [English (oben)](#english)
 
+> Maßgeblich ist der Lizenztext **Creative Commons Namensnennung – Nicht kommerziell – Weitergabe unter gleichen Bedingungen 4.0 International (CC BY-NC-SA 4.0)** in der Datei [LICENSE](LICENSE) (englischer Originaltext). Diese Seite erklärt, was wir damit meinen, und ist **nicht bindend**.
+
 Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
 
-## Kurzfassung (TL;DR)
+## Nur für den privaten, nicht kommerziellen Gebrauch
+
+**Dieses Projekt ist für den privaten, nicht kommerziellen Gebrauch.** Wir sind **gegen einen Verkauf**. Niemand darf dieses Projekt oder abgeleitete Werke verkaufen, fertig geflashte oder installierte Geräte oder SD-Karten verkaufen oder bezahlte Installation oder bezahlten Support dafür anbieten. **Das ist ein offenes Community-Projekt, und wir werden gegen Verkäufe dieser Art vorgehen.** Wer damit etwas Kommerzielles vorhat, braucht vorher unsere ausdrückliche schriftliche Erlaubnis.
+
+## Zusammenfassung
 
 - ✅ Anschauen, lernen, für dich selbst nachbauen und verändern – jederzeit erlaubt.
-- ✅ Weitergeben/teilen (z. B. Fork, eigener Effekt-Beitrag, Link posten) – erlaubt, **solange kostenlos und mit Namensnennung**.
-- ❌ **Verkaufen, Geld dafür verlangen, hinter eine Bezahlschranke stellen – NICHT erlaubt.** Weder der Code selbst, noch abgeleitete Werke, noch "Installations-Service" o. Ä. gegen Bezahlung, ohne meine ausdrückliche schriftliche Erlaubnis.
+- ✅ Weitergeben/teilen (z. B. Fork, eigener Effekt-Beitrag, Link posten) – erlaubt, **solange kostenlos, mit Namensnennung und unter derselben Lizenz** (Weitergabe unter gleichen Bedingungen).
+- ❌ **Verkaufen, Geld dafür verlangen, hinter eine Bezahlschranke stellen – NICHT erlaubt.** Weder der Code selbst, noch abgeleitete Werke, noch ein „Installations-Service“ o. Ä. gegen Bezahlung, ohne unsere ausdrückliche schriftliche Erlaubnis.
 - ❌ Als eigenes Werk ausgeben (ohne Namensnennung) – nicht erlaubt.
-
-Der Rest dieses Dokuments ist die ausführliche Fassung – im Zweifel gilt die.
 
 ## Umfang
 
-Diese Lizenz gilt für den eigenen Code dieses Projekts, konkret alles
-unter `java_patch/de/mk/ambientfx/**`, sowie die Build-/Deploy-Skripte
-und Werkzeuge (`build_java.sh`, `build_plugin.sh`, `verify.sh`,
-`deploy/**`, `tools/**`) und die Dokumentation (`README.md`,
-`EFFEKTE_HANDBUCH.md`, `DEPLOY_TELNET.md`, `docs/**`).
+Die Lizenz gilt für den eigenen Code dieses Projekts: alles unter `java_patch/de/mk/ambientfx/**`, die Build-/Deploy-Skripte und Werkzeuge (`build_java.sh`, `build_plugin.sh`, `verify.sh`, `deploy/**`, `tools/**`, `esd/**`, `examples/**`), das Design Studio (`designer/**`, `docs/designer/**`) und die Dokumentation. Die Dateien in `patches/` enthalten nur unsere eigenen Änderungen und einige Kontextzeilen von Audi-Code.
 
-**Ausdrücklich NICHT erfasst** (weil es nicht mein Code ist): die drei
-Dateien unter `java_patch/de/audi/...` (enthalten decompilierten,
-angepassten Audi-Originalcode) sowie alles unter `java_stock/` und
-`vendor/` (beides wird in diesem Repository nicht mitgeliefert) (reiner, unveränderter Audi-Firmware-Code bzw. Drittanbieter-
-Werkzeuge). Dafür gilt diese Lizenz nicht – wer damit etwas vorhat, muss
-sich selbst um die Rechtslage gegenüber AUDI AG/Volkswagen AG kümmern.
+**Nicht erfasst** (nicht unser Code):
+- die aus deiner eigenen Firmware erzeugten Audi-Klassen (`java_stock/`, `java_patch/de/audi/`) und alles unter `vendor/` – unveränderter Audi-Firmware-Code und Drittanbieter-Werkzeuge; sie werden hier nicht mitgeliefert, und wer sie benutzt, muss sich selbst um die Rechtslage gegenüber AUDI AG/Volkswagen AG kümmern;
+- die in die Seite des Design Studios eingebetteten Schriften **Space Grotesk** und **Space Mono** – sie bleiben unter der [SIL Open Font License 1.1](https://openfontlicense.org);
+- die **M.I.B.-Toolbox** ([Mr-MIBonk/M.I.B._More-Incredible-Bash](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash)) – ein eigenes Projekt mit eigener Lizenz, nicht Teil dieses Repositorys.
 
-## Bedingungen im Detail
+## Arbeiten anderer
 
-Unter den folgenden Bedingungen darfst du den lizenzierten Code nutzen,
-kopieren, verändern und weitergeben (angelehnt an
-[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de)):
+Teile dieses Projekts (die Ideen und Formeln für Drive und Scroll sowie der Bootclasspath-Mechanismus) sind von Arbeiten von LuKa_dev abgeleitet, dessen eigenes Projekt [mib2q-carplay-rgi](https://github.com/luka-dev/mib2q-carplay-rgi) unter der GPL-3.0 steht. Sie werden hier **mit seinem Einverständnis** verwendet. Sein Projekt bleibt unter seiner eigenen Lizenz.
 
-1. **Namensnennung (Attribution).** Du nennst den Urheber ("Matze89x in
-   cooperation with DEB and LuKa_dev") und einen Link zu diesem Projekt, wenn du den
-   Code oder abgeleitete Werke weitergibst.
-2. **Nicht-kommerziell (NonCommercial).** Du darfst diesen Code oder
-   abgeleitete Werke **nicht für kommerzielle Zwecke** nutzen. Das
-   schließt ausdrücklich ein: Verkauf des Codes oder von Modifikationen
-   davon, Verkauf fertig geflashter/installierter Geräte oder
-   SD-Karten, kostenpflichtige "Support"/"Installations"-Angebote, oder
-   jede andere Form, damit direkt oder indirekt Geld zu verdienen –
-   ohne meine vorherige, ausdrückliche schriftliche Zustimmung.
-3. **Weitergabe unter gleichen Bedingungen (ShareAlike).** Wenn du den
-   Code veränderst und weitergibst, muss das abgeleitete Werk unter
-   derselben Lizenz stehen (gleiche Bedingungen, gleiche
-   Einschränkungen).
+## Geschichte
 
-## Warum diese Lizenz?
+Bis 06.11.2026 galt für dieses Projekt ein eigener Lizenztext mit derselben Absicht (Namensnennung, nicht kommerziell, Weitergabe unter gleichen Bedingungen). Seitdem gilt der Standardtext CC BY-NC-SA 4.0. Früher bezogene Kopien bleiben unter den Bedingungen, unter denen sie empfangen wurden.
 
-Dieses Projekt basiert auf jahrelanger Reverse-Engineering-Arbeit an
-einem konkreten Fahrzeug, ist komplett in der Freizeit entstanden und
-soll der Community (Selbermacher, Bastler, andere Audi-A4-B9-Fahrer)
-zugutekommen – nicht dazu dienen, dass Dritte damit Geld verdienen, ohne
-selbst etwas beigetragen zu haben.
+## Mitmachen
 
-## Keine Garantie
-
-Dieser Code wird "wie besehen" bereitgestellt, ohne jede Gewährleistung.
-Eingriffe in die Fahrzeugsoftware geschehen auf eigenes Risiko.
-
-## Fragen / Erlaubnis anfragen
-
-Für alles, was über die oben genannten Rechte hinausgeht (insbesondere
-jede kommerzielle Nutzung), bitte vorher Kontakt aufnehmen und um
-Erlaubnis fragen.
+Beiträge werden unter derselben Lizenz angenommen. Fragen zur Lizenz oder kommerzielle Anfragen: bitte ein Issue öffnen.

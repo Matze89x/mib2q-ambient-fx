@@ -1,5 +1,5 @@
 /* Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
- * Lizenz: siehe LICENSE.md / License: see LICENSE.md
+ * Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md / License: CC BY-NC-SA 4.0, see LICENSE.md
  *
  * DE: JavaScript-Nachbau der Effekt-Vorlagen (Momentum, Momentum select, Atmosphere, Scroll, Drive) fuer die Vorschau im Design Studio. Zeile fuer Zeile
  *     nach den Java-Originalen (java_patch/.../effects/*.java), mit Float-Genauigkeit wie in Java (Math.fround). Geprueft per Takt-Vergleich gegen die

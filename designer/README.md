@@ -20,7 +20,7 @@ The **Design Studio** is an editor in your browser to build your own AmbientFX e
 2. **Give it a name** (letters, digits, spaces, `. _ -`, at most 24 characters, **unique**, not the same as a built-in effect).
 3. **Export:** you get `name.ambiente`.
 4. Optionally check on your computer: `designer/check_ambiente.sh name.ambiente` loads the file with the **original plugin loader** and prints a few colours.
-5. Put the file into `build/plugins/` and use the SD menu **Install/Update** (or telnet, see [../docs/INSTALLATION_INSTALL.md](../docs/INSTALLATION_INSTALL.md)). The jar and **all** plugins always belong on the unit together.
+5. Put the file into `build/plugins/` and use the SD menu **Install/Update** (or telnet, see [../docs/INSTALLATION_INSTALL.md](../docs/INSTALLATION_INSTALL.md)). The jar and **all** plugins always belong on the unit together. You are free in what you install: you can also delete bundled effects from `build/plugins/` and use only your own designs (section “Choose what gets installed”).
 6. Reboot the MMI: your design appears under **Ambient lighting**, after the existing entries.
 
 ## Import
@@ -164,7 +164,7 @@ Das **Design Studio** ist ein Editor im Browser, mit dem du eigene AmbientFX-Eff
 2. **Namen vergeben** (Buchstaben, Ziffern, Leerzeichen, `. _ -`, höchstens 24 Zeichen, **eindeutig**, nicht wie ein eingebauter Effekt).
 3. **Exportieren:** du bekommst `name.ambiente`.
 4. Optional am PC prüfen: `designer/check_ambiente.sh name.ambiente` lädt die Datei mit dem **Original-Plugin-Lader** und zeigt ein paar Farben.
-5. Datei nach `build/plugins/` legen und mit dem SD-Menü **Installieren/Updaten** (oder per Telnet, siehe [../docs/INSTALLATION_INSTALL.md](../docs/INSTALLATION_INSTALL.md)). Jar und **alle** Plugins gehören immer zusammen aufs Gerät.
+5. Datei nach `build/plugins/` legen und mit dem SD-Menü **Installieren/Updaten** (oder per Telnet, siehe [../docs/INSTALLATION_INSTALL.md](../docs/INSTALLATION_INSTALL.md)). Jar und **alle** Plugins gehören immer zusammen aufs Gerät. Du bist frei bei dem, was du installierst: Du kannst auch mitgelieferte Effekte aus `build/plugins/` löschen und nur eigene Designs verwenden (Abschnitt „Auswählen, was installiert wird“).
 6. MMI neu starten: dein Design steht unter **Ambientebeleuchtung** hinter den bisherigen Einträgen.
 
 ## Import

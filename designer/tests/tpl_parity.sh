@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
-# Lizenz: siehe LICENSE.md / License: see LICENSE.md
+# Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md / License: CC BY-NC-SA 4.0, see LICENSE.md
 #
 # DE: Vergleicht die JavaScript-Vorlagen (designer/tpl_engine.js) mit den erzeugten Java-Vorlagen (Tpl*), Takt fuer Takt, fuer zufaellige Werte-Aenderungen.
 #     Voraussetzung: ./build_java.sh, python3 -I designer/tools/gen_templates.py, ./designer/build_runtime.sh (baut auch die Tpl-Klassen). macOS (osascript/JavaScriptCore) oder node.

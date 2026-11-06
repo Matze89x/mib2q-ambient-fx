@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
-# Lizenz: siehe LICENSE.md / License: see LICENSE.md
+# Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md / License: CC BY-NC-SA 4.0, see LICENSE.md
 #
 # DE: Wie parity.sh, aber ohne Browser: rechnet die Faelle des Design-Studios mit der JavaScript-Engine der gebauten Seite (docs/designer/index.html)
 #     ueber node bzw. macOS-JavaScriptCore (osascript) und vergleicht sie mit der Java-Klasse DesignEffect.

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
- * Lizenz: siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
+ * Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
  *
  * AmbientFX - baut die zusaetzlichen Menue-Eintraege fuer den Screen
  * CARCARSETTINGSINTLIGHTMAIN (600028).

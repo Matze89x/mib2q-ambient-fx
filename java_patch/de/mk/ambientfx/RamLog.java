@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
- * Lizenz: siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
- * License: see LICENSE.md (attribution required, NO commercial use / selling)
+ * Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
+ * License: CC BY-NC-SA 4.0, see LICENSE.md (attribution required, NO commercial use / selling)
  *
  * AmbientFX - Debug-Protokoll NUR im Arbeitsspeicher (RAM), nur per Marker, mit fester Obergrenze.
  * AmbientFX debug log in RAM ONLY, only via a marker file, with a hard size limit.

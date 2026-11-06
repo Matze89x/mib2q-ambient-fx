@@ -60,6 +60,7 @@ Every entry that changes something does: **pre-check without changes** (files on
 
 Special points:
 * **Downgrade protection:** if the SD has an *older* jar state than the car (according to `known_versions.txt`), “Install” aborts without changing anything. Intended? Create an empty file `ALLOW_DOWNGRADE` in `mib2q-ambient-fx`.
+* **Your choice of plugins:** the menu installs exactly the `.ambiente` files listed in `build/plugins/` on the card (built from your `build/plugins/` folder). You can add your own designs or leave out bundled effects, see [docs/INSTALLATION_INSTALL.md](docs/INSTALLATION_INSTALL.md) (“Choose what gets installed”). To take a bundled effect out of the car: first **2 Uninstall**, then **1 Install / Update**.
 * **Foreign plugins** in the folder `ambientfx_effects` (not from this SD) are never touched, only reported; “Uninstall” backs up and removes all `.ambiente` files (without the jar they are useless).
 * **Log files of other mods** in the jar folder (e.g. `somemod.log`) grow during operation: they do not count for the “other jars unchanged” comparison and are never touched, deleted or counted as leftovers.
 * **On the card only `mib2q-ambient-fx/` is written** (backup/, log/); foreign folders (toolbox, other mods …) and foreign menu blocks stay untouched.
@@ -145,6 +146,7 @@ Jeder Änderungs-Punkt macht: **Vorprüfung ohne Änderung** (Dateien auf der SD
 
 Besonderheiten:
 * **Downgrade-Schutz:** hat die SD einen *älteren* Jar-Stand als das Auto (laut `known_versions.txt`), bricht „Installieren“ ab, ohne etwas zu ändern. Absicht? Leere Datei `ALLOW_DOWNGRADE` in `mib2q-ambient-fx` anlegen.
+* **Deine Auswahl an Plugins:** Das Menü installiert genau die `.ambiente`-Dateien, die in `build/plugins/` auf der Karte stehen (gebaut aus deinem Ordner `build/plugins/`). Du kannst eigene Designs dazulegen oder mitgelieferte Effekte weglassen, siehe [docs/INSTALLATION_INSTALL.md](docs/INSTALLATION_INSTALL.md) („Auswählen, was installiert wird“). Um einen mitgelieferten Effekt aus dem Auto zu nehmen: erst **2 Deinstallieren**, dann **1 Installieren / Updaten**.
 * **Fremde Plugins** im Ordner `ambientfx_effects` (nicht von dieser SD) werden nie angefasst, nur gemeldet; „Deinstallieren“ sichert und entfernt alle `.ambiente`-Dateien (ohne die Jar sind sie wirkungslos).
 * **Log-Dateien anderer Mods** im Jar-Ordner (z. B. `irgendeinmod.log`) wachsen im Betrieb: sie zählen nicht zum Vergleich „andere Jars unverändert“ und werden nie angefasst, gelöscht oder als Rest gewertet.
 * **Auf der Karte wird nur in `mib2q-ambient-fx/` geschrieben** (backup/, log/); fremde Ordner (Toolbox, andere Mods …) und fremde Menü-Blöcke bleiben unberührt.

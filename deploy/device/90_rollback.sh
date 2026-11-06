@@ -1,6 +1,6 @@
 #!/bin/sh
 # Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
-# Lizenz: siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
+# Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
 #
 # AmbientFX - ROLLBACK (auf dem MMI im Telnet ausfuehren)
 # Entfernt ambient_fx.jar wieder. Danach kompletter MMI-Neustart -> Stock-Zustand.

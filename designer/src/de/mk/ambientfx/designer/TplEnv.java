@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
- * Lizenz: siehe LICENSE.md / License: see LICENSE.md
+ * Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md / License: CC BY-NC-SA 4.0, see LICENSE.md
  *
  * DE: Gemeinsame Hilfe der Effekt-Vorlagen (Tpl*.java): liest die Design-Datei, begrenzt Werte, holt Fahrprofil und Aussentemperatur
  *     auf demselben Weg wie die mitgelieferten Effekte. Java 1.2 kompatibel (keine Generics, kein Autoboxing).

@@ -14,6 +14,9 @@
 > [!IMPORTANT]
 > Developed and tested on **one** vehicle only (Audi A4 B9) with **MHI2Q / MU1329**. Other units, other firmware versions and other vehicles are **untested**.
 
+> [!IMPORTANT]
+> **For private, non-commercial use only. We are against selling this project.** It is an open community project, and **we will take action against sales of this kind** (selling the software, flashed or installed devices, SD cards, or paid installation/support). Details: [LICENSE.md](LICENSE.md).
+
 ## What it is
 
 AmbientFX adds extra, vehicle-reactive light effects to the Audi MMI menu **Vehicle settings → Ambient lighting** (after “Audi drive select”). It is a Java patch for the MHI2Q (HMI “lsd”): an additional jar loaded on the bootclasspath **before** the original HMI – the unit’s original files stay untouched.
@@ -46,6 +49,10 @@ An effect is a small Java class with three methods (`start`, `tick`, `periodMs`)
 **New, experimental: the [Design Studio](designer/README.md).** An editor in your browser (one single HTML file, works offline) to **create, import, edit** and **export** designs as `.ambiente` **without programming**, with live preview, dark design, German/English. Online: https://matze89x.github.io/mib2q-ambient-fx/designer/, otherwise download [`docs/designer/index.html`](docs/designer/index.html) and open it in a browser. **Tested on a computer so far, not yet in a vehicle.**
 
 **Version 1.1:** The five **bundled effects** (Momentum, Momentum select, Atmosphere, Scroll, Drive) can now be opened as **original templates** and changed with all of their settings: colour path, time constants, night curve, D→S flash, colour ranges per drive profile, temperature limits and more. Importing the bundled `.ambiente` files into the Studio works as well. Unchanged, a template behaves **exactly like the original** (checked tick by tick against the real effect classes, see [designer/README.md](designer/README.md)). Your own values are only tested on a computer.
+
+## Your choice: bundled effects and your own designs
+
+**You decide what gets installed.** The entries in the menu come from the `.ambiente` files in `build/plugins/`. You can use all five bundled effects, add your own designs from the [Design Studio](designer/README.md), remove some of the bundled ones, or use **only your own designs**. Put your designs into `build/plugins/`, delete the bundled files you do not want (keep at least one plugin) and run `deploy/build_sd_package.sh` again. Details and the exact steps: [docs/INSTALLATION_INSTALL.md](docs/INSTALLATION_INSTALL.md) (section “Choose what gets installed”).
 
 ## What this repository does not contain
 
@@ -116,17 +123,18 @@ AmbientFX can keep a **log in RAM only** that you read via telnet. It is **off b
 - **Extend the Design Studio** (more building blocks in the free designs, e.g. gear- or profile-dependent rules or zones; the original templates can already do that), after the first test in a vehicle. Ideas and help welcome.
 - **Passive LED lighting (surface)** to be added soon. Phase 1 is the LED strips only.
 - More ideas: parking-distance effect, indicator pulse, brightness per zone.
+- **Community test wanted:** does the outside-temperature value reach Atmosphere on your vehicle? Enable the debug log and look at the `temp[valid=…]` value in the alive lines (see [docs/DEBUG.md](docs/DEBUG.md)). Please report your result in an issue.
 
 ## Contributing
 
-Your own effects, tests on other units and fixes are welcome (issue or pull request). **Please do not upload firmware, Audi files, VINs, logs with personal data or credentials.**
+Your own effects, tests on other units and fixes are welcome (issue or pull request). **Please do not upload firmware, Audi files, VINs, logs with personal data or credentials.** Contributions are accepted under the same licence.
 
 ## License, trademarks, credits
 
-- License: [LICENSE.md](LICENSE.md) – attribution required, **no commercial use, no selling**, share-alike. It covers the original code, scripts and documentation, **not** Audi/third-party code.
+- License: **CC BY-NC-SA 4.0** – for **private, non-commercial use only; no selling** (see [LICENSE.md](LICENSE.md) and the legal code in [LICENSE](LICENSE)). It covers the original code, scripts and documentation, **not** Audi/third-party code.
 - Audi, Volkswagen, MMI and all other trademarks belong to their respective owners. This is an independent community project with no connection to Audi/VW.
 - © 2026 Matze89x in cooperation with [DEB](https://www.digital-eliteboard.com/) and [LuKa_dev](https://github.com/luka-dev).
-- Inspired by **[LuKa_dev](https://github.com/luka-dev)**: the ideas for Drive and Scroll and the bootclasspath mechanism come from his patches. It was his project [mib2q-carplay-rgi](https://github.com/luka-dev/mib2q-carplay-rgi) that led us to this approach in the first place. Thank you!
+- Inspired by **[LuKa_dev](https://github.com/luka-dev)**: the ideas for Drive and Scroll and the bootclasspath mechanism come from his patches. It was his project [mib2q-carplay-rgi](https://github.com/luka-dev/mib2q-carplay-rgi) that led us to this approach in the first place. Thank you! The parts derived from his GPL-3.0 licensed work are used here with his consent.
 
 ---
 
@@ -143,6 +151,9 @@ Your own effects, tests on other units and fixes are welcome (issue or pull requ
 
 > [!IMPORTANT]
 > Entwickelt und getestet nur auf **einem** Fahrzeug (Audi A4 B9) mit **MHI2Q / MU1329**. Andere Geräte, andere Firmware-Stände und andere Fahrzeuge sind **ungetestet**.
+
+> [!IMPORTANT]
+> **Nur für den privaten, nicht kommerziellen Gebrauch. Wir sind gegen einen Verkauf dieses Projekts.** Es ist ein offenes Community-Projekt, und **wir werden gegen Verkäufe dieser Art vorgehen** (Verkauf der Software, fertig geflashter oder installierter Geräte, SD-Karten oder bezahlte Installation/bezahlter Support). Einzelheiten: [LICENSE.md](LICENSE.md).
 
 ## Worum geht es
 
@@ -176,6 +187,10 @@ Ein Effekt ist eine kleine Java-Klasse mit drei Methoden (`start`, `tick`, `peri
 **Neu, experimentell: das [Design Studio](designer/README.md).** Ein Editor im Browser (eine einzige HTML-Datei, läuft offline), mit dem du Designs **ohne Programmieren** neu erstellst, importierst, bearbeitest und als `.ambiente` exportierst, mit Live-Vorschau, dunklem Design, Deutsch/Englisch. Online: https://matze89x.github.io/mib2q-ambient-fx/designer/, sonst [`docs/designer/index.html`](docs/designer/index.html) herunterladen und im Browser öffnen. **Bisher nur am PC getestet, noch nicht im Fahrzeug.**
 
 **Version 1.1:** Die fünf **mitgelieferten Effekte** (Momentum, Momentum select, Atmosphere, Scroll, Drive) lassen sich jetzt als **Original-Vorlagen** öffnen und mit allen ihren Einstellwerten ändern: Farbweg, Zeitkonstanten, Nacht-Kurve, D→S-Blitz, Farbwelten je Fahrprofil, Temperatur-Grenzen und mehr. Auch ein Import der mitgelieferten `.ambiente`-Dateien ins Studio funktioniert. Ohne Änderung verhält sich eine Vorlage **exakt wie das Original** (Takt für Takt gegen die echten Effekt-Klassen geprüft, siehe [designer/README.md](designer/README.md)). Eigene Werte sind nur am PC getestet.
+
+## Deine Wahl: mitgelieferte Effekte und eigene Designs
+
+**Du entscheidest, was installiert wird.** Die Einträge im Menü stammen aus den `.ambiente`-Dateien in `build/plugins/`. Du kannst alle fünf mitgelieferten Effekte nutzen, eigene Designs aus dem [Design Studio](designer/README.md) dazulegen, einzelne mitgelieferte entfernen oder **nur eigene Designs** verwenden. Lege deine Designs nach `build/plugins/`, lösche die mitgelieferten Dateien, die du nicht willst (mindestens ein Plugin muss bleiben), und führe `deploy/build_sd_package.sh` erneut aus. Einzelheiten und die genauen Schritte: [docs/INSTALLATION_INSTALL.md](docs/INSTALLATION_INSTALL.md) (Abschnitt „Auswählen, was installiert wird“).
 
 ## Was dieses Repository nicht enthält
 
@@ -246,14 +261,15 @@ AmbientFX kann ein **Protokoll nur im RAM** führen, das du per Telnet ausliest.
 - **Design Studio erweitern** (mehr Bausteine in den freien Designs, etwa Gang- oder Profil-abhängige Regeln oder Zonen; die Original-Vorlagen können das schon), nach dem ersten Test im Fahrzeug. Ideen und Mithilfe willkommen.
 - **Passive LED-Beleuchtung (Fläche)** demnächst mit aufnehmen. Phase 1 sind nur die LED-Streifen.
 - Weitere Ideen: Einparkhilfe-Effekt, Blinker-Impuls, Helligkeit je Zone.
+- **Test durch die Community gesucht:** Kommt der Außentemperatur-Wert bei Atmosphere auf deinem Fahrzeug an? Schalte das Debug-Protokoll ein und achte auf den Wert `temp[valid=…]` in den Alive-Zeilen (siehe [docs/DEBUG.md](docs/DEBUG.md)). Bitte teile dein Ergebnis in einem Issue mit.
 
 ## Mitmachen
 
-Eigene Effekte, Tests auf anderen Geräten und Korrekturen sind willkommen (Issue oder Pull Request). **Bitte keine Firmware, keine Audi-Dateien, keine Fahrgestellnummern, keine Logs mit persönlichen Daten und keine Zugangsdaten hochladen.**
+Eigene Effekte, Tests auf anderen Geräten und Korrekturen sind willkommen (Issue oder Pull Request). **Bitte keine Firmware, keine Audi-Dateien, keine Fahrgestellnummern, keine Logs mit persönlichen Daten und keine Zugangsdaten hochladen.** Beiträge werden unter derselben Lizenz angenommen.
 
 ## Lizenz, Marken, Credits
 
-- Lizenz: [LICENSE.md](LICENSE.md) – Namensnennung Pflicht, **keine kommerzielle Nutzung, kein Verkauf**, Weitergabe unter gleichen Bedingungen. Sie gilt für den eigenen Code, die Skripte und die Dokumentation, **nicht** für Audi-/Drittanbieter-Code.
+- Lizenz: **CC BY-NC-SA 4.0** – **nur für den privaten, nicht kommerziellen Gebrauch; kein Verkauf** (siehe [LICENSE.md](LICENSE.md) und den Lizenztext in [LICENSE](LICENSE)). Sie gilt für den eigenen Code, die Skripte und die Dokumentation, **nicht** für Audi-/Drittanbieter-Code.
 - Audi, Volkswagen, MMI und alle weiteren Marken gehören ihren jeweiligen Inhabern. Dies ist ein unabhängiges Community-Projekt ohne Verbindung zu Audi/VW.
 - © 2026 Matze89x in cooperation with [DEB](https://www.digital-eliteboard.com/) and [LuKa_dev](https://github.com/luka-dev).
-- Inspiriert von **[LuKa_dev](https://github.com/luka-dev)**: Ideen zu Drive und Scroll sowie der Bootclasspath-Mechanismus stammen aus dessen Patches. Über sein Projekt [mib2q-carplay-rgi](https://github.com/luka-dev/mib2q-carplay-rgi) sind wir überhaupt auf diesen Ansatz gekommen. Danke!
+- Inspiriert von **[LuKa_dev](https://github.com/luka-dev)**: Ideen zu Drive und Scroll sowie der Bootclasspath-Mechanismus stammen aus dessen Patches. Über sein Projekt [mib2q-carplay-rgi](https://github.com/luka-dev/mib2q-carplay-rgi) sind wir überhaupt auf diesen Ansatz gekommen. Danke! Die Teile, die von seinem unter der GPL-3.0 stehenden Werk abgeleitet sind, werden hier mit seinem Einverständnis verwendet.

@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
-# Lizenz: siehe LICENSE.md / License: see LICENSE.md
+# Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md / License: CC BY-NC-SA 4.0, see LICENSE.md
 #
 # DE: Erzeugt java_patch/de/audi/... = deine decompilierten Stock-Klassen (java_stock/) + die kleinen AmbientFX-Haken aus patches/*.patch.
 # EN: Creates java_patch/de/audi/... = your decompiled stock classes (java_stock/) + the small AmbientFX hooks from patches/*.patch.

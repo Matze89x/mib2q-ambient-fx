@@ -1,4 +1,4 @@
-/* Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev - Lizenz: siehe LICENSE.md / License: see LICENSE.md
+/* Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev - Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md / License: CC BY-NC-SA 4.0, see LICENSE.md
  * DE: Erzeugt Testfaelle (Eingaben + Werte-Aenderungen) und rechnet sie mit tpl_engine.js. Erwartet TplEngine und TPL_META. Liefert ein Objekt.
  * EN: Generates test cases (inputs + value changes) and computes them with tpl_engine.js. Expects TplEngine and TPL_META. Returns an object. */
 (function () {

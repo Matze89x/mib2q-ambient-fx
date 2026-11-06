@@ -1,6 +1,6 @@
 #!/bin/bash
 # Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
-# Lizenz: siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
+# Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
 #
 # test_scripts.sh [Shell] - testet die SD-Menue-Skripte (afx_*.sh) auf dem Mac gegen ein Schein-Auto und eine Schein-SD
 # (alles in einem Temp-Ordner, nichts Echtes wird angefasst).

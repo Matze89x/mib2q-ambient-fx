@@ -1,6 +1,6 @@
 #!/bin/sh
 # Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
-# Lizenz: siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
+# Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
 #
 # afx_install.sh - GEM > M.I.B. > ambientfx > "Installieren / Updaten": ambient_fx.jar UND alle Effekt-Plugins (.ambiente) von der SD ins Auto.
 #   * nichts installiert        -> installieren

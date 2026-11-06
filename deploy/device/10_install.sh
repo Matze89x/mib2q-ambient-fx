@@ -1,6 +1,6 @@
 #!/bin/sh
 # Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
-# Lizenz: siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
+# Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
 #
 # AmbientFX - INSTALL (auf dem MMI im Telnet ausfuehren)
 # Kopiert build/ambient_fx.jar aus dem Projektordner auf der SD-Karte nach

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
- * Lizenz: siehe LICENSE.md / License: see LICENSE.md
+ * Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md / License: CC BY-NC-SA 4.0, see LICENSE.md
  *
  * DE: Rechnet die erzeugten Java-Vorlagen (Tpl*) fuer die Faelle aus einem Ordner (je Fall eine .properties-Datei = Design-Datei, "<name>.pal" = mit
  *     Werksliste) mit den Eingaben aus inputs.txt und gibt je Takt "<name> <i> r g b" aus. Gegenstueck: designer/tpl_engine.js (tpl_parity.sh vergleicht).

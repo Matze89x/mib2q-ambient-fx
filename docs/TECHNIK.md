@@ -352,9 +352,10 @@ Auto-restore of the last effect after a reboot is active
 (`AmbientFx.RESTORE_ON_BOOT = true`), stored under `/mnt/persist/ambientfx/`
 on the MMX. **Confirmed live (26.09.2026):** `/mnt/persist` is writable without a
 prior `mount -uw`, the log showed correct
-save operations per vehicle key (`ambientfx_key2.state`). The
-restore path after a real reboot has not been tested separately yet,
-but should work symmetrically. If writing/reading does fail
+save operations per vehicle key (`ambientfx_key2.state`). **Confirmed live
+(06.11.2026):** after a real reboot the saved effect is restored (debug log:
+`state loaded: label="Momentum select" <- /mnt/persist/ambientfx/ambientfx_key2.state`,
+then `restoring saved effect`). If writing/reading does fail
 at some point, everything else stays untouched (no crash, just no restore),
 see the comment above `AmbientFx.saveState()`.
 
@@ -517,8 +518,7 @@ Coexists with other jars in the folder `jars/` (for example `carplay_hook.jar`) 
 ## Next steps / ideas
 
 * First test of your own designs and original templates from the Design Studio in the vehicle
-* Confirm the outside-temperature source (`OutsideTempData`) for Atmosphere live (see “Atmosphere” above)
-* Test the restore path after a real reboot separately (see “Debug” above and the comment above `AmbientFx.saveState()`)
+* **Community test wanted:** confirm the outside-temperature source (`OutsideTempData`) for Atmosphere on your vehicle (see “Atmosphere” above). On the author’s vehicle a short test showed no value within about two minutes (`temp[valid=false]`), Atmosphere then shows its fallback of 15 °C (a green hue). Longer tests with the debug log are welcome
 * Add the passive LED lighting (surface); so far AmbientFX only drives the contour
 * Parking-distance effect (`ParkingDistanceData`, unit unconfirmed, see EFFEKTE_HANDBUCH.md)
 * **Indicator effect** (`blinkingState` 1/2 → light up one side briefly); earlier attempts were dropped because of the send discipline (see “Atmosphere” above), please mind safety
@@ -889,9 +889,11 @@ Auto-Restore des letzten Effekts nach Neustart ist aktiv
 (`AmbientFx.RESTORE_ON_BOOT = true`), Ablage unter `/mnt/persist/ambientfx/`
 auf der MMX. **Live bestätigt (26.09.2026):** `/mnt/persist` ist ohne
 vorheriges `mount -uw` beschreibbar, das Log zeigte korrekte
-Speichervorgänge je Fahrzeugschlüssel (`ambientfx_key2.state`). Der
-Restore-Pfad nach einem echten Neustart ist noch nicht separat getestet,
-sollte aber symmetrisch funktionieren. Schlägt das Schreiben/Lesen doch
+Speichervorgänge je Fahrzeugschlüssel (`ambientfx_key2.state`). **Live
+bestätigt (06.11.2026):** Nach einem echten Neustart wird der gemerkte Effekt
+wiederhergestellt (Debug-Protokoll:
+`state loaded: label="Momentum select" <- /mnt/persist/ambientfx/ambientfx_key2.state`,
+danach `restoring saved effect`). Schlägt das Schreiben/Lesen doch
 mal fehl, bleibt alles Übrige unberührt (kein Absturz, nur kein Restore),
 siehe Kommentar über `AmbientFx.saveState()`.
 
@@ -1054,8 +1056,7 @@ Verträgt sich mit anderen Jars im Ordner `jars/` (zum Beispiel `carplay_hook.ja
 ## Nächste Schritte / Ideen
 
 * Eigene Designs und Original-Vorlagen aus dem Design Studio zum ersten Mal im Fahrzeug testen
-* Außentemperatur-Quelle (`OutsideTempData`) für Atmosphere live bestätigen (siehe „Atmosphere“ oben)
-* Den Restore-Pfad nach einem echten Neustart separat testen (siehe „Debug“ oben und Kommentar über `AmbientFx.saveState()`)
+* **Test durch die Community gesucht:** Außentemperatur-Quelle (`OutsideTempData`) für Atmosphere auf deinem Fahrzeug bestätigen (siehe „Atmosphere“ oben). Am Fahrzeug des Autors kam bei einem kurzen Test innerhalb von etwa zwei Minuten kein Wert an (`temp[valid=false]`), Atmosphere zeigt dann seinen Ersatzwert von 15 °C (ein grüner Farbton). Längere Tests mit dem Debug-Protokoll sind willkommen
 * Passive LED-Beleuchtung (Fläche) mit aufnehmen; bisher steuert AmbientFX nur die Kontur
 * Einparkhilfe-Effekt (`ParkingDistanceData`, Einheit unbestätigt, siehe EFFEKTE_HANDBUCH.md)
 * **Blinker-Effekt** (`blinkingState` 1/2 → Seite kurz aufleuchten lassen); frühere Versuche wurden wegen der Sendedisziplin verworfen (siehe „Atmosphere“ oben), bitte Sicherheit beachten

@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
-# Lizenz: siehe LICENSE.md / License: see LICENSE.md
+# Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md / License: CC BY-NC-SA 4.0, see LICENSE.md
 #
 # DE: Decompiliert die drei Audi-Klassen, die AmbientFX ersetzt, aus DEINER eigenen lsd.jar nach java_stock/.
 #     Diese Dateien sind Audi-/e.solutions-Code und werden NICHT mitgeliefert und NICHT ins Git eingecheckt (.gitignore).

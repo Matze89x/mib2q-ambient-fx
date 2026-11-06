@@ -1,5 +1,5 @@
 # Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
-# Lizenz: siehe LICENSE.md / License: see LICENSE.md
+# Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md / License: CC BY-NC-SA 4.0, see LICENSE.md
 #
 # DE: Beschreibung aller einstellbaren Werte der Effekt-Vorlagen (Grenzen, Einheit, Beschriftung DE/EN). EINE Quelle fuer die erzeugten Java-Klassen
 #     (Begrenzung beim Laden) und das Design Studio (Regler). Die Standardwerte kommen NICHT von hier, sondern aus den Original-Effekten.

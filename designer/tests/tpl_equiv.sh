@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
-# Lizenz: siehe LICENSE.md / License: see LICENSE.md
+# Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md / License: CC BY-NC-SA 4.0, see LICENSE.md
 #
 # DE: Beweis "exakt wie das Original": laesst jede Effekt-Vorlage (Tpl*) gegen die ECHTE mitgelieferte Effekt-Klasse laufen (TplEquivTest).
 #     Voraussetzung: ./build_java.sh und ./designer/build_runtime.sh.

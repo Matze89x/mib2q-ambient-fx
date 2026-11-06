@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
-# Lizenz: siehe LICENSE.md / License: see LICENSE.md
+# Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md / License: CC BY-NC-SA 4.0, see LICENSE.md
 #
 # embed_designer.py
 #   DE: Baut docs/designer/index.html aus designer/index.src.html: setzt die Schriften (designer/fonts.css.part), die Laufzeit-Klasse

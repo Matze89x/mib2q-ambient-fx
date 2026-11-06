@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
-# Lizenz: siehe LICENSE.md / License: see LICENSE.md
+# Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md / License: CC BY-NC-SA 4.0, see LICENSE.md
 #
 # DE: Baut alle mitgelieferten Effekte als .ambiente-Plugins nach build/plugins/ (Jar + ALLE Plugins immer zusammen installieren!).
 # EN: Builds all bundled effects as .ambiente plugins into build/plugins/ (always install the jar AND ALL plugins together!).

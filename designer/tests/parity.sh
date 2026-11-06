@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
-# Lizenz: siehe LICENSE.md / License: see LICENSE.md
+# Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md / License: CC BY-NC-SA 4.0, see LICENSE.md
 #
 # DE: Vergleicht die JavaScript-Engine des Design Studios mit der Java-Klasse DesignEffect: gleiche Designs, gleiche Eingaben, Takt fuer Takt.
 #     Ablauf: 1) ./build_java.sh && ./designer/build_runtime.sh   2) Design Studio oeffnen, designer/tests/parity_snippet.js in die Browser-Konsole

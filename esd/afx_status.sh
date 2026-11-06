@@ -1,6 +1,6 @@
 #!/bin/sh
 # Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
-# Lizenz: siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
+# Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
 #
 # afx_status.sh - GEM > M.I.B. > ambientfx > "Status": NUR LESEN. Zeigt, was auf der SD-Karte und im Auto liegt und ob beides zusammenpasst; schreibt zusaetzlich
 # einen ausfuehrlichen Bericht nach <SD>/mib2q-ambient-fx/log/status_bericht.txt (fuer die Fehlersuche, ohne Telnet). Aendert nichts im Auto.

@@ -56,6 +56,15 @@ Recommended order: **3 Status → 1 Install/Update → 3 Status**. More details:
 
 If you have set up telnet access to the unit, [DEPLOY_TELNET.md](../DEPLOY_TELNET.md) has the step-by-step guide (backup, `mount -uw` for **both** partitions and the SD card, copy, checksums, rollback). Credentials are **not** part of this repository.
 
+## Choose what gets installed
+
+You are **free** in what ends up in the vehicle. The menu entries come from the `.ambiente` files that are listed in `build/plugins/` when you build the SD package:
+
+- **Add your own designs:** export them from the [Design Studio](../designer/README.md), put the `.ambiente` files into `build/plugins/` and run `deploy/build_sd_package.sh` again.
+- **Remove bundled effects:** delete the bundled `.ambiente` files you do not want from `build/plugins/` (at least one plugin has to stay) and build again. You can keep some of the five, or use **only your own designs**. The jar is always needed.
+- **Take a bundled effect out of the vehicle:** the entry **1 Install / Update** only copies what is in the list and **never deletes** plugins that are already in the vehicle (it reports them as foreign plugin files). So first run **2 Uninstall**, then **1 Install / Update** with the shortened list – or delete the file via telnet (see [DEPLOY_TELNET.md](../DEPLOY_TELNET.md)).
+- The menu texts still say “5 effects”; that is only cosmetic.
+
 ## Recover
 
 1. **Menu:** entry **2 Uninstall**. Afterwards the ambient lighting is back to stock.
@@ -130,6 +139,15 @@ Empfohlener Ablauf: **3 Status → 1 Installieren/Updaten → 3 Status**. Mehr D
 ## Weg 2: Telnet
 
 Wer einen Telnet-Zugang zum Gerät eingerichtet hat, findet in [DEPLOY_TELNET.md](../DEPLOY_TELNET.md) die Schritt-für-Schritt-Anleitung (Backup, `mount -uw` für **beide** Partitionen und die SD, Kopieren, Prüfsummen, Rollback). Die Zugangsdaten sind **nicht** Teil dieses Repositorys.
+
+## Auswählen, was installiert wird
+
+Du bist **frei**, was im Fahrzeug landet. Die Menü-Einträge stammen aus den `.ambiente`-Dateien, die beim Bauen des SD-Pakets in `build/plugins/` liegen:
+
+- **Eigene Designs dazulegen:** Exportiere sie aus dem [Design Studio](../designer/README.md), lege die `.ambiente`-Dateien nach `build/plugins/` und führe `deploy/build_sd_package.sh` erneut aus.
+- **Mitgelieferte Effekte entfernen:** Lösche die mitgelieferten `.ambiente`-Dateien, die du nicht willst, aus `build/plugins/` (mindestens ein Plugin muss bleiben) und baue neu. Du kannst einige der fünf behalten oder **nur eigene Designs** verwenden. Die Jar wird immer gebraucht.
+- **Einen mitgelieferten Effekt aus dem Fahrzeug nehmen:** Der Punkt **1 Installieren / Updaten** kopiert nur, was in der Liste steht, und **löscht nie** Plugins, die schon im Fahrzeug liegen (er meldet sie als fremde Plugin-Dateien). Mach deshalb erst **2 Deinstallieren** und dann **1 Installieren / Updaten** mit der gekürzten Liste – oder lösche die Datei per Telnet (siehe [DEPLOY_TELNET.md](../DEPLOY_TELNET.md)).
+- Die Menütexte sprechen weiter von „5 Effekten“; das ist nur Kosmetik.
 
 ## Wiederherstellen
 

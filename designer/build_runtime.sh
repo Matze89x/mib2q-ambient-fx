@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
-# Lizenz: siehe LICENSE.md / License: see LICENSE.md
+# Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md / License: CC BY-NC-SA 4.0, see LICENSE.md
 #
 # DE: Baut die Laufzeit-Klasse des Design Studios (designer/src/.../DesignEffect.java) mit Java-1.2-Regeln zu build/designer/DesignEffect.class
 #     und schreibt Pruefsumme + Groesse. Mit  tools/embed_designer.py  kommt die Klasse (Base64) in docs/designer/index.html.

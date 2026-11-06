@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
-# Lizenz: siehe LICENSE.md / License: see LICENSE.md
+# Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md / License: CC BY-NC-SA 4.0, see LICENSE.md
 #
 # DE: Erzeugt aus den ORIGINAL-Effekten (java_patch/de/mk/ambientfx/effects/*.java) die Vorlagen-Klassen des Design Studios (Tpl<Name>.java):
 #     jede Konstante wird zu einem Wert, der aus der Design-Datei ueberschrieben werden kann (Standard = Originalwert). Sonst bleibt der Code
@@ -108,7 +108,7 @@ def main():
         header = """/*
  * GENERIERT von designer/tools/gen_templates.py aus effects/%(cls)s.java - NICHT von Hand aendern. / GENERATED - do not edit by hand.
  * Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
- * Lizenz: siehe LICENSE.md / License: see LICENSE.md
+ * Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md / License: CC BY-NC-SA 4.0, see LICENSE.md
  *
  * DE: Vorlage "%(label)s" des Design Studios: derselbe Code wie der mitgelieferte Effekt, nur dass jede Konstante aus der Design-Datei
  *     (ambientfx_design.properties, Zeilen "p.NAME=Wert") ueberschrieben werden kann. Ohne Zeilen = exakt das Original.

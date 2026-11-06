@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
- * Lizenz: siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
+ * Lizenz: CC BY-NC-SA 4.0, siehe LICENSE.md (Namensnennung Pflicht, KEINE kommerzielle Nutzung/Verkauf)
  *
  * "Atmosphere" - dritter Effekt, bewusst das Gegenteil von Momentum/
  * Momentum Select: NICHT tempo-/gas-/bremsreaktiv, sondern eine ruhige,
