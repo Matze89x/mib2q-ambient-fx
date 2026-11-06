@@ -17,7 +17,7 @@ keyValue
     poll    0
 keyValue
     value   String sys 0x00000000 0
-    label   "Danach MMI neu starten (Power-Taste ca. 10 s). Lauf nie abbrechen."
+    label   "Bei OK startet das MMI nach 15 s von selbst neu. Lauf nie abbrechen."
     poll    0
 keyValue
     value   String sys 0x00000000 0
