@@ -129,6 +129,9 @@ AmbientFX can keep a **log in RAM only** that you read via telnet. It is **off b
 
 Your own effects, tests on other units and fixes are welcome (issue or pull request). **Please do not upload firmware, Audi files, VINs, logs with personal data or credentials.** Contributions are accepted under the same licence.
 
+- **Questions and discussion (German):** in the [DEB forum thread](https://www.digital-eliteboard.com/threads/ambientfx-fuer-mhi2q-mu1329-fahrzeugreaktive-ambiente-effekte.551051/).
+- **Bugs and feature requests:** please open a [GitHub issue](https://github.com/Matze89x/mib2q-ambient-fx/issues), so they do not get lost in the forum.
+
 ## License, trademarks, credits
 
 - License: **CC BY-NC-SA 4.0** – for **private, non-commercial use only; no selling** (see [LICENSE.md](LICENSE.md) and the legal code in [LICENSE](LICENSE)). It covers the original code, scripts and documentation, **not** Audi/third-party code.
@@ -266,6 +269,9 @@ AmbientFX kann ein **Protokoll nur im RAM** führen, das du per Telnet ausliest.
 ## Mitmachen
 
 Eigene Effekte, Tests auf anderen Geräten und Korrekturen sind willkommen (Issue oder Pull Request). **Bitte keine Firmware, keine Audi-Dateien, keine Fahrgestellnummern, keine Logs mit persönlichen Daten und keine Zugangsdaten hochladen.** Beiträge werden unter derselben Lizenz angenommen.
+
+- **Fragen und Diskussion (Deutsch):** im [DEB-Forenthread](https://www.digital-eliteboard.com/threads/ambientfx-fuer-mhi2q-mu1329-fahrzeugreaktive-ambiente-effekte.551051/).
+- **Fehler und Wünsche:** bitte als [GitHub-Issue](https://github.com/Matze89x/mib2q-ambient-fx/issues) melden, damit sie im Forum nicht untergehen.
 
 ## Lizenz, Marken, Credits
 
