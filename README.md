@@ -52,7 +52,7 @@ An effect is a small Java class with three methods (`start`, `tick`, `periodMs`)
 - **No Audi/VW/e.solutions code and no firmware.** The three original classes AmbientFX replaces are **not** shipped. You generate them yourself from **your own** `lsd.jar` (`tools/decompile_stock.sh`); the repository only contains the small changes as patch files (`patches/`).
 - **No pre-built jars/plugins** and no binaries. You build everything yourself.
 - **No vehicle data:** no VIN, no logs, no dumps, no colour values, no credentials, no personal data.
-- **No instructions to unlock** telnet, the console or the Green Engineering Menu, and no signature bypass. Use the respective community projects for that (for example the M.I.B. More Incredible Bash toolbox).
+- **No instructions to unlock** telnet, the console or the Green Engineering Menu, and no signature bypass. Use the respective community projects for that (for example the [M.I.B. More Incredible Bash toolbox](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash)).
 
 This repository contains only original code, scripts and documentation.
 
@@ -60,6 +60,7 @@ This repository contains only original code, scripts and documentation.
 
 - **A vehicle with coloured ambient lighting** (optional equipment, PR no. QQ2 on the test vehicle). The MMI must offer colour choice or profiles (individual / Audi drive select) under *MENU › Fahrzeug › Fahrzeugeinstellungen › Ambientebeleuchtung* (German MMI wording). AmbientFX only drives the colour of the **contour** of that existing lighting. Without coloured ambient lighting there is nothing to control.
 - Audi MHI2Q (MU1329) and a way into the unit that you set up yourself (telnet **or** toolbox with Green Engineering Menu). Neither is part of this project.
+- **The M.I.B. toolbox, prepared on the SD card first** (for the SD menu route; not part of this project): AmbientFX does not unlock your unit. Put the toolbox on the SD card **beforehand** and get it running on your unit **exactly as its own instructions describe**: release page [M.I.B. – More Incredible Bash, “Pre-V3.7.1 – MHIG Edition”](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/releases/tag/V3.7.1) and its [wiki/documentation](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki). The unit has to be able to execute the toolbox (the Green Engineering Menu must be reachable). Tested only with that toolbox version. Only then does our SD package make sense: `deploy/build_sd_package.sh` adds **one more line, `ambientfx`**, to the toolbox’s menu (GEM → M.I.B. → ambientfx) – everything else in the toolbox stays unchanged, and the installation itself is done through that new line.
 - Mac or Linux with **JDK 8** (Java 1.2 bytecode), `bash`, `patch`, `unzip`, `python3`.
 - **Your own `lsd.jar`**: the `lsd.jxe` of your unit, converted with a JXE→JAR converter (e.g. the community tool *jxe2jar*).
 - For decompiling: [Vineflower 1.12.0](https://github.com/Vineflower/vineflower/releases/tag/1.12.0) (needs Java 17+) and two small OSGi libraries from Maven Central.
@@ -79,7 +80,7 @@ tools/prepare_sources.sh
 tools/build_all_plugins.sh   # -> build/plugins/*.ambiente
 ```
 
-**Always install the jar and all plugins together.** Ways: **SD menu in the Green Engineering Menu** (`deploy/build_sd_package.sh`, with backup to the SD card) or **telnet** (`DEPLOY_TELNET.md`). See **[docs/INSTALLATION_INSTALL.md](docs/INSTALLATION_INSTALL.md)**.
+**Always install the jar and all plugins together.** Ways: **SD menu in the Green Engineering Menu** (`deploy/build_sd_package.sh`, with backup to the SD card) or **telnet** (`DEPLOY_TELNET.md`). The SD menu needs the prepared M.I.B. toolbox (see Requirements); our package adds one more line `ambientfx` to its menu. See **[docs/INSTALLATION_INSTALL.md](docs/INSTALLATION_INSTALL.md)**.
 
 ## Uninstall / recover
 
@@ -181,7 +182,7 @@ Ein Effekt ist eine kleine Java-Klasse mit drei Methoden (`start`, `tick`, `peri
 - **Keinen Audi-/VW-/e.solutions-Code und keine Firmware.** Die drei Original-Klassen, die AmbientFX ersetzt, werden **nicht** mitgeliefert. Du erzeugst sie selbst aus **deiner eigenen** `lsd.jar` (`tools/decompile_stock.sh`), das Repository enthält nur die kleinen Änderungen als Patch-Dateien (`patches/`).
 - **Keine fertig gebauten Jars/Plugins** und keine Binärdateien. Du baust alles selbst.
 - **Keine Fahrzeugdaten:** keine Fahrgestellnummer, keine Logs, keine Dumps, keine Farbwerte, keine Zugangsdaten, keine persönlichen Daten.
-- **Keine Anleitung zum Freischalten** von Telnet, Konsole oder dem Green Engineering Menu und keine Signatur-Umgehung. Wer das Gerät dafür vorbereiten muss, nutzt dafür die jeweiligen Community-Projekte (zum Beispiel die M.I.B. More Incredible Bash Toolbox).
+- **Keine Anleitung zum Freischalten** von Telnet, Konsole oder dem Green Engineering Menu und keine Signatur-Umgehung. Wer das Gerät dafür vorbereiten muss, nutzt dafür die jeweiligen Community-Projekte (zum Beispiel die [M.I.B. More Incredible Bash Toolbox](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash)).
 
 Dieses Repository enthält nur eigenen Code, eigene Skripte und eigene Dokumentation.
 
@@ -189,6 +190,7 @@ Dieses Repository enthält nur eigenen Code, eigene Skripte und eigene Dokumenta
 
 - **Ein Fahrzeug mit farbiger Ambientebeleuchtung** (Sonderausstattung, beim Testfahrzeug PR-Nr. QQ2). Im MMI muss es unter *MENU › Fahrzeug › Fahrzeugeinstellungen › Ambientebeleuchtung* Farbwahl bzw. Profile (individuell / Audi drive select) geben. AmbientFX steuert nur die Farbe der **Kontur** dieser vorhandenen Beleuchtung. Ohne farbige Ambientebeleuchtung gibt es nichts zu steuern.
 - Audi MHI2Q (MU1329), ein Steuergerät-Zugang, den du selbst eingerichtet hast (Telnet **oder** Toolbox mit Green Engineering Menu). Beides ist nicht Teil dieses Projekts.
+- **Die M.I.B.-Toolbox, vorher auf der SD-Karte eingerichtet** (für den Weg über das SD-Menü; nicht Teil dieses Projekts): AmbientFX schaltet dein Gerät nicht frei. Lege die Toolbox **vorher** auf die SD-Karte und bringe sie auf deinem Gerät **genau nach ihrer eigenen Anleitung** zum Laufen: Release-Seite [M.I.B. – More Incredible Bash, „Pre-V3.7.1 – MHIG Edition“](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/releases/tag/V3.7.1) und ihr [Wiki/Dokumentation](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki). Das Gerät muss die Toolbox ausführen können (das Green Engineering Menu muss erreichbar sein). Getestet nur mit dieser Toolbox-Version. Erst dann ist unser SD-Paket sinnvoll: `deploy/build_sd_package.sh` fügt dem Menü der Toolbox **eine weitere Zeile `ambientfx`** hinzu (GEM → M.I.B. → ambientfx) – alles Übrige der Toolbox bleibt unverändert, und die Installation selbst läuft über diese neue Zeile.
 - Mac oder Linux mit **JDK 8** (Java-1.2-Bytecode), `bash`, `patch`, `unzip`, `python3`.
 - **Deine eigene `lsd.jar`**: die `lsd.jxe` deines Geräts, mit einem JXE→JAR-Konverter (z. B. dem Community-Werkzeug *jxe2jar*) umgewandelt.
 - Zum Decompilieren: [Vineflower 1.12.0](https://github.com/Vineflower/vineflower/releases/tag/1.12.0) (braucht Java 17+) und zwei kleine OSGi-Bibliotheken aus Maven Central.
@@ -208,7 +210,7 @@ tools/prepare_sources.sh
 tools/build_all_plugins.sh   # -> build/plugins/*.ambiente
 ```
 
-Installiert wird **immer die Jar und alle Plugins zusammen**. Wege: **SD-Menü im Green Engineering Menu** (`deploy/build_sd_package.sh`, mit Sicherung auf die SD) oder **Telnet** (`DEPLOY_TELNET.md`). Siehe **[docs/INSTALLATION_INSTALL.md](docs/INSTALLATION_INSTALL.md)**.
+Installiert wird **immer die Jar und alle Plugins zusammen**. Wege: **SD-Menü im Green Engineering Menu** (`deploy/build_sd_package.sh`, mit Sicherung auf die SD) oder **Telnet** (`DEPLOY_TELNET.md`). Das SD-Menü braucht die vorbereitete M.I.B.-Toolbox (siehe Voraussetzungen); unser Paket fügt deren Menü eine weitere Zeile `ambientfx` hinzu. Siehe **[docs/INSTALLATION_INSTALL.md](docs/INSTALLATION_INSTALL.md)**.
 
 ## Deinstallieren / Wiederherstellen
 

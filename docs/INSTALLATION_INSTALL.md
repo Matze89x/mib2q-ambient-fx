@@ -22,7 +22,7 @@ Everything else on the unit stays unchanged. The original HMI (`lsd.jxe`) and th
 
 ## Way 1: SD menu in the Green Engineering Menu (recommended)
 
-Requirement: an **M.I.B. toolbox SD card** (More Incredible Bash) with access to the Green Engineering Menu. Setting that up is not part of this project.
+Requirement: an **M.I.B. toolbox SD card** (More Incredible Bash) that is **prepared first**: the toolbox (version “Pre-V3.7.1 – MHIG Edition”, see the [release page](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/releases/tag/V3.7.1) and its [wiki/documentation](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki)) has to be on the card, and your unit has to be able to run it **exactly as the toolbox’s own instructions describe**, so that the Green Engineering Menu is reachable. Setting that up is not part of this project. Our script then **adds one more line, `ambientfx`**, to the toolbox menu (GEM → M.I.B. → ambientfx); the installation itself is done through that line, everything else in the toolbox stays unchanged.
 
 **On the computer** (card inserted):
 
@@ -97,7 +97,7 @@ Alles andere im Gerät bleibt unverändert. Die Original-HMI (`lsd.jxe`) und das
 
 ## Weg 1: SD-Menü im Green Engineering Menu (empfohlen)
 
-Voraussetzung: eine **M.I.B.-Toolbox-SD-Karte** (More Incredible Bash) mit Zugang zum Green Engineering Menu. Das Einrichten ist nicht Teil dieses Projekts.
+Voraussetzung: eine **M.I.B.-Toolbox-SD-Karte** (More Incredible Bash), die **vorher eingerichtet** ist: Die Toolbox (Version „Pre-V3.7.1 – MHIG Edition“, siehe [Release-Seite](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/releases/tag/V3.7.1) und ihr [Wiki/Dokumentation](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki)) muss auf der Karte liegen, und dein Gerät muss sie **genau nach der eigenen Anleitung der Toolbox** ausführen können, sodass das Green Engineering Menu erreichbar ist. Das Einrichten ist nicht Teil dieses Projekts. Unser Skript **fügt dann eine weitere Zeile `ambientfx`** zum Menü der Toolbox hinzu (GEM → M.I.B. → ambientfx); die Installation selbst läuft über diese Zeile, alles Übrige der Toolbox bleibt unverändert.
 
 **Am Computer** (Karte eingesteckt):
 

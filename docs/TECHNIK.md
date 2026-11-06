@@ -37,7 +37,7 @@ alphabetical by file name since 26.09.2026, see “Plugin system”):
 | Drive | **Throttle + steering angle** drive hue/saturation/brightness (see “Drive” below, concept/formulas taken from LuKa_dev) – rest = pale violet, full throttle swings towards warm ember, steering lock additionally spreads the hue. Brake = instantly full red like the others. | untouched, like Momentum |
 | Momentum | Colour = run through **all 28 coloured Audi factory colours** over 0–130 km/h (red → orange → yellow → green → cyan → blue → violet → pink-red → **red again at 130 km/h**), blended continuously between neighbouring factory colours – see “Colour table Momentum / Momentum select” below. Brightness **always 100 % during the day** (independent of the throttle), **at night** 5 % at 0 % throttle, rising to 100 % at 50 % throttle and staying at 100 % above that (asymmetrically smoothed, brightens faster than it dims). Brake = instantly full red, full brightness, independent of everything else. **Gear lever D → S** (except in the Dynamic profile): once, instantly white at 100 % (day and night), held for 1 s, then a 2 s soft fade back to the normal colour (see “Gear lever D → S” below). | **untouched** – stays the manual colour/brightness control in the MIB (its own value remembered by the vehicle itself) |
 | Momentum select | **Independent copy of Momentum** (see “Momentum Select” below) – same colour table (all factory colours, 0–130 km/h) and brake principle, but the colour range, brightness and reaction curve additionally depend on the **Audi drive select mode** (Comfort/Auto/Dynamic/Eco/Individual). The same D→S white sequence as Momentum (see “Gear lever D → S” below). | untouched, like Momentum |
-| Scroll | **Pure rainbow show element** (see “Scroll” below, idea/formula taken from LuKa_dev) – the hue rotates endlessly over the colour wheel at a speed proportional to the vehicle speed, the colour freezes at standstill. No throttle/day-night breathing, only a fixed night dimming value. Brake = instantly full red like the others. | untouched, like Momentum |
+| Scroll | **Pure rainbow show element** (see “Scroll” below, idea/formula taken from LuKa_dev) – the hue rotates endlessly over the colour wheel at a speed proportional to the vehicle speed, the colour keeps rotating slowly even at standstill (8°/s), the faster you drive the faster it turns. No throttle relation; at night a fixed dimming value (40 %), plus a very slow shimmer (15 s). Brake = instantly full red like the others. | untouched, like Momentum |
 
 ### Colour table Momentum / Momentum select (since 03.10.2026)
 
@@ -149,7 +149,7 @@ day/night switching:
 `effects/MomentumSelect.java` imports/extends/references Momentum at no
 point, so that the two effects cannot influence each other:
 if one `.ambiente` file is deleted from the MIB, the other
-effect stays runnable unchanged. The same basic principle (rainbow over speed, factory colour snap,
+effect stays runnable unchanged. The same basic principle (rainbow over speed through the factory colour ring,
 instant red on brake), but the brightness/reaction curve additionally
 depends on the **Audi drive select mode**; the source is the new
 `DriveModeData` (`org.dsi.ifc.cardrivingcharacteristics.DSICarDrivingCharacteristics`,
@@ -267,25 +267,26 @@ there the hue rotates endlessly over the complete colour wheel at a
 speed proportional to the vehicle speed (0.36° per (km/h·s),
 formula/value taken 1:1 from Luka). Unlike Momentum (speed → fixed
 hue **position**, stays at red from 100 km/h) Scroll is a
-continuous hue **rotation**: at standstill the colour freezes, the faster
-you drive the faster it keeps rotating – no end stop, runs
+continuous hue **rotation**: the colour keeps rotating even at standstill (base rotation of 8°/s since 26.09.2026), the faster
+you drive the faster it turns – no end stop, runs
 endlessly in a circle.
 
 **Deliberately NOT taken 1:1 from Luka** (see the class comment in
 `Scroll.java` for the full reasoning):
 * Luka streams raw HSV values over the complete colour wheel without a
-  factory colour snap – works on his vehicle, but on our
-  retrofit strip would probably have reproduced the same flicker that we solved
-  specifically for Momentum. Scroll therefore snaps hard to the nearest factory colour
-  just like Momentum.
+  factory colour snap. We have a switch for that, `TRY_FREE_COLOR`: since the test on 26.09.2026 it is
+  **active on a trial basis** (free streaming, no flicker observed so far on the retrofit strip),
+  together with a compensation of the perceived brightness across the colour wheel
+  (`TARGET_LUMINANCE`, `MIN_SATURATION_FLOOR`). If it flickers, set it to `false`: then Scroll
+  snaps hard to the nearest factory colour just like Momentum.
 * Luka’s version drives surface and contour at the same time – for us, due to the design
   (Effect interface/engine), only the contour, like everywhere in this
   project.
 * Brake = instantly full red – our own addition for consistency with
   Momentum/Momentum Select, not present in Luka’s.
 
-Brightness deliberately simple: day 100 %, night a fixed dimming value (40 %) without
-throttle relation and without breathing – Scroll is a pure show element, not
+Brightness deliberately simple: day 100 %, night a fixed dimming value (40 %), without
+throttle relation and without breathing, plus a very slow, speed-independent shimmer of the brightness (period 15 s, 85–100 %) – Scroll is a pure show element, not
 driving feedback like Momentum or a mood like Atmosphere.
 
 ### Drive (throttle + steering angle)
@@ -448,7 +449,7 @@ java_patch/
     ├── ParkingDistanceData.java    DSICarParkingSystem listener (parking aid, attributes 10/11)
     ├── Effect.java / Rgb.java      contract (contour only) + colour helpers (HSV, palette, lerp)
     ├── Log.java / RamLog.java      debug facade + RAM log (only with marker, limit 256 KB)
-    └── effects/                    Momentum, Momentum Select, Atmosphere - source lives here,
+    └── effects/                    Momentum, Momentum Select, Atmosphere, Scroll, Drive - source lives here,
                                      but they are delivered as .ambiente plugins (see below),
                                      NO LONGER hard-wired into FxCatalog
 ```
@@ -515,15 +516,12 @@ Coexists with other jars in the folder `jars/` (for example `carplay_hook.jar`) 
 
 ## Next steps / ideas
 
-* Fine-tune Momentum in practice (colour limits, throttle threshold, brake behaviour)
-  before more effects come back
-* Verify `/mnt/persist` writability via telnet (see README section
-  “Debug log” above and the comment above `AmbientFx.saveState()`)
-* Later: selectively revive the removed v2 effects (see git history) as
-  `.ambiente` plugins (see “Plugin system” above)
-* **Drive** effect: colour by drive select mode (`DSICarDrivingCharacteristics`
-  attr. 13) – comfort blue, dynamic red, efficiency green …
-* **Indicator effect** (`blinkingState` 1/2 → light up one side briefly)
+* First test of your own designs and original templates from the Design Studio in the vehicle
+* Confirm the outside-temperature source (`OutsideTempData`) for Atmosphere live (see “Atmosphere” above)
+* Test the restore path after a real reboot separately (see “Debug” above and the comment above `AmbientFx.saveState()`)
+* Add the passive LED lighting (surface); so far AmbientFX only drives the contour
+* Parking-distance effect (`ParkingDistanceData`, unit unconfirmed, see EFFEKTE_HANDBUCH.md)
+* **Indicator effect** (`blinkingState` 1/2 → light up one side briefly); earlier attempts were dropped because of the send discipline (see “Atmosphere” above), please mind safety
 * Luka’s “* on the steering wheel = comfort ⇄ dynamic”: own patch via
   `DSICarDrivingCharacteristics.setCharismaActiveProfile` + steering wheel button
 
@@ -575,7 +573,7 @@ seit 26.09.2026 alphabetisch nach Dateiname, siehe „Plugin-System"):
 | Drive | **Gaspedal + Lenkwinkel** steuern Farbton/Sättigung/Helligkeit (siehe „Drive" unten, Konzept/Formeln von LuKa_dev übernommen) – Ruhe = blasses Violett, Vollgas schwenkt Richtung warmes Ember, Lenkeinschlag spreizt den Farbton zusätzlich auf. Bremse = sofort voll Rot wie bei den anderen. | unangetastet, wie Momentum |
 | Momentum | Farbe = Durchlauf durch **alle 28 farbigen Audi-Werksfarben** über 0–130 km/h (Rot → Orange → Gelb → Grün → Cyan → Blau → Violett → Rosa-Rot → wieder **Rot bei 130 km/h**), stufenlos zwischen benachbarten Werksfarben überblendet – siehe „Farbtabelle Momentum / Momentum select“ unten. Helligkeit **tagsüber immer 100 %** (unabhängig vom Gaspedal), **nachts** 5 % bei 0 % Gas, steigt bis 50 % Gas auf 100 % an und bleibt darüber bei 100 % (asymmetrisch geglättet, schneller heller als dunkler). Bremse = sofort voll Rot, voll hell, unabhängig von allem anderen. **Gangwahlhebel D → S** (außer im Dynamic-Profil): einmalig sofort Weiß bei 100 % (Tag und Nacht), 1 s gehalten, dann 2 s weiches Überblenden zurück zur normalen Farbe (siehe „Gangwahlhebel D → S“ unten). | **unangetastet** – bleibt der manuelle Farb-/Helligkeitsregler im MIB (eigener, vom Fahrzeug selbst gemerkter Wert) |
 | Momentum select | **Eigenständige Kopie von Momentum** (siehe „Momentum Select" unten) – gleiche Farbtabelle (alle Werksfarben, 0–130 km/h) und Brems-Prinzip, aber die Farbwelt, Helligkeits- und Reaktionskurve hängt zusätzlich vom **Audi-Drive-Select-Modus** ab (Comfort/Auto/Dynamic/Eco/Individual). Dieselbe D→S-Weißsequenz wie Momentum (siehe „Gangwahlhebel D → S“ unten). | unangetastet, wie Momentum |
-| Scroll | **Reines Regenbogen-Showelement** (siehe „Scroll" unten, Idee/Formel von LuKa_dev übernommen) – Farbton dreht sich mit einer zum Tempo proportionalen Geschwindigkeit endlos über das Farbrad, im Stand friert die Farbe ein. Kein Gas-/Tag-Nacht-Breathing, nur ein fester Nacht-Dimmwert. Bremse = sofort voll Rot wie bei den anderen. | unangetastet, wie Momentum |
+| Scroll | **Reines Regenbogen-Showelement** (siehe „Scroll" unten, Idee/Formel von LuKa_dev übernommen) – Farbton dreht sich mit einer zum Tempo proportionalen Geschwindigkeit endlos über das Farbrad, die Farbe dreht auch im Stand langsam weiter (8 °/s), je schneller gefahren wird, desto schneller. Kein Gas-Bezug; nachts ein fester Dimmwert (40 %), dazu ein sehr langsames Schimmern (15 s). Bremse = sofort voll Rot wie bei den anderen. | unangetastet, wie Momentum |
 
 ### Farbtabelle Momentum / Momentum select (seit 03.10.2026)
 
@@ -687,7 +685,7 @@ Tag/Nacht-Umschaltung speist:
 `effects/MomentumSelect.java` importiert/erweitert/referenziert Momentum an
 keiner Stelle, damit beide Effekte sich nicht gegenseitig beeinflussen
 können: wird eine `.ambiente`-Datei vom MIB gelöscht, bleibt der andere
-Effekt unverändert lauffähig. Gleiches Grundprinzip (Regenbogen über Tempo, Werksfarben-Snap,
+Effekt unverändert lauffähig. Gleiches Grundprinzip (Regenbogen über Tempo durch den Werksfarben-Ring,
 Sofort-Rot bei Bremse), aber die Helligkeits-/Reaktionskurve hängt
 zusätzlich vom **Audi-Drive-Select-Modus** ab, Quelle ist die neue
 `DriveModeData` (`org.dsi.ifc.cardrivingcharacteristics.DSICarDrivingCharacteristics`,
@@ -806,25 +804,26 @@ dort dreht sich der Farbton mit einer zum Tempo proportionalen
 Geschwindigkeit endlos über das komplette Farbrad (0,36° pro (km/h·s),
 Formel/Wert 1:1 von Luka übernommen). Anders als Momentum (Tempo → feste
 Hue-**Position**, bleibt ab 100 km/h bei Rot stehen) ist Scroll eine
-fortlaufende Hue-**Rotation**: im Stand friert die Farbe ein, je schneller
-gefahren wird, desto schneller dreht sie sich weiter – kein Anschlag, läuft
+fortlaufende Hue-**Rotation**: die Farbe dreht auch im Stand weiter (Grundrotation 8 °/s seit 26.09.2026), je schneller
+gefahren wird, desto schneller – kein Anschlag, läuft
 unbegrenzt im Kreis.
 
 **Bewusst NICHT 1:1 von Luka übernommen** (siehe Klassenkommentar in
 `Scroll.java` für die volle Begründung):
 * Luka streamt rohe HSV-Werte über das komplette Farbrad ohne
-  Werksfarben-Snap – funktioniert auf seinem Fahrzeug, hätte auf unserem
-  Retrofit-Streifen aber vermutlich dasselbe Flackern reproduziert, das wir
-  bei Momentum extra gelöst haben. Scroll snappt deshalb genau wie Momentum
-  hart auf die nächste Werksfarbe.
+  Werksfarben-Snap. Bei uns gibt es dafür den Schalter `TRY_FREE_COLOR`: seit dem Test am 26.09.2026 ist er
+  **testweise aktiv** (freies Streaming, bisher kein Flackern auf dem Retrofit-Streifen beobachtet),
+  zusammen mit einem Ausgleich der wahrgenommenen Helligkeit über das Farbrad
+  (`TARGET_LUMINANCE`, `MIN_SATURATION_FLOOR`). Bei Flackern auf `false` setzen: dann snappt Scroll
+  wie Momentum hart auf die nächste Werksfarbe.
 * Lukas Version steuert Fläche und Kontur gleichzeitig – bei uns bauartbedingt
   (Effect-Schnittstelle/Engine) nur die Kontur, wie überall in diesem
   Projekt.
 * Bremse = sofort volles Rot – eigene Ergänzung für Konsistenz mit
   Momentum/Momentum Select, bei Luka nicht vorhanden.
 
-Helligkeit bewusst simpel: Tag 100 %, Nacht ein fester Dimmwert (40 %) ohne
-Gas-Bezug und ohne Breathing – Scroll ist ein reines Showelement, kein
+Helligkeit bewusst einfach: Tag 100 %, Nacht ein fester Dimmwert (40 %), ohne
+Gas-Bezug und ohne Atmen, dazu ein sehr langsames, tempounabhängiges Schimmern der Helligkeit (Periode 15 s, 85–100 %) – Scroll ist ein reines Showelement, kein
 Fahr-Feedback wie Momentum oder eine Stimmung wie Atmosphere.
 
 ### Drive (Gaspedal + Lenkwinkel)
@@ -987,7 +986,7 @@ java_patch/
     ├── ParkingDistanceData.java    DSICarParkingSystem-Listener (Einparkhilfe, Attribute 10/11)
     ├── Effect.java / Rgb.java      Vertrag (nur Kontur) + Farb-Helfer (HSV, Palette, Lerp)
     ├── Log.java / RamLog.java      Debug-Fassade + RAM-Protokoll (nur mit Marker, Obergrenze 256 KB)
-    └── effects/                    Momentum, Momentum Select, Atmosphere - Quelltext liegt hier,
+    └── effects/                    Momentum, Momentum Select, Atmosphere, Scroll, Drive - Quelltext liegt hier,
                                      ausgeliefert werden sie aber als .ambiente-Plugins (siehe unten),
                                      NICHT mehr fest in FxCatalog verdrahtet
 ```
@@ -1054,15 +1053,12 @@ Verträgt sich mit anderen Jars im Ordner `jars/` (zum Beispiel `carplay_hook.ja
 
 ## Nächste Schritte / Ideen
 
-* Momentum in der Praxis feinschleifen (Farbgrenzen, Gas-Schwelle, Brems-Verhalten)
-  bevor weitere Effekte zurückkommen
-* `/mnt/persist`-Beschreibbarkeit per Telnet verifizieren (siehe README-Abschnitt
-  „Debug-Log“ oben und Kommentar über `AmbientFx.saveState()`)
-* Später: die entfernten v2-Effekte (siehe Git-Historie) selektiv als
-  `.ambiente`-Plugins wiederbeleben (siehe „Plugin-System“ oben)
-* **Drive**-Effekt: Farbe nach Drive-Select-Modus (`DSICarDrivingCharacteristics`
-  Attr. 13) – comfort blau, dynamic rot, efficiency grün …
-* **Blinker-Effekt** (`blinkingState` 1/2 → Seite kurz aufleuchten lassen)
+* Eigene Designs und Original-Vorlagen aus dem Design Studio zum ersten Mal im Fahrzeug testen
+* Außentemperatur-Quelle (`OutsideTempData`) für Atmosphere live bestätigen (siehe „Atmosphere“ oben)
+* Den Restore-Pfad nach einem echten Neustart separat testen (siehe „Debug“ oben und Kommentar über `AmbientFx.saveState()`)
+* Passive LED-Beleuchtung (Fläche) mit aufnehmen; bisher steuert AmbientFX nur die Kontur
+* Einparkhilfe-Effekt (`ParkingDistanceData`, Einheit unbestätigt, siehe EFFEKTE_HANDBUCH.md)
+* **Blinker-Effekt** (`blinkingState` 1/2 → Seite kurz aufleuchten lassen); frühere Versuche wurden wegen der Sendedisziplin verworfen (siehe „Atmosphere“ oben), bitte Sicherheit beachten
 * Lükas „* am Lenkrad = comfort ⇄ dynamic“: eigener Patch über
   `DSICarDrivingCharacteristics.setCharismaActiveProfile` + Lenkrad-Taste
 

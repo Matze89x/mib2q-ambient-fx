@@ -37,11 +37,11 @@ public interface Effect {
   new value should be sent. `vehicle` is never `null` but can be
   “empty/invalid” (check `vehicle.isFresh(nowMs)`, see below).
 * **`periodMs()`** – how smoothly your effect should be sent. 150 ms
-  is a good default (all three effects so far use it).
+  is a good default (all five bundled effects use it).
 
 **Since 25.09.2026 there is only one way left: plugin.** Every effect –
-including Momentum, Momentum select and Atmosphere themselves – is delivered as
-a `.ambiente` file (see section 6); no effect is hard-wired into the jar any
+including Momentum, Momentum select, Atmosphere, Scroll and Drive themselves – is delivered as
+a `.ambiente` file (see section 5); no effect is hard-wired into the jar any
 more. Adding/removing/replacing an effect therefore **never again** needs a
 rebuild/redeploy of `ambient_fx.jar` –
 just add or delete a `.ambiente` file on the MIB and reboot.
@@ -80,18 +80,21 @@ have to touch anything else for that.
 
 ## 2. Factory colour snapping (please note if you have LEDs in the vehicle)
 
-A retrofit LED strip in this vehicle only shows real
-**Audi factory colours** cleanly – freely streamed in-between values flicker.
-That is why all three effects so far compute their ideal colour continuously
+A retrofit LED strip in this vehicle initially only showed real
+**Audi factory colours** cleanly – freely streamed in-between values flickered.
+That is why **Atmosphere** and **Drive** compute their ideal colour continuously
 but snap it **before every send** to the nearest colour from
 `factoryPalette` (comes live from the vehicle, see below) – only **afterwards**
 is the brightness multiplied in separately (otherwise every dimmed
-colour would jump back to the full factory colour). Recommendation: copy
-this pattern (see `Momentum.setDisplay()` or `Atmosphere.setDisplay()`
-as a template), unless you do not have a sensitive strip and want to
-deliberately test free streaming (see `MomentumSelect.TRY_BLENDED_COLORS`
-for an experiment in that direction – so far unclear whether that stays
-flicker-free everywhere).
+colour would jump back to the full factory colour). **Momentum** and
+**Momentum select** have run continuously through a ring of the factory
+colours since 03.10.2026 (blending between neighbouring factory colours),
+**Scroll** streams freely without a snap (`TRY_FREE_COLOR`). Both stayed free
+of flicker on the author’s retrofit strip, but may look different on other
+strips. Recommendation: copy the snap pattern (see
+`Atmosphere.setDisplay()` or `Drive.setDisplay()` as a template), unless you
+do not have a sensitive strip and want to deliberately test free streaming
+(see `Scroll.TRY_FREE_COLOR` and `MomentumSelect.TRY_BLENDED_COLORS`).
 
 ```java
 static Rgb nearest(Rgb target, Rgb[] palette) {
@@ -118,7 +121,7 @@ effect was ever activated).
 |---|---|---|
 | `VehicleData` | parameter `vehicle` in `tick()` | ✅ yes (speed/throttle/brake/indicators) |
 | `DaylightData` | parameter `daylight` in `tick()` | ✅ yes (light switch test) |
-| `DriveModeData` | `AmbientFx.getInstance().getDriveMode()` | ⚠️ attribute confirmed, effect (Momentum select) not driven yet |
+| `DriveModeData` | `AmbientFx.getInstance().getDriveMode()` | ✅ yes (drive select dial cycled through, Momentum select used in daily driving) |
 | `OutsideTempData` | `AmbientFx.getInstance().getOutsideTemp()` | ❌ only by decompiling, never seen live |
 | `ParkingDistanceData` | `AmbientFx.getInstance().getParkingDistance()` | ❌ only by decompiling, never seen live |
 
@@ -236,7 +239,7 @@ So nobody does the same research twice:
 
 ---
 
-## 6. Effects as a plugin (`.ambiente` file, without rebuilding the main jar)
+## 5. Effects as a plugin (`.ambiente` file, without rebuilding the main jar)
 
 Since 25.09.2026 there is a second way to make an effect available
 without rebuilding `ambient_fx.jar` and reinstalling it completely:
@@ -256,7 +259,7 @@ version=1
 ```
 The `Effect`/`Rgb`/`VehicleData`/… classes themselves do NOT have to go in –
 the plugin loader finds them at runtime automatically in the already running
-`ambient_fx.jar` (normal classloader delegation principle).
+`ambient_fx.jar` (normal classloader delegation principle). Plugins made with the **Design Studio** (see [designer/README.md](designer/README.md)) look different inside: instead of your class they contain a prebuilt runtime class and a design text file.
 
 `version` is stamped by `build_plugin.sh` automatically from `Effect.CONTRACT_VERSION`
 (never enter it by hand) and has to match the currently valid number
@@ -300,8 +303,7 @@ finished bytecode is loaded.
 **What happens on an error:** a broken/incompatible plugin (e.g.
 wrong class name in `plugin.properties`, class does not implement `Effect`,
 or similar) is skipped during the scan and logged (`Log` output of
-`EffectPluginLoader`) – **no crash**; the three built-in effects
-(Momentum, Momentum select, Atmosphere) always keep running independent of it.
+`EffectPluginLoader`) – **no crash**; all other plugins and the HMI keep running independent of it.
 Even a completely missing/empty plugin folder (fresh
 installation, no `.ambiente` copied there yet) is uncritical – then
 there are simply no additional plugin entries, everything else stays as
@@ -311,16 +313,14 @@ usual.
 * The scan runs once at MMI start (more precisely: as soon as `FxCatalog` is
   used for the first time) – a plugin copied onto the
   MIB during operation only appears in the menu after the next complete MMI reboot.
-* The mechanism (`java.net.URLClassLoader`) is confirmed working by a local
-  Mac test (see commit history) – **not yet tested in the vehicle itself**.
-  Should it not work on the real QNX runtime environment for
-  any reason, the three built-in effects remain
-  completely unaffected (the plugin scan is encapsulated in its own try/catch in
+* The mechanism (`java.net.URLClassLoader`) is confirmed by a Mac test and
+  **in the vehicle** (since 25.09.2026). A failure in the plugin scan would not
+  affect the rest (the scan is encapsulated in its own try/catch in
   `FxCatalog`’s initialiser).
 
 ---
 
-## 7. Checklist for a new effect
+## 6. Checklist for a new effect
 
 1. Your own file under `java_patch/de/mk/ambientfx/effects/YourEffect.java`,
    **no reference to other effect files** (every effect stays
@@ -329,7 +329,7 @@ usual.
 3. Use `daylight` sensibly or ignore it deliberately (like `Atmosphere`).
 4. `./build_java.sh && ./verify.sh` – must give 3× “OK”.
 5. `./build_plugin.sh java_patch/de/mk/ambientfx/effects/YourEffect.java "Label"`
-   – builds the `.ambiente` file (section 6).
+   – builds the `.ambiente` file (section 5).
 6. Test in the vehicle on private property and observe the behaviour.
 
 ---
@@ -373,11 +373,11 @@ public interface Effect {
   neuer Wert gesendet werden soll. `vehicle` ist nie `null`, kann aber
   „leer/ungültig" sein (`vehicle.isFresh(nowMs)` prüfen, siehe unten).
 * **`periodMs()`** – wie flüssig dein Effekt gesendet werden soll. 150 ms
-  ist ein guter Standardwert (alle drei bisherigen Effekte nutzen das).
+  ist ein guter Standardwert (alle fünf mitgelieferten Effekte nutzen das).
 
 **Seit 25.09.2026 gibt es nur noch einen Weg: Plugin.** Jeder Effekt –
-auch Momentum, Momentum select und Atmosphere selbst – wird als
-`.ambiente`-Datei ausgeliefert (siehe Abschnitt 6), kein Effekt ist mehr
+auch Momentum, Momentum select, Atmosphere, Scroll und Drive selbst – wird als
+`.ambiente`-Datei ausgeliefert (siehe Abschnitt 5), kein Effekt ist mehr
 fest im Jar verdrahtet. Ein Effekt hinzufügen/entfernen/austauschen
 braucht dadurch **nie mehr** einen Neubau/Redeploy von `ambient_fx.jar` –
 nur eine `.ambiente`-Datei auf dem MIB hinzufügen oder löschen und neu
@@ -418,18 +418,21 @@ sonst nichts anfassen.
 
 ## 2. Werksfarben-Snapping (bitte beachten, wenn du LEDs am Fahrzeug hast)
 
-Ein Retrofit-LED-Streifen in diesem Fahrzeug stellt nur echte
-**Audi-Werksfarben** sauber dar – frei gestreamte Zwischenwerte flackern.
-Deshalb rechnen alle drei bisherigen Effekte ihre ideale Farbe stufenlos
+Ein Retrofit-LED-Streifen in diesem Fahrzeug stellte anfangs nur echte
+**Audi-Werksfarben** sauber dar – frei gestreamte Zwischenwerte flackerten.
+Deshalb rechnen **Atmosphere** und **Drive** ihre ideale Farbe stufenlos
 aus, snappen sie aber **vor jedem Senden** auf die nächstliegende Farbe aus
 `factoryPalette` (kommt live vom Fahrzeug, siehe unten) – **danach** erst
 wird die Helligkeit separat aufmultipliziert (sonst würde jede gedimmte
-Farbe wieder auf die volle Werksfarbe zurückspringen). Empfehlung: kopiere
-dieses Muster (siehe `Momentum.setDisplay()` oder `Atmosphere.setDisplay()`
-als Vorlage), außer du hast keinen empfindlichen Streifen und willst
-bewusst freies Streaming testen (siehe `MomentumSelect.TRY_BLENDED_COLORS`
-für ein Experiment in die Richtung – bisher unklar, ob das überall
-flackerfrei bleibt).
+Farbe wieder auf die volle Werksfarbe zurückspringen). **Momentum** und
+**Momentum select** laufen seit 03.10.2026 stufenlos durch einen Ring aus den
+Werksfarben (Überblendung zwischen benachbarten Werksfarben), **Scroll**
+streamt frei ohne Snap (`TRY_FREE_COLOR`). Beides blieb auf dem
+Retrofit-Streifen des Autors ohne Flackern, kann auf anderen Streifen aber
+anders aussehen. Empfehlung: kopiere das Snap-Muster (siehe
+`Atmosphere.setDisplay()` oder `Drive.setDisplay()` als Vorlage), außer du
+hast keinen empfindlichen Streifen und willst bewusst freies Streaming
+testen (siehe `Scroll.TRY_FREE_COLOR` und `MomentumSelect.TRY_BLENDED_COLORS`).
 
 ```java
 static Rgb nearest(Rgb target, Rgb[] palette) {
@@ -456,7 +459,7 @@ Effekt je aktiviert wurde).
 |---|---|---|
 | `VehicleData` | Parameter `vehicle` in `tick()` | ✅ ja (Tempo/Gas/Bremse/Blinker) |
 | `DaylightData` | Parameter `daylight` in `tick()` | ✅ ja (Lichtschalter-Test) |
-| `DriveModeData` | `AmbientFx.getInstance().getDriveMode()` | ⚠️ Attribut bestätigt, Effekt (Momentum select) noch nicht gefahren |
+| `DriveModeData` | `AmbientFx.getInstance().getDriveMode()` | ✅ ja (Drive-Select-Drehregler durchgeschaltet, Momentum select im Alltag gefahren) |
 | `OutsideTempData` | `AmbientFx.getInstance().getOutsideTemp()` | ❌ nur per Decompile, noch nie live gesehen |
 | `ParkingDistanceData` | `AmbientFx.getInstance().getParkingDistance()` | ❌ nur per Decompile, noch nie live gesehen |
 
@@ -574,7 +577,7 @@ Damit niemand dieselbe Recherche doppelt macht:
 
 ---
 
-## 6. Effekte als Plugin (`.ambiente`-Datei, ohne Neubau des Haupt-Jars)
+## 5. Effekte als Plugin (`.ambiente`-Datei, ohne Neubau des Haupt-Jars)
 
 Seit 25.09.2026 gibt es einen zweiten Weg, einen Effekt verfügbar zu
 machen, ohne `ambient_fx.jar` neu zu bauen und komplett neu zu installieren:
@@ -594,7 +597,7 @@ version=1
 ```
 Die `Effect`/`Rgb`/`VehicleData`/…-Klassen selbst müssen NICHT mit rein –
 die findet der Plugin-Lader zur Laufzeit automatisch im schon laufenden
-`ambient_fx.jar` (normales Classloader-Delegationsprinzip).
+`ambient_fx.jar` (normales Classloader-Delegationsprinzip). Plugins aus dem **Design Studio** (siehe [designer/README.md](designer/README.md)) sehen innen anders aus: statt deiner Klasse enthalten sie eine fertige Laufzeit-Klasse und eine Design-Textdatei.
 
 `version` wird von `build_plugin.sh` automatisch aus `Effect.CONTRACT_VERSION`
 gestempelt (nie von Hand eintragen) und muss **exakt** zur aktuell gültigen
@@ -638,8 +641,7 @@ fertiger Bytecode.
 **Was bei einem Fehler passiert:** ein defektes/inkompatibles Plugin (z. B.
 falscher Klassenname in `plugin.properties`, Klasse implementiert `Effect`
 nicht, o. ä.) wird beim Scan übersprungen und geloggt (`Log`-Ausgabe
-`EffectPluginLoader`) – **kein Absturz**, die eingebauten drei Effekte
-(Momentum, Momentum select, Atmosphere) laufen immer unabhängig davon
+`EffectPluginLoader`) – **kein Absturz**, alle übrigen Plugins und die HMI laufen unabhängig davon
 weiter. Auch ein komplett fehlender/leerer Plugin-Ordner (frische
 Installation, noch keine `.ambiente` draufkopiert) ist unkritisch – dann
 gibt's einfach keine zusätzlichen Plugin-Einträge, alles andere bleibt wie
@@ -650,16 +652,14 @@ gewohnt.
   ersten Mal benutzt wird) – ein Plugin, das während des Betriebs auf das
   MIB kopiert wird, taucht erst nach dem nächsten kompletten MMI-Neustart
   im Menü auf.
-* Der Mechanismus (`java.net.URLClassLoader`) ist per lokalem Mac-Test
-  bestätigt funktionsfähig (siehe Commit-Historie) – **im Fahrzeug selbst
-  noch nicht getestet**. Sollte das auf der echten QNX-Laufzeitumgebung aus
-  irgendeinem Grund nicht gehen, bleiben die drei eingebauten Effekte davon
-  komplett unberührt (der Plugin-Scan ist in einem eigenen try/catch in
+* Der Mechanismus (`java.net.URLClassLoader`) ist per Mac-Test und **im
+  Fahrzeug bestätigt** (seit 25.09.2026). Ein Fehler im Plugin-Scan würde den
+  Rest nicht beeinträchtigen (der Scan ist in einem eigenen try/catch in
   `FxCatalog`s Initialisierer gekapselt).
 
 ---
 
-## 7. Checkliste für einen neuen Effekt
+## 6. Checkliste für einen neuen Effekt
 
 1. Eigene Datei unter `java_patch/de/mk/ambientfx/effects/DeinEffekt.java`,
    **keine Referenz auf andere Effekt-Dateien** (jeder Effekt bleibt
@@ -668,5 +668,5 @@ gewohnt.
 3. `daylight` sinnvoll nutzen oder bewusst ignorieren (wie `Atmosphere`).
 4. `./build_java.sh && ./verify.sh` – muss 3× "OK" liefern.
 5. `./build_plugin.sh java_patch/de/mk/ambientfx/effects/DeinEffekt.java "Label"`
-   – baut die `.ambiente`-Datei (Abschnitt 6).
+   – baut die `.ambiente`-Datei (Abschnitt 5).
 6. Auf privatem Grundstück im Fahrzeug testen und das Verhalten beobachten.

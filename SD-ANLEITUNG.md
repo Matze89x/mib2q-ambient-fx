@@ -11,13 +11,15 @@ Matze89x in cooperation with DEB and LuKa_dev. Attribution required, **no commer
 
 With this SD card you install, update and remove AmbientFX (the ambient lighting effects) **without telnet**: in the Green Engineering Menu (GEM) under **M.I.B. → ambientfx**. The project always consists of **the jar and all five effect plugins together** (Atmosphere, Drive, Momentum, Momentum select, Scroll) – the menu treats them that way, too. **Note:** the menu texts on the car’s screen are in German; this document quotes them as they appear and adds the English meaning in brackets.
 
+**Prerequisite:** the card must already carry the **M.I.B. toolbox** (“Pre-V3.7.1 – MHIG Edition”, see the [release page](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/releases/tag/V3.7.1) and its [wiki/documentation](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki)), and your unit must be able to run it **as the toolbox’s own instructions describe**. Our package only adds **one more line, `ambientfx`**, under M.I.B. in the Green Engineering Menu; the rest of the toolbox stays unchanged.
+
 ## 1. What is on the card
 
 **One single folder `mib2q-ambient-fx/`** – everything is in there, and the menu only writes there (backups, logs). Outside of it the only thing that changes on the card are the two menu files of the toolbox (an appended block `ambientfx`).
 
 ```
 <SD root>                         M.I.B. toolbox "Pre-V3.7.1 – MHIG Edition" (unchanged, except the two menu files below)
-  mib2q-esd-original/             the original menu files of the toolbox (shared by all mods, never overwritten)
+  mib2q-esd-original/             the original menu files of the toolbox (shared, never overwritten)
   esd/Launcher-sda0.esd           menu file of the toolbox + appended blocks of other mods (…, here additionally "ambientfx" – at the very bottom)
   esd/Launcher-MHIG-sda0.esd      same (for MHIG units)
   mib2q-ambient-fx/               OUR folder (the project folder, as before via deploy/copy_to_sd.sh)
@@ -94,13 +96,15 @@ Matze89x in cooperation with DEB and LuKa_dev. Namensnennung Pflicht, **keine ko
 
 Mit dieser SD-Karte installierst, aktualisierst und entfernst du AmbientFX (die Ambientebeleuchtungs-Effekte) **ohne Telnet**: im Grünen Engineering-Menü (GEM) unter **M.I.B. → ambientfx**. Zum Projekt gehören immer **die Jar und alle fünf Effekt-Plugins zusammen** (Atmosphere, Drive, Momentum, Momentum select, Scroll) – das Menü behandelt sie auch so.
 
+**Voraussetzung:** Auf der Karte muss schon die **M.I.B.-Toolbox** liegen („Pre-V3.7.1 – MHIG Edition“, siehe [Release-Seite](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/releases/tag/V3.7.1) und ihr [Wiki/Dokumentation](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki)), und dein Gerät muss sie **nach der eigenen Anleitung der Toolbox** ausführen können. Unser Paket fügt nur **eine weitere Zeile `ambientfx`** unter M.I.B. im Green Engineering Menu hinzu; alles Übrige der Toolbox bleibt unverändert.
+
 ## 1. Was auf der Karte liegt
 
 **Ein einziger Ordner `mib2q-ambient-fx/`** – darin liegt alles, und nur dort schreibt das Menü (Sicherungen, Protokolle). Außerhalb davon ändert sich auf der Karte nur an den zwei Menü-Dateien der Toolbox etwas (angehängter Block `ambientfx`).
 
 ```
 <SD-Wurzel>                       M.I.B.-Toolbox "Pre-V3.7.1 – MHIG Edition" (unverändert, bis auf die zwei Menü-Dateien unten)
-  mib2q-esd-original/             die Original-Menü-Dateien der Toolbox (gemeinsam für alle Mods, nie überschrieben)
+  mib2q-esd-original/             die Original-Menü-Dateien der Toolbox (gemeinsam genutzt, nie überschrieben)
   esd/Launcher-sda0.esd           Menü-Datei der Toolbox + angehängte Blöcke anderer Mods (…, hier zusätzlich "ambientfx" – ganz unten)
   esd/Launcher-MHIG-sda0.esd      dito (für MHIG-Geräte)
   mib2q-ambient-fx/               UNSER Ordner (der Projektordner, wie bisher via deploy/copy_to_sd.sh)

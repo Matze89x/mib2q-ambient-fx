@@ -185,7 +185,7 @@ footer a{color:var(--muted)}
   <div class="hright">
     <span class="ver" id="verBadge" title="AmbientFX Design Studio">v1.1</span>
     <div class="lang" role="group" aria-label="Language / Sprache">
-      <button type="button" data-lang="de">DE</button><button type="button" data-lang="en">EN</button>
+      <button type="button" data-lang="en">EN</button><button type="button" data-lang="de">DE</button>
     </div>
   </div>
 </header>
@@ -1201,7 +1201,7 @@ async function techInfo(){
 
 (function init(){
   let l='de'; try{ l=localStorage.getItem('afx-lang')||''; }catch(e){}
-  if(l!=='de'&&l!=='en') l=(navigator.language||'de').toLowerCase().startsWith('de')?'de':'en';
+  if(l!=='de'&&l!=='en') l='en';   /* English first; German is selectable (the choice is remembered) */
   bindInputs(); wire();
   setLang(l);
   engine.start(performance.now());
