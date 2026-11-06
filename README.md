@@ -20,7 +20,7 @@ AmbientFX adds extra, vehicle-reactive light effects to the Audi MMI menu **Vehi
 
 **The factory colour choices stay available.** AmbientFX only adds extra entries to the *Ambientebeleuchtung* (ambient lighting) menu after “Audi drive select”. Maritim-Blau, Impuls-Rot, individuell, Audi drive select and the other factory colours and profiles remain selectable as usual.
 
-![Ambient lighting menu in the MMI: the factory choices (Maritim-Blau, Impuls-Rot, individuell, Audi drive select) stay, with the AmbientFX effects Momentum and Momentum Select below](docs/images/ambientfx-mmi-menu.jpg)
+![The AmbientFX effects in the MMI of an Audi A4 B9 (Vehicle settings → Ambient lighting): below “Audi drive select” Atmosphere, Drive, Momentum, Momentum select and Scroll; the contour lighting glows red](docs/images/ambientfx-mmi-in-car.jpg)
 
 All effects only drive the **contour/line** of the ambient lighting. The **surface** stays with the normal colour control in the MMI.
 
@@ -150,7 +150,7 @@ AmbientFX erweitert im Audi-MMI das Menü **Fahrzeugeinstellungen → Ambientebe
 
 **Die serienmäßigen Farbwahlen bleiben erhalten.** AmbientFX ergänzt das Menü *Ambientebeleuchtung* nur um zusätzliche Einträge hinter „Audi drive select“. Maritim-Blau, Impuls-Rot, individuell, Audi drive select und die übrigen Werksfarben und Profile bleiben wie gewohnt wählbar.
 
-![Menü Ambientebeleuchtung im MMI: die Werksauswahl (Maritim-Blau, Impuls-Rot, individuell, Audi drive select) bleibt, darunter die AmbientFX-Effekte Momentum und Momentum Select](docs/images/ambientfx-mmi-menu.jpg)
+![Die AmbientFX-Effekte im MMI eines Audi A4 B9 (Fahrzeugeinstellungen → Ambientebeleuchtung): unter „Audi drive select“ Atmosphere, Drive, Momentum, Momentum select und Scroll; die Kontur-Beleuchtung leuchtet rot](docs/images/ambientfx-mmi-in-car.jpg)
 
 Alle Effekte steuern nur die **Kontur/Linie** der Ambientebeleuchtung. Die **Fläche** bleibt beim normalen Farbregler im MMI.
 
