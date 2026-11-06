@@ -40,7 +40,7 @@ fi
 DST="$SD/mib2q-ambient-fx"
 RSYNC_OPTS=(-a --delete
     --exclude '.DS_Store' --exclude '._*' --exclude '.AppleDouble' --exclude '.apdisk' --exclude '.TemporaryItems' --exclude '.Trashes' --exclude '.Spotlight-V100' --exclude '.fseventsd' --exclude '.git'
-    --exclude 'build/classes' --exclude 'build/designer' --exclude 'java_stock' --exclude 'vendor'
+    --exclude 'build/classes' --exclude 'build/designer' --exclude 'build/tpl_cls' --exclude 'build/tpl_src' --exclude 'java_stock' --exclude 'vendor'
    
     --exclude '/backup/' --exclude '/log/' --exclude '/MANIFEST.txt' --exclude '/NO_AUTO_REBOOT' --exclude '/ALLOW_DOWNGRADE')
 if [ "$DRY" = 1 ]; then
