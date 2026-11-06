@@ -1,7 +1,94 @@
-# mib2q-ambient-fx – SD-Menü (AmbientFX, Stand 2026-10-04)
+<a id="english"></a>
+
+# mib2q-ambient-fx – SD menu (AmbientFX, state 2026-10-04)
+
+🇬🇧 **English** · 🇩🇪 [Deutsch (German, below)](#deutsch)
 
 > [!CAUTION]
-> **Nur zu Testzwecken auf privatem Grundstück, nicht im öffentlichen Straßenverkehr** (siehe [RECHT_LEGAL.md](docs/RECHT_LEGAL.md)). Eingriff in die HMI-Software, Nutzung auf eigene Gefahr. Dieses Dokument ist auf Deutsch, der englische Überblick steht in der [README](README.md).
+> **For testing on private property only, not in public road traffic** (see [RECHT_LEGAL.md](docs/RECHT_LEGAL.md)). Intervention in the HMI software, use at your own risk.
+
+Matze89x in cooperation with DEB and LuKa_dev. Attribution required, **no commercial use/selling** (see LICENSE.md in the project).
+
+With this SD card you install, update and remove AmbientFX (the ambient lighting effects) **without telnet**: in the Green Engineering Menu (GEM) under **M.I.B. → ambientfx**. The project always consists of **the jar and all five effect plugins together** (Atmosphere, Drive, Momentum, Momentum select, Scroll) – the menu treats them that way, too. **Note:** the menu texts on the car’s screen are in German; this document quotes them as they appear and adds the English meaning in brackets.
+
+## 1. What is on the card
+
+**One single folder `mib2q-ambient-fx/`** – everything is in there, and the menu only writes there (backups, logs). Outside of it the only thing that changes on the card are the two menu files of the toolbox (an appended block `ambientfx`).
+
+```
+<SD root>                         M.I.B. toolbox "Pre-V3.7.1 – MHIG Edition" (unchanged, except the two menu files below)
+  mib2q-esd-original/             the original menu files of the toolbox (shared by all mods, never overwritten)
+  esd/Launcher-sda0.esd           menu file of the toolbox + appended blocks of other mods (…, here additionally "ambientfx" – at the very bottom)
+  esd/Launcher-MHIG-sda0.esd      same (for MHIG units)
+  mib2q-ambient-fx/               OUR folder (the project folder, as before via deploy/copy_to_sd.sh)
+    esd/afx_*.sh                  the 3 menu scripts + afx_lib.sh, known_versions.txt, VERSION
+    build/ambient_fx.jar (+ .cksum)   the jar
+    build/plugins/*.ambiente      the 5 effect plugins, build/plugins.cksum = their checksums
+    backup/<no>_<entry>_<jar no>/ backups: BEFORE every change in the car a copy goes here (no = running number, jar no = checksum of the backed-up jar)
+    backup/original/              one-time full backup of the car’s jars (+ lsd.sh); the menu creates it itself on first install
+    log/                          logs: install.txt / uninstall.txt / status.txt = last run, <no>_install.txt etc. = every run with a backup (same no. as the backup folder), status_bericht.txt
+    MANIFEST.txt                  list of the files that matter for the menu with size and checksum
+    SD-ANLEITUNG.md, TEST-ABLAUF.md, DEPLOY_TELNET.md, deploy/, java_patch/ …   guides and sources (the telnet route stays valid)
+```
+
+## 2. Build it cleanly (anew) – on the Mac
+
+```
+bash deploy/build_sd_package.sh "/Volumes/<card>"            # dry run: only shows what would happen
+bash deploy/build_sd_package.sh --apply "/Volumes/<card>"    # really writes
+```
+The script first runs all tests (mock car in sh/bash/ksh/dash + ESD patch against the real menu files), checks every file by checksum and only **appends** a block to the toolbox menu files (blocks of other projects stay byte for byte the same). At the end it cleans up macOS junk only in our folder and **ejects the card automatically** (`--no-eject` leaves it mounted). If ejecting does not work, a message says so – then eject in the Finder.
+
+## 3. Start (always the same)
+
+1. Card in **SD slot 1**, ignition on, MMI booted (after a cold start the GEM can take up to 5 minutes).
+2. On the **home screen (HOME)** your known key combination for the Green Engineering Menu (A4 8W – the combination from the M.I.B. wiki “hidden menus – key combinations”).
+3. In the GEM: **==>>M.I.B.<<==** → **ambientfx**.
+4. Tap an entry, never abort the run (neither “Back” nor pulling the card) – until “--- fertig ---” (“--- done ---”) appears.
+
+## 4. The menu entries
+
+| No. | Entry | What happens |
+|---|---|---|
+| 1 | **Install / Update** | Nothing installed → install everything. Installed, SD state different → update (display **old → new**, per file). Everything the same → “schon aktuell, nichts zu tun” (“already up to date, nothing to do”; no reboot). Always the jar **and** all 5 plugins; the old test effects `momentumgds`/`momentumgdsselect` are removed (after a backup). |
+| 2 | **Uninstall** | Removes only AmbientFX: jar, all `.ambiente` plugins (and the empty folder `ambientfx_effects`), the remembered effect (`/mnt/persist/ambientfx`) – backup to the SD first, then a search for leftovers and proof that all other jars are unchanged. |
+| 3 | **Status** | Read only. Shows SD and car: jar state, each plugin (same/different/missing), old test effects, foreign plugins, remembered effect, debug marker (set or not). Writes `log/status_bericht.txt`. Recommended **first**. |
+
+Every entry that changes something does: **pre-check without changes** (files on the SD present, jar checksum against the `.cksum`, each plugin against `plugins.cksum` – otherwise abort) → **backup to the SD** (`backup/<no>_<entry>_<jar no>/`; SD not writable = nothing is changed) → **copy via temporary file + checksum** → **read back from the car (“PRUEFUNG”, i.e. “CHECK”)** and proof that other files in the jar folder are unchanged → on **“ERGEBNIS: OK” (“RESULT: OK”) the MMI reboots by itself after 15 seconds** (no reboot on abort, notes, leftovers or “nothing to do”). To switch this off: an empty file `NO_AUTO_REBOOT` in `mib2q-ambient-fx`. The GEM cannot hide entries – so the scripts check the “only if” conditions themselves.
+
+Special points:
+* **Downgrade protection:** if the SD has an *older* jar state than the car (according to `known_versions.txt`), “Install” aborts without changing anything. Intended? Create an empty file `ALLOW_DOWNGRADE` in `mib2q-ambient-fx`.
+* **Foreign plugins** in the folder `ambientfx_effects` (not from this SD) are never touched, only reported; “Uninstall” backs up and removes all `.ambiente` files (without the jar they are useless).
+* **Log files of other mods** in the jar folder (e.g. `somemod.log`) grow during operation: they do not count for the “other jars unchanged” comparison and are never touched, deleted or counted as leftovers.
+* **On the card only `mib2q-ambient-fx/` is written** (backup/, log/); foreign folders (toolbox, other mods …) and foreign menu blocks stay untouched.
+* **Debug:** a log in RAM only is available via the marker file `/mnt/persist/ambientfx/debug` (switch on and read via telnet, see [docs/DEBUG.md](docs/DEBUG.md)). The menu has no entry of its own for it: **Status** shows whether the marker is set, and **Uninstall** also deletes the marker and the RAM log.
+* **Full backup** (`mib2q-ambient-fx/backup/original/`: all jars + `lsd.sh`, with byte comparison): “Install” creates it once if it is missing. It is cleanest when AmbientFX is **not** installed at that time (e.g. after “Uninstall”); otherwise it also contains the jar installed back then.
+
+## 5. Backup and way back
+
+Before every change a copy is in `backup/<no>_<entry>_<jar no>/` on the SD (old jar, all plugins, remembered effect, plus `STAND.txt` with checksums). **Why a number instead of a time:** the car’s clock shows 01.01.1970 in the GEM and starts over after every reboot – timestamps would be neither unique nor sortable. `no` counts up from 001 (highest existing + 1), `jar no` is the checksum of the jar being backed up (`ohne-jar` = nothing installed); same `jar no` = same jar state, and the menu points that out when backing up (“dieselbe Jar … schon gesichert in …”, “same jar … already backed up in …”). The matching log is `log/<no>_<entry>.txt`. Older folders with a date in the name stay untouched. Restoring = “Install” with the jar/plugins from the SD (a different state: put the files from `backup/…` into `mib2q-ambient-fx` and keep `plugins.cksum`/`.cksum` matching – or simply copy via telnet, see 6). Stock state = menu entry 2 (Uninstall). The original menu files of the toolbox are in `mib2q-esd-original/`.
+
+## 6. Telnet (fallback if the menu does not appear) – stays valid
+
+```
+telnet 172.16.250.248 123          (login root, your own password)
+mount -uw /net/mmx/mnt/app
+mount -uw /net/mmx/mnt/system      (the scripts write nothing there – but it belongs to your routine)
+mount -uw /net/mmx/fs/sda0
+sh /net/mmx/fs/sda0/mib2q-ambient-fx/esd/afx_status.sh          (every menu entry also works this way: afx_install.sh, afx_uninstall.sh)
+```
+Pure manual work without the scripts is in `mib2q-ambient-fx/DEPLOY_TELNET.md` (jar + all plugins, checksums, rollback). Once the menu runs you do not need telnet any more.
+
+---
+
+<a id="deutsch"></a>
+
+# mib2q-ambient-fx – SD-Menü (AmbientFX, Stand 2026-10-04)
+
+🇩🇪 **Deutsch** · 🇬🇧 [English (oben)](#english)
+
+> [!CAUTION]
+> **Nur zu Testzwecken auf privatem Grundstück, nicht im öffentlichen Straßenverkehr** (siehe [RECHT_LEGAL.md](docs/RECHT_LEGAL.md)). Eingriff in die HMI-Software, Nutzung auf eigene Gefahr.
 
 Matze89x in cooperation with DEB and LuKa_dev. Namensnennung Pflicht, **keine kommerzielle Nutzung/Verkauf** (siehe LICENSE.md im Projekt).
 

@@ -1,7 +1,549 @@
-# AmbientFX – Technische Dokumentation
+<a id="english"></a>
+
+# AmbientFX – Technical documentation
+
+🇬🇧 **English** · 🇩🇪 [Deutsch (German, below)](#deutsch)
 
 > [!CAUTION]
-> **Nur zu Testzwecken auf privatem Grundstück, nicht im öffentlichen Straßenverkehr** (siehe [RECHT_LEGAL.md](RECHT_LEGAL.md)). Eingriff in die HMI-Software, Nutzung auf eigene Gefahr. Dieses Dokument ist auf Deutsch, der englische Überblick steht in der [README](../README.md).
+> **For testing on private property only, not in public road traffic** (see [RECHT_LEGAL.md](RECHT_LEGAL.md)). Intervention in the HMI software, use at your own risk.
+
+Java patch for the Audi MHI2Q (MU1329) that extends the menu **Vehicle settings → Ambient lighting** with animated and vehicle-reactive effects. This document describes the structure, how it works, and the analysis of the stock HMI.
+
+Overview and quick start: [README](../README.md) · Build: [BAUEN_BUILD.md](BAUEN_BUILD.md) · Install: [INSTALLATION_INSTALL.md](INSTALLATION_INSTALL.md) · Your own effects: [EIGENE-DESIGNS_CUSTOM-DESIGNS.md](EIGENE-DESIGNS_CUSTOM-DESIGNS.md) · Licence: [LICENSE.md](../LICENSE.md) (applies to the original code, **not** to Audi/third-party code; the replaced Audi classes are not shipped here).
+
+---
+
+## What the patch does
+
+Stock menu (screen 600028):
+
+```
+Kontur-Weiß        (profile 3)
+Maritim-Blau       (profile 4)
+Impuls-Rot         (profile 6)
+individuell        (profile 1)
+Audi drive select  (profile 2)
+```
+
+With the patch (jar) + the five bundled plugin files (see
+“Plugin system” further down – since 25.09.2026 **no** effect is hard-wired
+into the jar any more, all are installed separately as `.ambiente` files)
+five entries are added below them (the order in the menu has been
+alphabetical by file name since 26.09.2026, see “Plugin system”):
+
+| Entry  | Contour (line)                                                  | Surface |
+|----------|------------------------------------------------------------------|--------|
+| Atmosphere | **Independent, deliberately non-reactive** mood (see “Atmosphere” below) – hue by outside temperature, brightness as a slow “breathing”, no speed/throttle/brake reaction. | untouched, like Momentum |
+| Drive | **Throttle + steering angle** drive hue/saturation/brightness (see “Drive” below, concept/formulas taken from LuKa_dev) – rest = pale violet, full throttle swings towards warm ember, steering lock additionally spreads the hue. Brake = instantly full red like the others. | untouched, like Momentum |
+| Momentum | Colour = run through **all 28 coloured Audi factory colours** over 0–130 km/h (red → orange → yellow → green → cyan → blue → violet → pink-red → **red again at 130 km/h**), blended continuously between neighbouring factory colours – see “Colour table Momentum / Momentum select” below. Brightness **always 100 % during the day** (independent of the throttle), **at night** 5 % at 0 % throttle, rising to 100 % at 50 % throttle and staying at 100 % above that (asymmetrically smoothed, brightens faster than it dims). Brake = instantly full red, full brightness, independent of everything else. **Gear lever D → S** (except in the Dynamic profile): once, instantly white at 100 % (day and night), held for 1 s, then a 2 s soft fade back to the normal colour (see “Gear lever D → S” below). | **untouched** – stays the manual colour/brightness control in the MIB (its own value remembered by the vehicle itself) |
+| Momentum select | **Independent copy of Momentum** (see “Momentum Select” below) – same colour table (all factory colours, 0–130 km/h) and brake principle, but the colour range, brightness and reaction curve additionally depend on the **Audi drive select mode** (Comfort/Auto/Dynamic/Eco/Individual). The same D→S white sequence as Momentum (see “Gear lever D → S” below). | untouched, like Momentum |
+| Scroll | **Pure rainbow show element** (see “Scroll” below, idea/formula taken from LuKa_dev) – the hue rotates endlessly over the colour wheel at a speed proportional to the vehicle speed, the colour freezes at standstill. No throttle/day-night breathing, only a fixed night dimming value. Brake = instantly full red like the others. | untouched, like Momentum |
+
+### Colour table Momentum / Momentum select (since 03.10.2026)
+
+Reason: the colours changed too abruptly (snap to only **one** nearest
+factory colour, 25 different colours over the whole speed range, jumps of up to 240
+RGB levels per km/h) and many green/yellow tones of the vehicle list were never
+shown. After the live tests with Scroll (free streaming, **no flicker**
+on the retrofit strip) the snapping in Momentum and Momentum select
+was replaced by a **colour ring from the factory list**:
+
+* The list (30 entries, delivered by the vehicle at runtime: 28 coloured + 2 white) is
+  filtered in `buildRing()` (saturation ≥ 0.35 → white drops out) and **sorted
+  by hue starting at red**. The order of the list in the vehicle does not
+  matter, the table adapts to the reported list.
+* Speed → position on the **closed** ring: 0 km/h = first red,
+  130 km/h = the same red again (13 steps of 10 km/h, `RAINBOW_SPAN_KMH=130`,
+  `SPEED_STEP_KMH=10`). Between two factory colours it blends continuously
+  (`SMOOTH_COLORS=true`); every 10 km/h passes through a good two factory colours.
+  The last stretch (violet → pink-red → red) closes the circle without
+  the list needing a magenta colour of its own.
+* **Fallback on flicker:** `SMOOTH_COLORS=false` → only real factory colours
+  in hard 10 km/h steps (14 colours, step = rounding to 10 km/h).
+* Without a factory list (not arrived yet): pure hue as before.
+* **Brake unchanged:** instantly factory red, full brightness. **Brightness unchanged**
+  (day 100 %, night 5 % at 0 % throttle → 100 % at 50 % throttle; Comfort/Eco and
+  Dynamic as before). **D→S white sequence unchanged.**
+* Momentum select keeps its **colour ranges per profile**, now made of real
+  factory colours: Auto/Individual = the whole ring (0 km/h red … 130 km/h red);
+  Dynamic = section red → yellow over 0–130 km/h (throttle still pulls towards
+  red); Comfort/Eco = section green → blue over 0–130 km/h.
+* Measurement (simulation with a photo approximation of the factory colours, 1 km/h grid,
+  0–140 km/h): Momentum **25 → 130 different colours**, largest jump per
+  km/h **240 → 52**.
+  The real 30 RGB values appear, with the debug marker set, as the line
+  “factory color list values: …” in the log (they come from the vehicle, not from the
+  MMI dump).
+* Backup before the rework: `backups/2026-10-03-vor-farbtabelle/`.
+
+### Factory colour snapping (until 02.10.2026, because of the retrofit LED strip)
+
+> **Historical:** for Momentum/Momentum select it now only applies to the **brake**
+> and the fallback without a factory list; for Atmosphere/Drive/Scroll see each of them.
+> The assumption “free in-between values flicker” was not confirmed by the Scroll test
+> (80–130 km/h, no flicker) – see “Colour table” above.
+
+The retrofitted LED strip in the vehicle only shows the colours from the
+**Audi’s own “individuell” colour list** reliably – freely streamed
+in-between values flicker. That is why Momentum computes the rainbow hue
+internally continuously but **snaps it before every send to the
+nearest real factory colour** (`Rgb.nearest(...)`, the palette comes passively
+via DSI from the vehicle, see `AmbientFx.onColorListChunk`). This is deliberately
+no longer an optional setting (the earlier marker-file experiment is
+gone) – on this vehicle with this LED it is the only configuration
+that runs cleanly. Important: the brightness is multiplied in **separately
+afterwards**, not snapped along – otherwise every dimmed colour would jump back
+to the full factory colour and make the throttle brightness ineffective.
+Until the factory colour list has arrived from the vehicle (it should happen
+automatically at start, see the log line “factory color list
+complete: N entries”), Momentum shows the unaltered rainbow hue.
+
+**Important, different from v2: the engine no longer sends a surface at all.**
+`Effect.tick()` only delivers the contour colour now; the surface you
+still set completely as usual via the colour control in the MIB itself, and the
+vehicle remembers this value like for any other profile – our
+patch does not interfere there.
+
+Technically the effect runs on the vehicle profile **“individuell” (1)**
+(necessary so the contour can be freely determined): the engine switches the profile
+and then only streams the contour colour via DSI to the vehicle. The
+radio button in the menu stays on “Momentum”.
+
+### Day/night behaviour
+
+**Corrected after the first live test:** the first version had practically
+0 % brightness permanently during the day with normal, moderate throttle (< 50 %) –
+so the contour was practically invisible in normal daytime driving, only a
+brief flash with a firm launch (throttle > 50 %) was visible. That was
+a bug in the brightness logic, not a day/night switch-off.
+
+The day/night detection deliberately sits **in the effect itself** (not as a
+blanket rule at engine level – that existed in v3 before but was
+removed because it would have cut off Momentum’s curve peak again). The source
+is **`DaylightData`** (`de/mk/ambientfx/DaylightData.java`), **confirmed live in the
+vehicle**: flipping the light switch flips the signal in real time.
+`VehicleData.lowBeamOn` (the first, obvious signal), on the other hand, stayed
+`false` throughout in several tests – instead the same
+DSI service and the same attribute is used (`DSIGeneralVehicleStates`, attribute 16,
+`updateDisplayDayNightDesign`), which demonstrably (by decompiling
+`de.audi.app.terminalmode.NightDayModeHandler`) also feeds CarPlay’s own
+day/night switching:
+
+* **Day** – contour always **100 % bright**, independent of the throttle. During the day
+  nothing dazzles, and “mostly invisible” was worse than “always
+  visible”.
+* **Night** – brightness follows the throttle. Curve readjusted several times:
+  50–100 % (too tight) → 25–100 % linear over the whole throttle range → since
+  26.09.2026 (second curve): **5 % at 0 % throttle** (never completely off), rises to
+  **100 %** linearly up to **50 % throttle** and stays capped above that – resolves the
+  everyday-relevant lower/middle throttle range more finely instead of reaching full brightness only at
+  full throttle. Since 26.09.2026 additionally smoothed
+  **asymmetrically** (idea from `luka-collection`, see
+  `Momentum.java`): faster brightening when giving throttle (120 ms), noticeably
+  slower dimming when releasing it (350 ms).
+* **Brake** overrides both instantly with full red at full brightness.
+
+### Momentum Select (drive-select-reactive variant)
+
+**Deliberately a complete, independent copy** of `Momentum.java` –
+`effects/MomentumSelect.java` imports/extends/references Momentum at no
+point, so that the two effects cannot influence each other:
+if one `.ambiente` file is deleted from the MIB, the other
+effect stays runnable unchanged. The same basic principle (rainbow over speed, factory colour snap,
+instant red on brake), but the brightness/reaction curve additionally
+depends on the **Audi drive select mode**; the source is the new
+`DriveModeData` (`org.dsi.ifc.cardrivingcharacteristics.DSICarDrivingCharacteristics`,
+attribute 13, `updateCharismaActiveProfile`) – the same attribute that had been
+on the wish list for a while, connected here for the first time. It is queried
+via `AmbientFx.getInstance().getDriveMode()`, deliberately **not** as an
+additional parameter in `Effect.tick()`, so that Momentum stays
+unchanged.
+
+| Profile | Brightness | Reaction speed (hue / brightness up·down) |
+|---|---|---|
+| **Dynamic** | always 100 % (day *and* night, independent of the throttle) | much faster, **symmetric** (150 / 100·100 ms) – deliberately no attack/release, suits the snappy character |
+| **Auto, Individual** | exactly like Momentum (day 100 %, night 5–100 % by throttle, capped from 50 % throttle) | exactly like Momentum (600 / 120·350 ms, asymmetric since 26.09.2026) |
+| **Comfort, Eco (Efficiency)** | **always** follows the throttle: 3 % at 0 % throttle up to 100 % at full throttle (independent of day/night) | clearly slower, asymmetric (1000 / 250·700 ms) |
+| unknown / no signal | like Auto/Individual | like Auto/Individual |
+
+“Without overshoot” for Dynamic: it is just a simple low-pass
+(exponential smoothing as in Momentum), no spring/PID model – that
+cannot overshoot in principle, independent of the time constant.
+
+**Experiment “more in-between colours”** (active on request, `TRY_BLENDED_COLORS
+= true` in `MomentumSelect.java`): instead of snapping hard to the one nearest
+factory colour, Momentum Select blends weighted between the
+**two** nearest factory colours – more perceptible in-between tones, but the
+blended values are no longer pure factory colours and could show the same flicker effect
+on the retrofit strip as free streaming. On
+flicker: `TRY_BLENDED_COLORS` to `false` – then exactly the same hard snap
+as in Momentum, only in this separate file. Both variants are deliberately kept in the
+code (a single switch), not as two files.
+
+### Gear lever D → S (in Momentum and Momentum select)
+
+Directly in `effects/Momentum.java` and
+`effects/MomentumSelect.java` since 30.09.2026. Created on 27.–29.09.2026 as two
+separate test effects “Momentum GDS” / “Momentum GDS select” (deliberately separate at the user’s request,
+so the originals stayed untouched); adopted after the
+successful live test, the two test effects were removed
+(copies: `backups/2026-09-30-vor-gds-merge/`). On the MIB the old
+files `momentumgds.ambiente` and `momentumgdsselect.ambiente` have to be deleted,
+otherwise they keep showing up in the menu (see DEPLOY_TELNET.md 4.5b).
+
+Source: `VehicleData.gearTransMode` (`DynamicVehicleInfoMidFrequent`,
+`automaticGearShiftTransMode`). If the lever is on **S** (sport) **and** Audi
+drive select is **not** on Dynamic (`DriveModeData.PROFILE_DYNAMIC`),
+a white entry sequence plays on the **change** to S (not permanently, only once per switch)
+– “like braking, only in white”:
+
+1. **Instantly** white at 100 % brightness (day and night the same, without a ramp),
+   held for 1 s (`FLASH_HOLD_MS`).
+2. Then a 2 s soft fade (`FLASH_FADE_MS`) from white to whatever the
+   effect is currently computing for colour/brightness (followed live,
+   no static target; at night it therefore fades down to the then valid, darker
+   night brightness).
+3. After that 1:1 normal Momentum/Momentum select, no further
+   special treatment until the lever is switched to D again and then to S again.
+
+Back to **D**: normal behaviour immediately, no transition. **Dynamic deliberately
+excluded** (user’s requirement): there the transmission is permanently on
+S anyway, the signal would be meaningless. **The brake still has priority** over everything,
+even over the sequence; the sequence runs by time (not by tick count)
+and has therefore progressed accordingly after a brief braking in the middle. If
+you brake *while* the lever is switched to S, the red wins and the
+white sequence only starts when the brake is released.
+
+The earlier intermediate step “1 s white at 20 %” before the 100 % jump was dropped
+on 30.09.2026 at the user’s request. The very first attempt (28.09., permanent
+colour pull towards red as long as S is active) felt restless in the live test because
+the speed rainbow fought against it in parallel.
+
+Confirmed with `javap` against your own `lsd.jar` (MU1329):
+`GEARTRANSMISSIONMODE_POSITION_D=4`, `_S=5` – present identically on this
+vehicle.
+
+### Atmosphere (calm, non-reactive variant)
+
+**Also a completely independent file** – `effects/Atmosphere.java`
+imports/extends/references neither Momentum nor Momentum Select.
+Deliberately the opposite of the other two: those are *reactive* (they jump with
+speed/throttle/brake), Atmosphere is *calm* – no relation to speed, throttle or
+brake, meant as a mood for everyone in the car instead of a signal for the
+driver.
+
+* **Hue**: depends on the **outside temperature** – the source is the new
+  `OutsideTempData` (`org.dsi.ifc.carkombi.DSICarKombi`, attribute 65,
+  `updateBCOutsideTemperature`, the same number as the thermometer icon in the
+  instrument cluster display). Cold (≤ −5 °C) → cool blue (hue 210°), warm (≥ 30 °C)
+  → warm amber (hue 30°), interpolated linearly in between. **Not yet
+  confirmed live beyond doubt** (unlike `DaylightData`/`DriveModeData`)
+  – whether a real value arrives or only the neutral placeholder
+  (15 °C) is running is checked by the alive log directly since 26.09.2026 (`temp[valid=…
+  c=…]`, see `AmbientFx.loop()`). Additionally, since
+  26.09.2026 `OutsideTempData` also checks `CarBCTemperature.state == NORMAL_OPERATION`, not just
+  the coarse `validFlag`. The temperature is also followed very sluggishly
+  (~8 s time constant) – nothing is supposed to jump after it here.
+* **Brightness**: no relation to throttle/speed. Instead a slow
+  “breathing” – a sine between a min and max value over ~5 s, somewhat more
+  present during the day (50–85 %), clearly more subdued at night (15–35 %).
+* **Brake**: **deliberately not evaluated** – no hard red as in
+  Momentum/Momentum Select. That would destroy the calm character immediately.
+* **Indicator**: since 26.09.2026 **no reaction any more** (earlier versions
+  let the contour pulse amber when indicating – removed because of the
+  send-discipline problem). Of
+  driving behaviour Atmosphere now reacts to **nothing at all**.
+* **Factory colour snap**: like Momentum – hard snap to the one nearest
+  factory colour (`Rgb.nearest` principle), not the in-between-colour blending from
+  Momentum Select. According to live observation in the vehicle no
+  colour problems at all occurred on the retrofit strip with it so far – so this is the
+  proven basis.
+
+### Scroll (rainbow show element)
+
+**Fourth effect, completely independent file** – `effects/Scroll.java`.
+Origin: `luka-collection/AmbientSpeedComponent.java`, mode “Scroll” –
+there the hue rotates endlessly over the complete colour wheel at a
+speed proportional to the vehicle speed (0.36° per (km/h·s),
+formula/value taken 1:1 from Luka). Unlike Momentum (speed → fixed
+hue **position**, stays at red from 100 km/h) Scroll is a
+continuous hue **rotation**: at standstill the colour freezes, the faster
+you drive the faster it keeps rotating – no end stop, runs
+endlessly in a circle.
+
+**Deliberately NOT taken 1:1 from Luka** (see the class comment in
+`Scroll.java` for the full reasoning):
+* Luka streams raw HSV values over the complete colour wheel without a
+  factory colour snap – works on his vehicle, but on our
+  retrofit strip would probably have reproduced the same flicker that we solved
+  specifically for Momentum. Scroll therefore snaps hard to the nearest factory colour
+  just like Momentum.
+* Luka’s version drives surface and contour at the same time – for us, due to the design
+  (Effect interface/engine), only the contour, like everywhere in this
+  project.
+* Brake = instantly full red – our own addition for consistency with
+  Momentum/Momentum Select, not present in Luka’s.
+
+Brightness deliberately simple: day 100 %, night a fixed dimming value (40 %) without
+throttle relation and without breathing – Scroll is a pure show element, not
+driving feedback like Momentum or a mood like Atmosphere.
+
+### Drive (throttle + steering angle)
+
+**Fifth effect, completely independent file** – `effects/Drive.java`.
+Origin: `luka-collection/AmbientSpeedComponent.java`, mode “Drive” –
+described there as the “flagship”. The throttle owns the hue axis
+(rest = pale violet, full throttle swings via red towards warm ember),
+steering lock additionally spreads the hue and raises the saturation
+– the more load/corner, the more saturated the colour, at rest pale/silvery.
+Steering angle source: new field `VehicleData.wheelAngle`
+(`DynamicVehicleInfoHighFrequent`, attribute 14) – connected for the
+first time on 26.09.2026, confirmed with `javap` against your own `lsd.jar`
+to be present identically to Luka’s finding.
+
+**Deliberately NOT taken 1:1 from Luka** (see the class comment in
+`Drive.java` for the full reasoning):
+* Factory colour snap instead of raw HSV streaming – as with Scroll/Momentum.
+* Only the contour – Luka’s own contour formula (`hc`/`cv`, steering lock
+  spreads it further away from the rest value) is used directly as the **only**
+  output, since we only have one channel anyway.
+* **Brake = instantly full red**, not Luka’s azure blue – consistency with the
+  already established brake convention of the other four effects was more
+  important here than fidelity to the original.
+
+The safety clamp `DRIVE_HUE_CAP` (marked by Luka explicitly as “SAFETY
+INVARIANT, not a taste knob” – prevents full throttle +
+full lock from unintentionally tipping the hue towards green) was taken
+over 1:1. Day/night is an addition of our own, kept simple (not present at all
+in Luka’s): at night the computed brightness is simply halved.
+
+### Plugin system (since 25.09.2026, confirmed in the vehicle)
+
+No effect is hard-wired into the jar any more – not even Momentum, Momentum
+select, Atmosphere, Scroll and Drive.
+All five are delivered as independent **`.ambiente` files**
+and are loaded automatically at start from
+`/net/mmx/mnt/app/eso/hmi/lsd/ambientfx_effects/` (on the MIB itself,
+not the SD card – that only serves as transport)
+(`EffectPluginLoader`, `java.net.URLClassLoader`). A `.ambiente` file
+is technically a small jar (compiled effect class + `plugin.properties`
+with class name/label) – do not want Momentum select? Simply
+delete the file from the MIB, no rebuild of `ambient_fx.jar` needed. A
+broken/missing plugin is skipped during the scan and logged, never a
+crash – in the worst case the menu simply shows no extra entries.
+
+Complete guide to writing and delivering your own effects:
+[EFFEKTE_HANDBUCH.md](../EFFEKTE_HANDBUCH.md).
+
+### Safety: only the contour reacts
+
+Everything reactive (speed colour, throttle brightness, brake red) runs **exclusively
+on the contour** (narrow line), never on the surface. Large-area
+reacting/flashing in the peripheral field of view (footwell, large door panels)
+would be a real dazzle and irritation hazard at night – the surface is therefore
+left out on principle.
+
+### Debug
+
+The debug facade `Log.java` (`Log.i`, `Log.w`, `Log.e`, `Log.value`, `Log.enabled`) writes via `RamLog.java` into a **log in RAM only** (`/dev/shmem/ambientfx.log`, fallback `/tmp`). It is enabled exclusively by the marker file `/mnt/persist/ambientfx/debug` (survives the reboot; `RamLog.on()` checks it at most every 2 s). Without the marker no file is created. The file has a **hard limit** (`MAX_BYTES` = 256 KB per boot): after that exactly one final line follows, then nothing is written any more, nothing is rotated and nothing is deleted. If the file is deleted or shortened, `RamLog` writes again. No network, no own thread, every write error is swallowed. Measured values (`Log.value`) are only written on change (at most 64 different names). Operation and limits: [DEBUG.md](DEBUG.md).
+
+Auto-restore of the last effect after a reboot is active
+(`AmbientFx.RESTORE_ON_BOOT = true`), stored under `/mnt/persist/ambientfx/`
+on the MMX. **Confirmed live (26.09.2026):** `/mnt/persist` is writable without a
+prior `mount -uw`, the log showed correct
+save operations per vehicle key (`ambientfx_key2.state`). The
+restore path after a real reboot has not been tested separately yet,
+but should work symmetrically. If writing/reading does fail
+at some point, everything else stays untouched (no crash, just no restore),
+see the comment above `AmbientFx.saveState()`.
+
+---
+
+## How it works in the stock HMI (analysis)
+
+Everything decompiled from the `lsd.jxe` (MU1329) (`tools/decompile_stock.sh`, result local in `java_stock/`, not in the repository).
+
+* **Screen** `600028` = `CarScreenBag5.cARCARSETTINGSINTLIGHTMAIN(...)`
+  (`de.audi.tghu.car.hmi.evohigh`). Generated widget tree: 8 static
+  `MenuItemController`s of type 256 (radio button), all on the Range2D model
+  **601073** (X = active profile, Y = brightness), event **600040**.
+  `widgetID` = profile number: 1 individuell, 2 Audi drive select, 3 Kontur-Weiß,
+  4 Maritim-Blau, 5 Solar-Orange, 6 Impuls-Rot, 7 Vision-Weiß, 8 Sport-Rot.
+  Visibility comes from the vehicle (`IntLightViewOptions`, models 601079…601085,
+  602368) – Luka’s “Sport red” is simply profile 8 made visible.
+* **Texts** come from `lang_data/resources/HMICarEvoHigh/strings_<lang>.data`
+  (text IDs 601979 “individuell”, 601980 “Audi drive select”, 601030 …).
+  For our entries `FxMenuItemController` sets the text directly as a
+  string model on the label – no language table needed.
+* **Selection**: focus → `IntLightMenuEventBusiness.processItemFocused(widgetID)`
+  → `IntLightCurrentFocus`. Press → `IntLightRange2DBusiness.processKeyTyped`
+  → `dsi.setIntLightActiveProfile(focus)`.
+* **Vehicle feedback**: `AbstractIntLightComponent.updateIntLightActiveProfile`
+  sets X of the Range2D model to the active profile.
+* **DSI** `org.dsi.ifc.carlight.DSICarLight` – searched completely, these
+  are **all** the setters there are:
+  `setIntLightActiveProfile(int)`, `setIntLightColour(int)`,
+  `setIntLightIlluminationSet(setNr, brightness)` (brightness **per zone**,
+  no colour), `setIntLightAmbientLightColor(IntLightRGBValues)`,
+  `setIntLightContourLightColor(IntLightRGBValues)`,
+  `setIntLightIlluminationProfile(profile, brightness)`. **No further
+  colour setters** – see [What does not work](#what-does-not-work-research-round-2)
+  below. All fire-and-forget (`remoteCallMethod`).
+* **Vehicle data** `org.dsi.ifc.carvehiclestates.DSICarVehicleStates`,
+  attribute 14 `DynamicVehicleInfoHighFrequent` (engineSpeed, vehicleSpeed,
+  longitudinalAcceleration, acceleratorPosition, shiftLight, powermeter …),
+  attribute 15 `DynamicVehicleInfoMidFrequent` (currentGear, recommendedGear,
+  driverIsBraking, acceleratorKickDown, automaticGearShiftTransMode,
+  blinkingState, lowBeamHeadlightIsActive – **caution:** the latter stayed
+  `false` throughout in the live test, see day/night behaviour above).
+* **Day/night** `org.dsi.ifc.generalvehiclestates.DSIGeneralVehicleStates`,
+  attribute 16, `updateDisplayDayNightDesign(boolean,int)` – the source that actually
+  works (see `DaylightData.java`), extracted from
+  `de.audi.app.terminalmode.NightDayModeHandler` (which drives CarPlay’s own
+  day/night switching there).
+* **Drive select mode** (for a later “Drive” effect):
+  `DSICarDrivingCharacteristics` attribute 13 `CHARISMAACTIVEPROFILE`.
+
+### What does not work (research round 2)
+
+Two wishes from the wish list were checked against hard limits of the DSI layer
+and answered – not as a guess, but based on the
+completely decompiled interface:
+
+* **Controlling individual LEDs/zones independently** (footwell ≠ door pocket ≠
+  cup holder, as shown in the VW/Audi service manual wiring diagram for interior/
+  background lighting with LIN bus on J519): **not possible.**
+  `IntLightMembersMultiColor` / `IntLightMembersIlluminationSet` are pure
+  configuration flags (“is zone X installed”), no colour values. There are only
+  the two channels surface/contour; which physical LEDs hang on which channel
+  is decided by the factory wiring/coding (ambient package QQ2),
+  not by the Java layer.
+* **Music equaliser for reactive lighting**: **not possible with what
+  we have access to.** `org.dsi.ifc.audio.DSISound`/`DSISoundListener`
+  searched completely – there are only tone controls (bass/mid/treble/fader as
+  fixed target values), no real-time level meter/spectrum of the running playback.
+  Music-reactive lighting would need a tap on the raw audio pipeline (a project of its own,
+  much larger, not part of this patch).
+
+---
+
+## Architecture of the patch
+
+```
+java_patch/
+├── de/audi/tghu/car/hmi/evohigh/CarScreenBag5.java     REPLACEMENT – only cARCARSETTINGSINTLIGHTMAIN changed
+├── de/audi/app/car/evo/light/IntLightComponentEvo.java REPLACEMENT – bind engine, X limit, keep selection
+├── de/audi/app/car/core/light/IntLightRange2DBusiness.java REPLACEMENT – effect entries on press
+└── de/mk/ambientfx/
+    ├── AmbientFx.java              engine (singleton, worker thread, sends only the contour via DSI)
+    ├── FxCatalog.java              effect list, filled at runtime (see EffectPluginLoader)
+    ├── EffectPluginLoader.java     loads *.ambiente files from ambientfx_effects/ on the MIB
+    ├── EffectFactory.java          small factory interface for the plugin system
+    ├── FxMenu.java                 builds the menu entries for the screen
+    ├── FxMenuItemController.java   MenuItem with free text
+    ├── VehicleData.java            DSICarVehicleStates listener (rpm, speed, throttle, brake, …)
+    ├── DaylightData.java           DSIGeneralVehicleStates listener (day/night, attribute 16)
+    ├── DriveModeData.java          DSICarDrivingCharacteristics listener (drive select, attribute 13)
+    ├── OutsideTempData.java        DSICarKombi listener (outside temperature, attribute 65 - still untested)
+    ├── ParkingDistanceData.java    DSICarParkingSystem listener (parking aid, attributes 10/11)
+    ├── Effect.java / Rgb.java      contract (contour only) + colour helpers (HSV, palette, lerp)
+    ├── Log.java / RamLog.java      debug facade + RAM log (only with marker, limit 256 KB)
+    └── effects/                    Momentum, Momentum Select, Atmosphere - source lives here,
+                                     but they are delivered as .ambiente plugins (see below),
+                                     NO LONGER hard-wired into FxCatalog
+```
+
+Classes in `/mnt/app/eso/hmi/lsd/jars/*.jar` are on the bootclasspath **in front of**
+`lsd.jxe` (see `lsd.sh`), which is why classes of the same name replace the
+stock classes. The three replaced classes are recompiled from the decompilate –
+`verify.sh` proves that only the intended methods differ
+from the original (all other methods are instruction-identical).
+Everything effect-related lives in `de.mk.ambientfx` – the three stock replacement
+classes did **not have to be touched a single time** for v2 (surface/contour separation,
+day/night, 9th effect), which `verify.sh` confirms.
+
+### Flow when “Momentum” is selected
+
+1. Menu focus → `IntLightCurrentFocus = 9`
+2. Press → `IntLightRange2DBusiness.processKeyTyped`: `9 >= FIRST_WIDGET_ID`
+   → `AmbientFx.activate(9)`
+3. Engine: Range2D X := 9 (radio button jumps), `setIntLightActiveProfile(1)`,
+   worker thread starts
+4. Vehicle reports `updateIntLightActiveProfile(1)` → stock code sets X = 1 →
+   `IntLightComponentEvo` calls `AmbientFx.restoreSelection()` → X = 9
+5. Worker: every `periodMs` → `effect.tick()` delivers the finished contour colour
+   (day/night is already included, see above) → on a change
+   ≥ 14 (RGB sum) `setIntLightContourLightColor`. The surface is never
+   touched.
+6. Choosing a stock profile → `deactivate()` + `setIntLightActiveProfile(n)`
+
+### Adding a new effect
+
+Since 25.09.2026 exclusively via the **plugin system** – no `FxCatalog`
+entry, no rebuild of the main jar needed any more. Short version (details,
+including all available vehicle data, in `EFFEKTE_HANDBUCH.md`):
+
+1. Class in `de/mk/ambientfx/effects/` (interface `Effect`, delivers only the
+   contour colour; day/night comes in as a finished `daylight` parameter,
+   see `Momentum.tick()`)
+2. `./build_java.sh && ./verify.sh`
+3. `./build_plugin.sh java_patch/de/mk/ambientfx/effects/YourEffect.java "Label"`
+   → `build/plugins/youreffect.ambiente`
+4. `deploy/copy_to_sd.sh` (brings `build/plugins/` along automatically) → copy via
+   telnet to `/net/mmx/mnt/app/eso/hmi/lsd/ambientfx_effects/`
+   → complete MMI reboot
+
+Menu, Range2D limit and selection follow automatically.
+
+---
+
+## Build
+
+See **[BAUEN_BUILD.md](BAUEN_BUILD.md)**: create `vendor/` with your own `lsd.jar`, `tools/decompile_stock.sh`, `tools/prepare_sources.sh`, `./build_java.sh`, `./verify.sh`, `tools/build_all_plugins.sh`.
+
+---
+
+## Deploy
+
+See **[INSTALLATION_INSTALL.md](INSTALLATION_INSTALL.md)** (SD menu in the Green Engineering Menu or telnet, always the jar + all plugins together), [SD-ANLEITUNG.md](../SD-ANLEITUNG.md) and [DEPLOY_TELNET.md](../DEPLOY_TELNET.md).
+
+Coexists with other jars in the folder `jars/` (for example `carplay_hook.jar`) – no class overlap.
+
+**Removal:** menu entry *Uninstall*, or delete the jar and plugin folder, reboot. Afterwards the vehicle may still be on the “individuell” profile with the last effect colour – just choose a profile in the menu.
+
+---
+
+## Next steps / ideas
+
+* Fine-tune Momentum in practice (colour limits, throttle threshold, brake behaviour)
+  before more effects come back
+* Verify `/mnt/persist` writability via telnet (see README section
+  “Debug log” above and the comment above `AmbientFx.saveState()`)
+* Later: selectively revive the removed v2 effects (see git history) as
+  `.ambiente` plugins (see “Plugin system” above)
+* **Drive** effect: colour by drive select mode (`DSICarDrivingCharacteristics`
+  attr. 13) – comfort blue, dynamic red, efficiency green …
+* **Indicator effect** (`blinkingState` 1/2 → light up one side briefly)
+* Luka’s “* on the steering wheel = comfort ⇄ dynamic”: own patch via
+  `DSICarDrivingCharacteristics.setCharismaActiveProfile` + steering wheel button
+
+---
+
+## References
+
+* Inspiration (not part of the build): [LuKa_dev’s](https://github.com/luka-dev) custom patch for the MHI2Q (we became aware of it through [mib2q-carplay-rgi](https://github.com/luka-dev/mib2q-carplay-rgi)); his ideas for **Drive** and **Scroll** and the bootclasspath mechanism (`jars/*.jar` in front of `lsd.jxe`) were adopted or modelled on, deviations are in the class comments.
+* The Audi classes (`CarScreenBag5`, `IntLightComponentEvo`, `IntLightRange2DBusiness`) belong to Audi/e.solutions and are **not** shipped here; `patches/` only contains our changes to them.
+
+---
+
+<a id="deutsch"></a>
+
+# AmbientFX – Technische Dokumentation
+
+🇩🇪 **Deutsch** · 🇬🇧 [English (oben)](#english)
+
+> [!CAUTION]
+> **Nur zu Testzwecken auf privatem Grundstück, nicht im öffentlichen Straßenverkehr** (siehe [RECHT_LEGAL.md](RECHT_LEGAL.md)). Eingriff in die HMI-Software, Nutzung auf eigene Gefahr.
 
 Java-Patch für das Audi MHI2Q (MU1329), der das Menü **Fahrzeugeinstellungen → Ambientebeleuchtung** um animierte und fahrzeugreaktive Effekte erweitert. Dieses Dokument beschreibt Aufbau, Funktionsweise und die Analyse des Stock-HMI.
 

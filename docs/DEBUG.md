@@ -1,6 +1,62 @@
+<a id="english"></a>
+
+# Debug log (RAM only)
+
+🇬🇧 **English** · 🇩🇪 [Deutsch (German, below)](#deutsch)
+
+> [!CAUTION]
+> For testing on private property only, not in public road traffic – see [RECHT_LEGAL.md](RECHT_LEGAL.md). Telnet access to the head unit is **not** part of this project and is at your own risk.
+
+AmbientFX can keep a **log in working memory (RAM)** that you read via telnet, for example when an effect does not react as expected. It is **off by default**.
+
+## Properties
+
+- **Marker only:** without the marker file **nothing** is written, no file is created.
+- **RAM only:** the log lives in `/dev/shmem/ambientfx.log` and is **gone after every reboot** of the unit. It is never written to flash or SD. If `/dev/shmem` is not writable, AmbientFX falls back to `/tmp/ambientfx.log`.
+- **The marker stays:** the marker lives on `/mnt/persist` and **survives a reboot** until you delete it. So after you enable it, AmbientFX logs from the start of every drive without you opening telnet each time.
+- **Hard limit:** **256 KB per boot.** Once reached, AmbientFX writes a final line (`=== GRENZE 256 KB erreicht … ===` (German for “limit of 256 KB reached”)) and **stops writing**. **Nothing is rotated and nothing is deleted**; the beginning is kept. Reset: delete the file (`rm`) or reboot the unit.
+- **No network, no own thread.** Every write error is swallowed; the log cannot disturb the HMI.
+- **Content:** lines like `[+12.345s] AmbientFx: …` (seconds since enabling, because the unit’s clock is unreliable), errors with stack trace and measured values (`fx.<name> = <value>`, on change only). No vehicle identification number, no position. Speed, gear and effect names can appear though: **look at the log before you post it anywhere.**
+
+## Use (telnet)
+
+```sh
+# 1) Set the marker (once; it stays after a reboot)
+mount -uw /net/mmx/mnt/persist            # if /mnt/persist is read-only
+mkdir -p /mnt/persist/ambientfx
+touch /mnt/persist/ambientfx/debug
+
+# 2) Drive or test (the marker is checked every ~2 s, no reboot needed)
+
+# 3) Read it
+cat /dev/shmem/ambientfx.log               # everything
+tail -f /dev/shmem/ambientfx.log           # follow live
+
+# 4) Switch off
+rm /mnt/persist/ambientfx/debug
+```
+
+The log lives on the **MMX** (where the HMI runs). With telnet on **port 23** (MMX directly) the paths above apply. With telnet on **port 123** (RCC) prefix `/net/mmx`: `/net/mmx/dev/shmem/ambientfx.log` and marker `/net/mmx/mnt/persist/ambientfx/debug` (see [DEPLOY_TELNET.md](../DEPLOY_TELNET.md)).
+
+The **SD menu** has no entry of its own for this: *Status* only shows whether the marker is set, and *Uninstall* also deletes the marker and the RAM log.
+
+## Limits
+
+- An error that happens **before** the marker was set is not in the log. The RAM log is gone after a reboot even though the marker stays.
+- The log says what AmbientFX **sees and does**. It is not a capture of the vehicle bus.
+- Whether `/dev/shmem` is writable and really RAM on your unit is **not yet confirmed on the author’s test unit**. Check with `mount` and `df /dev/shmem`.
+
+## For developers
+
+The code is in `java_patch/de/mk/ambientfx/RamLog.java` (sink) and `Log.java` (facade: `Log.i`, `Log.w`, `Log.e`, `Log.value`, `Log.enabled`). Check `Log.enabled()` before building expensive text. The test `deploy/sd-menu/tests/test_ramlog.sh` checks marker, limit, reset and fallback folder (compiled with Java 1.2 rules).
+
+---
+
+<a id="deutsch"></a>
+
 # Debug-Protokoll (nur im RAM)
 
-🇩🇪 **Deutsch** · 🇬🇧 [English below](#english)
+🇩🇪 **Deutsch** · 🇬🇧 [English (oben)](#english)
 
 > [!CAUTION]
 > Nur zu Testzwecken auf privatem Grundstück, nicht im öffentlichen Straßenverkehr – siehe [RECHT_LEGAL.md](RECHT_LEGAL.md). Telnet-Zugriff aufs Steuergerät ist **nicht** Teil dieses Projekts und geschieht auf eigene Gefahr.
@@ -47,41 +103,3 @@ Das **SD-Menü** hat dafür keinen eigenen Punkt: *Status* zeigt nur, ob der Mar
 ## Für Entwickler
 
 Der Code steht in `java_patch/de/mk/ambientfx/RamLog.java` (Senke) und `Log.java` (Fassade: `Log.i`, `Log.w`, `Log.e`, `Log.value`, `Log.enabled`). Wer teuren Text zusammenbaut, fragt vorher `Log.enabled()` ab. Der Test `deploy/sd-menu/tests/test_ramlog.sh` prüft Marker, Obergrenze, Zurücksetzen und Ausweichordner (mit Java-1.2-Regeln übersetzt).
-
----
-
-<a id="english"></a>
-
-# Debug log (RAM only)
-
-🇩🇪 [Deutsch oben](#debug-protokoll-nur-im-ram) · 🇬🇧 **English** (English version of the German text above)
-
-> [!CAUTION]
-> For testing on private property only, not in public road traffic – see [RECHT_LEGAL.md](RECHT_LEGAL.md). Telnet access to the head unit is **not** part of this project and is at your own risk.
-
-AmbientFX can keep a **log in working memory (RAM)** that you read via telnet, for example when an effect does not react as expected. It is **off by default**.
-
-## Properties
-
-- **Marker only:** without the marker file **nothing** is written, no file is created.
-- **RAM only:** the log lives in `/dev/shmem/ambientfx.log` and is **gone after every reboot** of the unit. It is never written to flash or SD. If `/dev/shmem` is not writable, AmbientFX falls back to `/tmp/ambientfx.log`.
-- **The marker stays:** the marker lives on `/mnt/persist` and **survives a reboot** until you delete it. So after you enable it, AmbientFX logs from the start of every drive without you opening telnet each time.
-- **Hard limit:** **256 KB per boot.** Once reached, AmbientFX writes a final line (`=== GRENZE 256 KB erreicht … ===`, i.e. “limit reached”) and **stops writing**. **Nothing is rotated and nothing is deleted**; the beginning is kept. Reset: delete the file (`rm`) or reboot the unit.
-- **No network, no own thread.** Every write error is swallowed; the log cannot disturb the HMI.
-- **Content:** lines like `[+12.345s] AmbientFx: …` (seconds since enabling, because the unit’s clock is unreliable), errors with stack trace and measured values (`fx.<name> = <value>`, on change only). No vehicle identification number, no position. Speed, gear and effect names can appear though: **look at the log before you post it anywhere.**
-
-## Use (telnet)
-
-See the commands in the German part above (they are identical): set the marker with `touch /mnt/persist/ambientfx/debug` (first `mount -uw /net/mmx/mnt/persist` if needed), drive or test, read with `cat /dev/shmem/ambientfx.log` or `tail -f`, switch off with `rm /mnt/persist/ambientfx/debug`. The log lives on the **MMX** (where the HMI runs). With telnet on **port 23** (MMX directly) the paths above apply. With telnet on **port 123** (RCC) prefix `/net/mmx`: `/net/mmx/dev/shmem/ambientfx.log` and marker `/net/mmx/mnt/persist/ambientfx/debug` (see [DEPLOY_TELNET.md](../DEPLOY_TELNET.md)).
-
-The **SD menu** has no entry of its own for this: *Status* only shows whether the marker is set, and *Uninstall* also deletes the marker and the RAM log.
-
-## Limits
-
-- An error that happens **before** the marker was set is not in the log. The RAM log is gone after a reboot even though the marker stays.
-- The log says what AmbientFX **sees and does**. It is not a capture of the vehicle bus.
-- Whether `/dev/shmem` is writable and really RAM on your unit is **not yet confirmed on the author’s test unit**. Check with `mount` and `df /dev/shmem`.
-
-## For developers
-
-The code is in `java_patch/de/mk/ambientfx/RamLog.java` (sink) and `Log.java` (facade: `Log.i`, `Log.w`, `Log.e`, `Log.value`, `Log.enabled`). Check `Log.enabled()` before building expensive text. The test `deploy/sd-menu/tests/test_ramlog.sh` checks marker, limit, reset and fallback folder (compiled with Java 1.2 rules).

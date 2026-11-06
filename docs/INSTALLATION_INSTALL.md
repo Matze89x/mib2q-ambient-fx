@@ -1,6 +1,83 @@
+<a id="english"></a>
+
+# Install, uninstall, recover
+
+🇬🇧 **English** · 🇩🇪 [Deutsch (German, below)](#deutsch)
+
+> [!CAUTION]
+> **For testing on private property only, not in public road traffic** – see [RECHT_LEGAL.md](RECHT_LEGAL.md). The intervention modifies the HMI software of your head unit. **Use at your own risk.** Make a backup before the first time and make sure you can reset the unit if necessary.
+
+## What gets installed
+
+Exactly these files, **always together**:
+
+| File | Target on the unit |
+|---|---|
+| `ambient_fx.jar` | `/mnt/app/eso/hmi/lsd/jars/ambient_fx.jar` |
+| all `*.ambiente` from `build/plugins/` | `/mnt/app/eso/hmi/lsd/ambientfx_effects/` |
+
+Everything else on the unit stays unchanged. The original HMI (`lsd.jxe`) and the start script (`lsd.sh`) are **not** touched: `lsd.sh` loads every jar from the `jars/` folder in front of the original HMI by itself.
+
+> **Why always the jar and all plugins?** The jar and every plugin contain the same effect class. The plugin loader asks the jar first (parent-first). A newer plugin next to an older jar therefore never takes effect, and vice versa.
+
+## Way 1: SD menu in the Green Engineering Menu (recommended)
+
+Requirement: an **M.I.B. toolbox SD card** (More Incredible Bash) with access to the Green Engineering Menu. Setting that up is not part of this project.
+
+**On the computer** (card inserted):
+
+```bash
+./build_java.sh && ./verify.sh && tools/build_all_plugins.sh
+bash deploy/build_sd_package.sh /Volumes/YOUR-CARD            # dry run: shows what would be written
+bash deploy/build_sd_package.sh --apply /Volumes/YOUR-CARD    # writes to the card
+```
+
+The script runs all tests first (mock car in four shells, ESD patch), writes **only** to the folder `mib2q-ambient-fx/` on the card and appends its own block to the two toolbox menu files (all other menu entries stay byte-for-byte unchanged; the originals are kept in `mib2q-esd-original/`). macOS junk (`._*`, `.DS_Store`) is removed in its own folder. With `--no-eject` the card stays mounted afterwards.
+
+**In the vehicle** (card in slot 1): Green Engineering Menu → **M.I.B. → ambientfx**:
+
+| Entry | What happens |
+|---|---|
+| **3 Status** | Read only. Shows SD and vehicle state (jar, each plugin same/different/missing). |
+| **1 Install / Update** | Backs up everything affected to the SD card first, copies jar + plugins via a temporary file and checksum, reads everything back from the vehicle (“PRUEFUNG”) and reboots the MMI after 15 seconds on “OK”. |
+| **2 Uninstall** | Backs up everything, removes the jar, **all** `.ambiente` plugins including the folder `ambientfx_effects`, the remembered effect, the debug marker including the RAM log and old debug leftovers. Afterwards everything is as before the installation. |
+
+Recommended order: **3 Status → 1 Install/Update → 3 Status**. More details: [SD-ANLEITUNG.md](../SD-ANLEITUNG.md) and [TEST-ABLAUF.md](../TEST-ABLAUF.md).
+
+**Guarantees of the menu** (covered by tests): **only** `ambient_fx.jar` and the files listed in `build/plugins.cksum` that end in `.ambiente` are copied – never macOS junk, never anything unknown. Other jars on the vehicle are never touched, and the menu proves it with checksums before and after the run. If the card is write-protected (LOCK switch) the menu aborts **before** changing anything.
+
+**Backups and logs** are on the card in `mib2q-ambient-fx/`:
+
+- `backup/original/` – one-time full backup of all jars (and `lsd.sh`) on first install
+- `backup/<no>_<entry>_<jar checksum>/` – backup before every change (running number instead of a timestamp, because the clock in the Green Engineering Menu shows 1970), with `STAND.txt`
+- `log/` – logs of the runs (`install.txt` = last run, `<no>_install.txt` = every run with a backup)
+
+## Way 2: Telnet
+
+If you have set up telnet access to the unit, [DEPLOY_TELNET.md](../DEPLOY_TELNET.md) has the step-by-step guide (backup, `mount -uw` for **both** partitions and the SD card, copy, checksums, rollback). Credentials are **not** part of this repository.
+
+## Recover
+
+1. **Menu:** entry **2 Uninstall**. Afterwards the ambient lighting is back to stock.
+2. **By hand:** delete `ambient_fx.jar` from `/mnt/app/eso/hmi/lsd/jars/` and the folder `/mnt/app/eso/hmi/lsd/ambientfx_effects/` (first `mount -uw /net/mmx/mnt/app`), then reboot.
+3. **Back to an older version:** copy the files from `backup/<no>_…/` or `backup/original/` back. The menu prevents accidentally going back to an **older** jar (an empty file `ALLOW_DOWNGRADE` in the folder `mib2q-ambient-fx/` lifts that).
+
+After an uninstall the vehicle may still be on the “individual” profile with the last effect colour. Just pick a profile in the menu.
+
+## If something does not work
+
+- **Menu entry missing:** re-insert the card; `bash deploy/build_sd_package.sh` without `--apply` shows whether the block is in the menu files.
+- **Menu aborts:** the last line gives the reason (“nothing was changed” or where the backup is). The log is in `log/`.
+- **Effect entries missing after reboot:** run 3 Status. Often a plugin is missing or the jar is older than the plugins.
+- **MMI does not start normally:** uninstalling via the menu is then not possible. Remove `ambient_fx.jar` via telnet or restore the original backup `backup/original/`.
+
+---
+
+<a id="deutsch"></a>
+
 # Installieren, Deinstallieren, Wiederherstellen
 
-🇩🇪 **Deutsch** · 🇬🇧 [English below](#english)
+🇩🇪 **Deutsch** · 🇬🇧 [English (oben)](#english)
 
 > [!CAUTION]
 > **Nur zu Testzwecken auf privatem Grundstück, nicht im öffentlichen Straßenverkehr** – siehe [RECHT_LEGAL.md](RECHT_LEGAL.md). Der Eingriff verändert die HMI-Software deines Steuergeräts. **Nutzung auf eigene Gefahr.** Mach vor dem ersten Mal ein Backup und stell sicher, dass du das Gerät notfalls wieder zurücksetzen kannst.
@@ -40,7 +117,7 @@ Das Skript lässt vorher alle Tests laufen (Schein-Auto in vier Shells, ESD-Patc
 | **1 Installieren / Updaten** | Sichert vorher alles Betroffene auf die SD, kopiert Jar + Plugins über Zwischendatei und Prüfsumme, liest alles aus dem Fahrzeug zurück („PRUEFUNG“) und startet bei „OK“ das MMI nach 15 Sekunden neu. |
 | **2 Deinstallieren** | Sichert alles, entfernt Jar, **alle** `.ambiente`-Plugins samt Ordner `ambientfx_effects`, den gemerkten Effekt, den Debug-Marker samt RAM-Protokoll und alte Debug-Reste. Danach ist alles wie vor der Installation. |
 
-Empfohlener Ablauf: **3 Status → 1 Installieren/Updaten → 3 Status**. Mehr Details: [SD-ANLEITUNG.md](../SD-ANLEITUNG.md) und [TEST-ABLAUF.md](../TEST-ABLAUF.md) (Deutsch).
+Empfohlener Ablauf: **3 Status → 1 Installieren/Updaten → 3 Status**. Mehr Details: [SD-ANLEITUNG.md](../SD-ANLEITUNG.md) und [TEST-ABLAUF.md](../TEST-ABLAUF.md).
 
 **Zusicherungen des Menüs** (durch Tests abgesichert): Kopiert werden **nur** `ambient_fx.jar` und die Dateien, die in `build/plugins.cksum` stehen und auf `.ambiente` enden – nie macOS-Müll, nie etwas Unbekanntes. Andere Jars im Fahrzeug werden nie angefasst, und das Menü beweist das mit Prüfsummen vor und nach dem Lauf. Ist die Karte schreibgeschützt (LOCK-Schalter), bricht das Menü ab, **bevor** es etwas verändert.
 
@@ -68,70 +145,3 @@ Nach einer Deinstallation kann das Fahrzeug noch auf dem Profil „individuell�
 - **Menü bricht ab:** Die letzte Zeile nennt den Grund („Es wurde nichts verändert“ oder wo die Sicherung liegt). Das Protokoll liegt in `log/`.
 - **Effekt-Einträge fehlen nach dem Neustart:** Punkt 3 Status zeigen. Häufig fehlt ein Plugin oder die Jar ist älter als die Plugins.
 - **MMI startet nicht normal:** Deinstallieren ist per Menü nicht mehr möglich. Dann per Telnet `ambient_fx.jar` entfernen oder die Original-Sicherung `backup/original/` zurückspielen.
-
----
-
-<a id="english"></a>
-
-# Install, uninstall, recover
-
-🇩🇪 [Deutsch oben](#installieren-deinstallieren-wiederherstellen) · 🇬🇧 **English** (English version of the German text above)
-
-> [!CAUTION]
-> **For testing on private property only, not in public road traffic** – see [RECHT_LEGAL.md](RECHT_LEGAL.md). The intervention modifies the HMI software of your head unit. **Use at your own risk.** Make a backup before the first time and make sure you can reset the unit if necessary.
-
-## What gets installed
-
-Exactly these files, **always together**:
-
-| File | Target on the unit |
-|---|---|
-| `ambient_fx.jar` | `/mnt/app/eso/hmi/lsd/jars/ambient_fx.jar` |
-| all `*.ambiente` from `build/plugins/` | `/mnt/app/eso/hmi/lsd/ambientfx_effects/` |
-
-Everything else on the unit stays unchanged. The original HMI (`lsd.jxe`) and the start script (`lsd.sh`) are **not** touched: `lsd.sh` loads every jar from the `jars/` folder in front of the original HMI by itself.
-
-> **Why always the jar and all plugins?** The jar and every plugin contain the same effect class. The plugin loader asks the jar first (parent-first). A newer plugin next to an older jar therefore never takes effect, and vice versa.
-
-## Way 1: SD menu in the Green Engineering Menu (recommended)
-
-Requirement: an **M.I.B. toolbox SD card** (More Incredible Bash) with access to the Green Engineering Menu. Setting that up is not part of this project.
-
-**On the computer** (card inserted): see the commands in the German part above. The script runs all tests first (mock car in four shells, ESD patch), writes **only** to the folder `mib2q-ambient-fx/` on the card and appends its own block to the two toolbox menu files (all other menu entries stay byte-for-byte unchanged; the originals are kept in `mib2q-esd-original/`). macOS junk (`._*`, `.DS_Store`) is removed in its own folder. With `--no-eject` the card stays mounted afterwards.
-
-**In the vehicle** (card in slot 1): Green Engineering Menu → **M.I.B. → ambientfx**:
-
-| Entry | What happens |
-|---|---|
-| **3 Status** | Read only. Shows SD and vehicle state (jar, each plugin same/different/missing). |
-| **1 Install / Update** | Backs up everything affected to the SD card first, copies jar + plugins via a temporary file and checksum, reads everything back from the vehicle (“PRUEFUNG”) and reboots the MMI after 15 seconds on “OK”. |
-| **2 Uninstall** | Backs up everything, removes the jar, **all** `.ambiente` plugins including the folder `ambientfx_effects`, the remembered effect, the debug marker including the RAM log and old debug leftovers. Afterwards everything is as before the installation. |
-
-Recommended order: **3 Status → 1 Install/Update → 3 Status**. More details: [SD-ANLEITUNG.md](../SD-ANLEITUNG.md) and [TEST-ABLAUF.md](../TEST-ABLAUF.md) (German).
-
-**Guarantees of the menu** (covered by tests): **only** `ambient_fx.jar` and the files listed in `build/plugins.cksum` that end in `.ambiente` are copied – never macOS junk, never anything unknown. Other jars on the vehicle are never touched, and the menu proves it with checksums before and after the run. If the card is write-protected (LOCK switch) the menu aborts **before** changing anything.
-
-**Backups and logs** are on the card in `mib2q-ambient-fx/`:
-
-- `backup/original/` – one-time full backup of all jars (and `lsd.sh`) on first install
-- `backup/<no>_<entry>_<jar checksum>/` – backup before every change (running number instead of a timestamp, because the clock in the Green Engineering Menu shows 1970), with `STAND.txt`
-- `log/` – logs of the runs (`install.txt` = last run, `<no>_install.txt` = every run with a backup)
-
-## Way 2: Telnet
-
-If you have set up telnet access to the unit, [DEPLOY_TELNET.md](../DEPLOY_TELNET.md) has the step-by-step guide (German: backup, `mount -uw` for **both** partitions and the SD card, copy, checksums, rollback). Credentials are **not** part of this repository.
-
-## Recover
-
-1. **Menu:** entry **2 Uninstall**. Afterwards the ambient lighting is back to stock.
-2. **By hand:** delete `ambient_fx.jar` from `/mnt/app/eso/hmi/lsd/jars/` and the folder `/mnt/app/eso/hmi/lsd/ambientfx_effects/` (first `mount -uw /net/mmx/mnt/app`), then reboot.
-3. **Back to an older version:** copy the files from `backup/<no>_…/` or `backup/original/` back. The menu prevents accidentally going back to an **older** jar (an empty file `ALLOW_DOWNGRADE` in the folder `mib2q-ambient-fx/` lifts that).
-
-After an uninstall the vehicle may still be on the “individual” profile with the last effect colour. Just pick a profile in the menu.
-
-## If something does not work
-
-- **Menu entry missing:** re-insert the card; `bash deploy/build_sd_package.sh` without `--apply` shows whether the block is in the menu files.
-- **Menu aborts:** the last line gives the reason (“nothing was changed” or where the backup is). The log is in `log/`.
-- **Effect entries missing after reboot:** run 3 Status. Often a plugin is missing or the jar is older than the plugins.
-- **MMI does not start normally:** uninstalling via the menu is then not possible. Remove `ambient_fx.jar` via telnet or restore the original backup `backup/original/`.

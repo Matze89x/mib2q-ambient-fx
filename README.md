@@ -1,138 +1,10 @@
 ![AmbientFX for mib2q](docs/images/ambientfx-banner.jpg)
 
-# mib2q-ambient-fx – AmbientFX für Audi MHI2Q (MU1329)
-
-🇩🇪 **Deutsch** (diese Seite oben) · 🇬🇧 [English version below](#english)
-
-> [!CAUTION]
-> **Nur zu Test- und Entwicklungszwecken auf privatem Grundstück – nicht im öffentlichen Straßenverkehr.**
-> Dieses Projekt ist **nicht** von Audi/VW freigegeben, hat **keine** Betriebserlaubnis/Bauartgenehmigung und ist im Straßenverkehr **womöglich nicht zulässig** (StVO/StVZO, Details: [docs/RECHT_LEGAL.md](docs/RECHT_LEGAL.md)).
-> Es greift in die HMI-Software deines Steuergeräts ein. **Nutzung auf eigene Gefahr, nur für den privaten Gebrauch.** Es gibt keine Gewährleistung und keine Haftung.
-
-> [!IMPORTANT]
-> Entwickelt und getestet nur auf **einem** Fahrzeug (Audi A4 B9) mit **MHI2Q / MU1329**. Andere Geräte, andere Firmware-Stände und andere Fahrzeuge sind **ungetestet**.
-
-## Worum geht es
-
-AmbientFX erweitert im Audi-MMI das Menü **Fahrzeugeinstellungen → Ambientebeleuchtung** (hinter „Audi drive select“) um zusätzliche, fahrzeugreaktive Licht-Effekte. Es ist ein Java-Patch für das MHI2Q (HMI „lsd“), der als zusätzliche Jar im Bootclasspath **vor** der originalen HMI geladen wird – die Original-Dateien des Geräts bleiben unverändert.
-
-**Die serienmäßigen Farbwahlen bleiben erhalten.** AmbientFX ergänzt das Menü *Ambientebeleuchtung* nur um zusätzliche Einträge hinter „Audi drive select“. Maritim-Blau, Impuls-Rot, individuell, Audi drive select und die übrigen Werksfarben und Profile bleiben wie gewohnt wählbar.
-
-![Menü Ambientebeleuchtung im MMI: die Werksauswahl (Maritim-Blau, Impuls-Rot, individuell, Audi drive select) bleibt, darunter die AmbientFX-Effekte Momentum und Momentum Select](docs/images/ambientfx-mmi-menu.jpg)
-
-Alle Effekte steuern nur die **Kontur/Linie** der Ambientebeleuchtung. Die **Fläche** bleibt beim normalen Farbregler im MMI.
-
-> [!NOTE]
-> **Phase 1: nur die LED-Streifen.** In der ersten Phase sprechen wir ausschließlich die **LED-Streifen** (Kontur/Linie) an. Die übrige, passive LED-Beleuchtung (die flächige Ambientebeleuchtung) bleibt unverändert und lässt sich **weiterhin wie gewohnt manuell** im MMI unter *Ambientebeleuchtung* einstellen. Wir nehmen die passive Beleuchtung **demnächst mit auf**, in einem der nächsten Updates. Zuerst geht es um die Streifen. Im MMI sind das zwei getrennte Farbwahlen: eine für alles **Passive** (Fläche) und eine für alles mit **LED-Streifen** (Kontur). AmbientFX steuert nur die zweite. **Hinweis:** Die Tür-Streifen gibt es an **allen vier Türen** (vorn und hinten). Optional kommt ganz vorn ein **selbst nachgerüsteter** Streifen am Armaturenbrett dazu, den es im Original **nicht** gibt.
-
-![AmbientFX Phase 1: LED-Streifen werden gesteuert, passive LED-Beleuchtung bleibt manuell / LED strips controlled, passive LED lighting stays manual](docs/images/ambientfx-led-zones.svg)
-
-| Effekt | Verhalten |
-|---|---|
-| **Momentum** | Farbe folgt dem Tempo (0–130 km/h in 10-km/h-Stufen, weich überblendet, 0 und 130 km/h = Rot), Helligkeit folgt dem Gaspedal, Bremsen = sofort Werks-Rot. Wechsel D → S am Gangwahlhebel: sofort Weiß 100 %, 1 s halten, 2 s in die normale Farbe ausblenden (nicht im Dynamic-Profil). |
-| **Momentum select** | Wie Momentum, aber mit eigener Farbwelt je Audi-drive-select-Profil. |
-| **Atmosphere** | Ruhig, nicht fahrreaktiv: Farbton nach Außentemperatur (kalt = Blau, warm = Amber), langsames „Atmen“. |
-| **Scroll** | Regenbogen-Showeffekt, Drehgeschwindigkeit proportional zum Tempo. |
-| **Drive** | Gaspedal und Lenkwinkel steuern Farbton, Sättigung und Helligkeit. |
-
-Die Farben stammen **zur Laufzeit aus der Werksfarbliste, die das Fahrzeug selbst meldet** – im Repository sind keine Farbwerte oder Daten des Fahrzeugs hinterlegt.
-
-## Eigene Designs selbst erstellen
-
-Ein Effekt ist eine kleine Java-Klasse mit drei Methoden (`start`, `tick`, `periodMs`) und wird als **`.ambiente`-Plugin** gebaut, ohne das Haupt-Jar zu ändern. Schritt für Schritt: **[docs/EIGENE-DESIGNS_CUSTOM-DESIGNS.md](docs/EIGENE-DESIGNS_CUSTOM-DESIGNS.md)**, dazu ein lauffähiges Beispiel in [`examples/MeinEffekt.java`](examples/MeinEffekt.java) und das ausführliche [Handbuch für eigene Effekte](EFFEKTE_HANDBUCH.md) (Deutsch).
-
-**Neu, experimentell: das [Design Studio](designer/README.md).** Ein Editor im Browser (eine einzige HTML-Datei, läuft offline), mit dem du Designs **ohne Programmieren** neu erstellst, importierst, bearbeitest und als `.ambiente` exportierst, mit Live-Vorschau, dunklem Design, Deutsch/Englisch. Online: https://matze89x.github.io/mib2q-ambient-fx/designer/ (sobald GitHub Pages aktiv ist), sonst [`docs/designer/index.html`](docs/designer/index.html) herunterladen und im Browser öffnen. **Bisher nur am PC getestet, noch nicht im Fahrzeug.**
-
-**Version 1.1:** Die fünf **mitgelieferten Effekte** (Momentum, Momentum select, Atmosphere, Scroll, Drive) lassen sich jetzt als **Original-Vorlagen** öffnen und mit allen ihren Einstellwerten ändern: Farbweg, Zeitkonstanten, Nacht-Kurve, D→S-Blitz, Farbwelten je Fahrprofil, Temperatur-Grenzen und mehr. Auch ein Import der mitgelieferten `.ambiente`-Dateien ins Studio funktioniert. Ohne Änderung verhält sich eine Vorlage **exakt wie das Original** (Takt für Takt gegen die echten Effekt-Klassen geprüft, siehe [designer/README.md](designer/README.md)). Eigene Werte sind nur am PC getestet.
-
-## Was dieses Repository nicht enthält
-
-- **Keinen Audi-/VW-/e.solutions-Code und keine Firmware.** Die drei Original-Klassen, die AmbientFX ersetzt, werden **nicht** mitgeliefert. Du erzeugst sie selbst aus **deiner eigenen** `lsd.jar` (`tools/decompile_stock.sh`), das Repository enthält nur die kleinen Änderungen als Patch-Dateien (`patches/`).
-- **Keine fertig gebauten Jars/Plugins** und keine Binärdateien. Du baust alles selbst.
-- **Keine Fahrzeugdaten:** keine Fahrgestellnummer, keine Logs, keine Dumps, keine Farbwerte, keine Zugangsdaten, keine persönlichen Daten.
-- **Keine Anleitung zum Freischalten** von Telnet, Konsole oder dem Green Engineering Menu und keine Signatur-Umgehung. Wer das Gerät dafür vorbereiten muss, nutzt dafür die jeweiligen Community-Projekte (zum Beispiel die M.I.B. More Incredible Bash Toolbox).
-
-Dieses Repository enthält nur eigenen Code, eigene Skripte und eigene Dokumentation.
-
-## Voraussetzungen
-
-- **Ein Fahrzeug mit farbiger Ambientebeleuchtung** (Sonderausstattung, beim Testfahrzeug PR-Nr. QQ2). Im MMI muss es unter *MENU › Fahrzeug › Fahrzeugeinstellungen › Ambientebeleuchtung* Farbwahl bzw. Profile (individuell / Audi drive select) geben. AmbientFX steuert nur die Farbe der **Kontur** dieser vorhandenen Beleuchtung. Ohne farbige Ambientebeleuchtung gibt es nichts zu steuern.
-- Audi MHI2Q (MU1329), ein Steuergerät-Zugang, den du selbst eingerichtet hast (Telnet **oder** Toolbox mit Green Engineering Menu). Beides ist nicht Teil dieses Projekts.
-- Mac oder Linux mit **JDK 8** (Java-1.2-Bytecode), `bash`, `patch`, `unzip`, `python3`.
-- **Deine eigene `lsd.jar`**: die `lsd.jxe` deines Geräts, mit einem JXE→JAR-Konverter (z. B. dem Community-Werkzeug *jxe2jar*) umgewandelt.
-- Zum Decompilieren: [Vineflower 1.12.0](https://github.com/Vineflower/vineflower/releases/tag/1.12.0) (braucht Java 17+) und zwei kleine OSGi-Bibliotheken aus Maven Central.
-
-Alle Schritte stehen in **[docs/BAUEN_BUILD.md](docs/BAUEN_BUILD.md)**.
-
-## Schnellstart
-
-```bash
-# 1. Quellen vorbereiten (deine lsd.jar, Vineflower und OSGi-Jars liegen unter vendor/, siehe docs/BAUEN_BUILD.md)
-VF_JAVA=/pfad/zu/java17/bin/java tools/decompile_stock.sh
-tools/prepare_sources.sh
-
-# 2. Bauen und prüfen
-./build_java.sh          # -> build/ambient_fx.jar
-./verify.sh              # Bytecode-Vergleich mit dem Original: nur erwartete Abweichungen
-tools/build_all_plugins.sh   # -> build/plugins/*.ambiente
-```
-
-Installiert wird **immer die Jar und alle Plugins zusammen**. Wege: **SD-Menü im Green Engineering Menu** (`deploy/build_sd_package.sh`, mit Sicherung auf die SD) oder **Telnet** (`DEPLOY_TELNET.md`). Siehe **[docs/INSTALLATION_INSTALL.md](docs/INSTALLATION_INSTALL.md)**.
-
-## Deinstallieren / Wiederherstellen
-
-Das SD-Menü hat den Punkt **Deinstallieren**: Es sichert zuerst alles auf die SD und entfernt dann nur die AmbientFX-Dateien (Jar, Plugins, den gemerkten Effekt). Danach ist die Ambientebeleuchtung wieder im Originalzustand. Per Telnet genügt: `ambient_fx.jar` und den Ordner `ambientfx_effects` löschen und neu starten. Details in [docs/INSTALLATION_INSTALL.md](docs/INSTALLATION_INSTALL.md).
-
-## Was geprüft ist – und was nicht
-
-- ✅ Im Fahrzeug (Audi A4 B9, MU1329): **Alle fünf Effekte** (Momentum, Momentum select, Atmosphere, Scroll, Drive) wurden vom Autor privat durchgetestet und laufen **seit Wochen im Alltag** ohne Probleme. Ebenso Menü-Einträge, Plugin-System, Installation und Deinstallation über das SD-Menü.
-- ⚠️ Die Farbübergänge hängen vom verbauten LED-Streifen ab. Auf anderen Streifen (anderes Fahrzeug, Nachrüstung) können sie anders aussehen. Das Design Studio ist bisher nur am PC getestet.
-- ❌ Andere Fahrzeuge, andere Firmware: **ungetestet**. Das Skript `verify.sh` meldet, wenn eine ersetzte Klasse in deiner Firmware nicht passt. Dann **nicht installieren**.
-
-## Dokumentation
-
-| Datei | Inhalt |
-|---|---|
-| [docs/BAUEN_BUILD.md](docs/BAUEN_BUILD.md) | Voraussetzungen und Bauen (DE/EN) |
-| [docs/INSTALLATION_INSTALL.md](docs/INSTALLATION_INSTALL.md) | Installieren, Deinstallieren, Wiederherstellen (DE/EN) |
-| [docs/EIGENE-DESIGNS_CUSTOM-DESIGNS.md](docs/EIGENE-DESIGNS_CUSTOM-DESIGNS.md) | Eigene Effekte erstellen (DE/EN) |
-| [docs/RECHT_LEGAL.md](docs/RECHT_LEGAL.md) | Straßenverkehr, StVO/StVZO, Haftung (DE/EN) |
-| [docs/TECHNIK.md](docs/TECHNIK.md) | Technische Details: Aufbau, Analyse, Effekte (Deutsch) |
-| [EFFEKTE_HANDBUCH.md](EFFEKTE_HANDBUCH.md) | Ausführliches Handbuch für eigene Effekte (Deutsch) |
-| [SD-ANLEITUNG.md](SD-ANLEITUNG.md), [TEST-ABLAUF.md](TEST-ABLAUF.md) | SD-Menü im Green Engineering Menu (Deutsch) |
-| [DEPLOY_TELNET.md](DEPLOY_TELNET.md) | Weg per Telnet (Deutsch) |
-| [docs/DEBUG.md](docs/DEBUG.md) | Debug-Protokoll nur im RAM, Marker, Obergrenze (DE/EN) |
-| [designer/README.md](designer/README.md) | Design Studio: Designs im Browser bauen, Format, Prüfung (DE/EN) |
-
-## Debug
-
-AmbientFX kann ein **Protokoll nur im RAM** führen, das du per Telnet ausliest. Es ist **standardmäßig aus** und wird nur mit der Marker-Datei `/mnt/persist/ambientfx/debug` eingeschaltet (`touch`, bleibt nach dem Neustart erhalten, bis du sie mit `rm` löschst). Das Protokoll (`/dev/shmem/ambientfx.log`) ist nach jedem Neustart weg, hat eine **feste Obergrenze von 256 KB pro Start** (danach Stopp, nichts wird rotiert oder gelöscht) und sendet **nichts** über ein Netz. Ohne Marker wird nichts geschrieben. Einzelheiten: [docs/DEBUG.md](docs/DEBUG.md).
-
-## Roadmap
-
-- **Design Studio erweitern** (mehr Bausteine in den freien Designs, etwa Gang- oder Profil-abhängige Regeln oder Zonen; die Original-Vorlagen können das schon), nach dem ersten Test im Fahrzeug. Ideen und Mithilfe willkommen.
-- **Passive LED-Beleuchtung (Fläche)** demnächst mit aufnehmen. Phase 1 sind nur die LED-Streifen.
-- Weitere Ideen: Einparkhilfe-Effekt, Blinker-Impuls, Helligkeit je Zone.
-- Englische Übersetzung der technischen Detail-Dokumente.
-
-## Mitmachen
-
-Eigene Effekte, Tests auf anderen Geräten und Korrekturen sind willkommen (Issue oder Pull Request). **Bitte keine Firmware, keine Audi-Dateien, keine Fahrgestellnummern, keine Logs mit persönlichen Daten und keine Zugangsdaten hochladen.**
-
-## Lizenz, Marken, Credits
-
-- Lizenz: [LICENSE.md](LICENSE.md) – Namensnennung Pflicht, **keine kommerzielle Nutzung, kein Verkauf**, Weitergabe unter gleichen Bedingungen. Sie gilt für den eigenen Code, die Skripte und die Dokumentation, **nicht** für Audi-/Drittanbieter-Code.
-- Audi, Volkswagen, MMI und alle weiteren Marken gehören ihren jeweiligen Inhabern. Dies ist ein unabhängiges Community-Projekt ohne Verbindung zu Audi/VW.
-- © 2026 Matze89x in cooperation with [DEB](https://www.digital-eliteboard.com/) and [LuKa_dev](https://github.com/luka-dev).
-- Inspiriert von **[LuKa_dev](https://github.com/luka-dev)**: Ideen zu Drive und Scroll sowie der Bootclasspath-Mechanismus stammen aus dessen Patches. Über sein Projekt [mib2q-carplay-rgi](https://github.com/luka-dev/mib2q-carplay-rgi) sind wir überhaupt auf diesen Ansatz gekommen. Danke!
-
----
-
 <a id="english"></a>
 
 # mib2q-ambient-fx – AmbientFX for Audi MHI2Q (MU1329)
 
-🇩🇪 [Deutsche Version oben](#mib2q-ambient-fx--ambientfx-für-audi-mhi2q-mu1329) · 🇬🇧 **English** (English version of the German text above)
+🇬🇧 **English** · 🇩🇪 [Deutsch (German, below)](#deutsch)
 
 > [!CAUTION]
 > **For testing and development only, on private property – not on public roads.**
@@ -169,9 +41,9 @@ Colours are taken **at runtime from the factory colour list the vehicle itself r
 
 ## Make your own designs
 
-An effect is a small Java class with three methods (`start`, `tick`, `periodMs`), built as a **`.ambiente` plugin** without touching the main jar. Step by step: **[docs/EIGENE-DESIGNS_CUSTOM-DESIGNS.md](docs/EIGENE-DESIGNS_CUSTOM-DESIGNS.md)**, a working example in [`examples/MeinEffekt.java`](examples/MeinEffekt.java), and the detailed [effects handbook](EFFEKTE_HANDBUCH.md) (German).
+An effect is a small Java class with three methods (`start`, `tick`, `periodMs`), built as a **`.ambiente` plugin** without touching the main jar. Step by step: **[docs/EIGENE-DESIGNS_CUSTOM-DESIGNS.md](docs/EIGENE-DESIGNS_CUSTOM-DESIGNS.md)**, a working example in [`examples/MeinEffekt.java`](examples/MeinEffekt.java), and the detailed [effects handbook](EFFEKTE_HANDBUCH.md).
 
-**New, experimental: the [Design Studio](designer/README.md).** An editor in your browser (one single HTML file, works offline) to **create, import, edit** and **export** designs as `.ambiente` **without programming**, with live preview, dark design, German/English. Online: https://matze89x.github.io/mib2q-ambient-fx/designer/ (once GitHub Pages is enabled), otherwise download [`docs/designer/index.html`](docs/designer/index.html) and open it in a browser. **Tested on a computer so far, not yet in a vehicle.**
+**New, experimental: the [Design Studio](designer/README.md).** An editor in your browser (one single HTML file, works offline) to **create, import, edit** and **export** designs as `.ambiente` **without programming**, with live preview, dark design, German/English. Online: https://matze89x.github.io/mib2q-ambient-fx/designer/, otherwise download [`docs/designer/index.html`](docs/designer/index.html) and open it in a browser. **Tested on a computer so far, not yet in a vehicle.**
 
 **Version 1.1:** The five **bundled effects** (Momentum, Momentum select, Atmosphere, Scroll, Drive) can now be opened as **original templates** and changed with all of their settings: colour path, time constants, night curve, D→S flash, colour ranges per drive profile, temperature limits and more. Importing the bundled `.ambiente` files into the Studio works as well. Unchanged, a template behaves **exactly like the original** (checked tick by tick against the real effect classes, see [designer/README.md](designer/README.md)). Your own values are only tested on a computer.
 
@@ -227,10 +99,10 @@ The SD menu has an **Uninstall** entry: it backs everything up to the SD card fi
 | [docs/INSTALLATION_INSTALL.md](docs/INSTALLATION_INSTALL.md) | Install, uninstall, recover (DE/EN) |
 | [docs/EIGENE-DESIGNS_CUSTOM-DESIGNS.md](docs/EIGENE-DESIGNS_CUSTOM-DESIGNS.md) | Create your own effects (DE/EN) |
 | [docs/RECHT_LEGAL.md](docs/RECHT_LEGAL.md) | Road traffic, StVO/StVZO, liability (DE/EN) |
-| [docs/TECHNIK.md](docs/TECHNIK.md) | Technical details: structure, analysis, effects (German) |
-| [EFFEKTE_HANDBUCH.md](EFFEKTE_HANDBUCH.md) | Detailed handbook for your own effects (German) |
-| [SD-ANLEITUNG.md](SD-ANLEITUNG.md), [TEST-ABLAUF.md](TEST-ABLAUF.md) | SD menu in the Green Engineering Menu (German) |
-| [DEPLOY_TELNET.md](DEPLOY_TELNET.md) | Telnet route (German) |
+| [docs/TECHNIK.md](docs/TECHNIK.md) | Technical details: structure, analysis, effects (DE/EN) |
+| [EFFEKTE_HANDBUCH.md](EFFEKTE_HANDBUCH.md) | Detailed handbook for your own effects (DE/EN) |
+| [SD-ANLEITUNG.md](SD-ANLEITUNG.md), [TEST-ABLAUF.md](TEST-ABLAUF.md) | SD menu in the Green Engineering Menu (DE/EN) |
+| [DEPLOY_TELNET.md](DEPLOY_TELNET.md) | Telnet route (DE/EN) |
 | [docs/DEBUG.md](docs/DEBUG.md) | Debug log in RAM only, marker, size limit (DE/EN) |
 | [designer/README.md](designer/README.md) | Design Studio: build designs in the browser, format, verification (DE/EN) |
 
@@ -243,7 +115,6 @@ AmbientFX can keep a **log in RAM only** that you read via telnet. It is **off b
 - **Extend the Design Studio** (more building blocks in the free designs, e.g. gear- or profile-dependent rules or zones; the original templates can already do that), after the first test in a vehicle. Ideas and help welcome.
 - **Passive LED lighting (surface)** to be added soon. Phase 1 is the LED strips only.
 - More ideas: parking-distance effect, indicator pulse, brightness per zone.
-- English translation of the technical detail documents.
 
 ## Contributing
 
@@ -255,3 +126,132 @@ Your own effects, tests on other units and fixes are welcome (issue or pull requ
 - Audi, Volkswagen, MMI and all other trademarks belong to their respective owners. This is an independent community project with no connection to Audi/VW.
 - © 2026 Matze89x in cooperation with [DEB](https://www.digital-eliteboard.com/) and [LuKa_dev](https://github.com/luka-dev).
 - Inspired by **[LuKa_dev](https://github.com/luka-dev)**: the ideas for Drive and Scroll and the bootclasspath mechanism come from his patches. It was his project [mib2q-carplay-rgi](https://github.com/luka-dev/mib2q-carplay-rgi) that led us to this approach in the first place. Thank you!
+
+---
+
+<a id="deutsch"></a>
+
+# mib2q-ambient-fx – AmbientFX für Audi MHI2Q (MU1329)
+
+🇩🇪 **Deutsch** · 🇬🇧 [English (oben)](#english)
+
+> [!CAUTION]
+> **Nur zu Test- und Entwicklungszwecken auf privatem Grundstück – nicht im öffentlichen Straßenverkehr.**
+> Dieses Projekt ist **nicht** von Audi/VW freigegeben, hat **keine** Betriebserlaubnis/Bauartgenehmigung und ist im Straßenverkehr **womöglich nicht zulässig** (StVO/StVZO, Details: [docs/RECHT_LEGAL.md](docs/RECHT_LEGAL.md)).
+> Es greift in die HMI-Software deines Steuergeräts ein. **Nutzung auf eigene Gefahr, nur für den privaten Gebrauch.** Es gibt keine Gewährleistung und keine Haftung.
+
+> [!IMPORTANT]
+> Entwickelt und getestet nur auf **einem** Fahrzeug (Audi A4 B9) mit **MHI2Q / MU1329**. Andere Geräte, andere Firmware-Stände und andere Fahrzeuge sind **ungetestet**.
+
+## Worum geht es
+
+AmbientFX erweitert im Audi-MMI das Menü **Fahrzeugeinstellungen → Ambientebeleuchtung** (hinter „Audi drive select“) um zusätzliche, fahrzeugreaktive Licht-Effekte. Es ist ein Java-Patch für das MHI2Q (HMI „lsd“), der als zusätzliche Jar im Bootclasspath **vor** der originalen HMI geladen wird – die Original-Dateien des Geräts bleiben unverändert.
+
+**Die serienmäßigen Farbwahlen bleiben erhalten.** AmbientFX ergänzt das Menü *Ambientebeleuchtung* nur um zusätzliche Einträge hinter „Audi drive select“. Maritim-Blau, Impuls-Rot, individuell, Audi drive select und die übrigen Werksfarben und Profile bleiben wie gewohnt wählbar.
+
+![Menü Ambientebeleuchtung im MMI: die Werksauswahl (Maritim-Blau, Impuls-Rot, individuell, Audi drive select) bleibt, darunter die AmbientFX-Effekte Momentum und Momentum Select](docs/images/ambientfx-mmi-menu.jpg)
+
+Alle Effekte steuern nur die **Kontur/Linie** der Ambientebeleuchtung. Die **Fläche** bleibt beim normalen Farbregler im MMI.
+
+> [!NOTE]
+> **Phase 1: nur die LED-Streifen.** In der ersten Phase sprechen wir ausschließlich die **LED-Streifen** (Kontur/Linie) an. Die übrige, passive LED-Beleuchtung (die flächige Ambientebeleuchtung) bleibt unverändert und lässt sich **weiterhin wie gewohnt manuell** im MMI unter *Ambientebeleuchtung* einstellen. Wir nehmen die passive Beleuchtung **demnächst mit auf**, in einem der nächsten Updates. Zuerst geht es um die Streifen. Im MMI sind das zwei getrennte Farbwahlen: eine für alles **Passive** (Fläche) und eine für alles mit **LED-Streifen** (Kontur). AmbientFX steuert nur die zweite. **Hinweis:** Die Tür-Streifen gibt es an **allen vier Türen** (vorn und hinten). Optional kommt ganz vorn ein **selbst nachgerüsteter** Streifen am Armaturenbrett dazu, den es im Original **nicht** gibt.
+
+![AmbientFX Phase 1: LED-Streifen werden gesteuert, passive LED-Beleuchtung bleibt manuell / LED strips controlled, passive LED lighting stays manual](docs/images/ambientfx-led-zones.svg)
+
+| Effekt | Verhalten |
+|---|---|
+| **Momentum** | Farbe folgt dem Tempo (0–130 km/h in 10-km/h-Stufen, weich überblendet, 0 und 130 km/h = Rot), Helligkeit folgt dem Gaspedal, Bremsen = sofort Werks-Rot. Wechsel D → S am Gangwahlhebel: sofort Weiß 100 %, 1 s halten, 2 s in die normale Farbe ausblenden (nicht im Dynamic-Profil). |
+| **Momentum select** | Wie Momentum, aber mit eigener Farbwelt je Audi-drive-select-Profil. |
+| **Atmosphere** | Ruhig, nicht fahrreaktiv: Farbton nach Außentemperatur (kalt = Blau, warm = Amber), langsames „Atmen“. |
+| **Scroll** | Regenbogen-Showeffekt, Drehgeschwindigkeit proportional zum Tempo. |
+| **Drive** | Gaspedal und Lenkwinkel steuern Farbton, Sättigung und Helligkeit. |
+
+Die Farben stammen **zur Laufzeit aus der Werksfarbliste, die das Fahrzeug selbst meldet** – im Repository sind keine Farbwerte oder Daten des Fahrzeugs hinterlegt.
+
+## Eigene Designs selbst erstellen
+
+Ein Effekt ist eine kleine Java-Klasse mit drei Methoden (`start`, `tick`, `periodMs`) und wird als **`.ambiente`-Plugin** gebaut, ohne das Haupt-Jar zu ändern. Schritt für Schritt: **[docs/EIGENE-DESIGNS_CUSTOM-DESIGNS.md](docs/EIGENE-DESIGNS_CUSTOM-DESIGNS.md)**, dazu ein lauffähiges Beispiel in [`examples/MeinEffekt.java`](examples/MeinEffekt.java) und das ausführliche [Handbuch für eigene Effekte](EFFEKTE_HANDBUCH.md).
+
+**Neu, experimentell: das [Design Studio](designer/README.md).** Ein Editor im Browser (eine einzige HTML-Datei, läuft offline), mit dem du Designs **ohne Programmieren** neu erstellst, importierst, bearbeitest und als `.ambiente` exportierst, mit Live-Vorschau, dunklem Design, Deutsch/Englisch. Online: https://matze89x.github.io/mib2q-ambient-fx/designer/, sonst [`docs/designer/index.html`](docs/designer/index.html) herunterladen und im Browser öffnen. **Bisher nur am PC getestet, noch nicht im Fahrzeug.**
+
+**Version 1.1:** Die fünf **mitgelieferten Effekte** (Momentum, Momentum select, Atmosphere, Scroll, Drive) lassen sich jetzt als **Original-Vorlagen** öffnen und mit allen ihren Einstellwerten ändern: Farbweg, Zeitkonstanten, Nacht-Kurve, D→S-Blitz, Farbwelten je Fahrprofil, Temperatur-Grenzen und mehr. Auch ein Import der mitgelieferten `.ambiente`-Dateien ins Studio funktioniert. Ohne Änderung verhält sich eine Vorlage **exakt wie das Original** (Takt für Takt gegen die echten Effekt-Klassen geprüft, siehe [designer/README.md](designer/README.md)). Eigene Werte sind nur am PC getestet.
+
+## Was dieses Repository nicht enthält
+
+- **Keinen Audi-/VW-/e.solutions-Code und keine Firmware.** Die drei Original-Klassen, die AmbientFX ersetzt, werden **nicht** mitgeliefert. Du erzeugst sie selbst aus **deiner eigenen** `lsd.jar` (`tools/decompile_stock.sh`), das Repository enthält nur die kleinen Änderungen als Patch-Dateien (`patches/`).
+- **Keine fertig gebauten Jars/Plugins** und keine Binärdateien. Du baust alles selbst.
+- **Keine Fahrzeugdaten:** keine Fahrgestellnummer, keine Logs, keine Dumps, keine Farbwerte, keine Zugangsdaten, keine persönlichen Daten.
+- **Keine Anleitung zum Freischalten** von Telnet, Konsole oder dem Green Engineering Menu und keine Signatur-Umgehung. Wer das Gerät dafür vorbereiten muss, nutzt dafür die jeweiligen Community-Projekte (zum Beispiel die M.I.B. More Incredible Bash Toolbox).
+
+Dieses Repository enthält nur eigenen Code, eigene Skripte und eigene Dokumentation.
+
+## Voraussetzungen
+
+- **Ein Fahrzeug mit farbiger Ambientebeleuchtung** (Sonderausstattung, beim Testfahrzeug PR-Nr. QQ2). Im MMI muss es unter *MENU › Fahrzeug › Fahrzeugeinstellungen › Ambientebeleuchtung* Farbwahl bzw. Profile (individuell / Audi drive select) geben. AmbientFX steuert nur die Farbe der **Kontur** dieser vorhandenen Beleuchtung. Ohne farbige Ambientebeleuchtung gibt es nichts zu steuern.
+- Audi MHI2Q (MU1329), ein Steuergerät-Zugang, den du selbst eingerichtet hast (Telnet **oder** Toolbox mit Green Engineering Menu). Beides ist nicht Teil dieses Projekts.
+- Mac oder Linux mit **JDK 8** (Java-1.2-Bytecode), `bash`, `patch`, `unzip`, `python3`.
+- **Deine eigene `lsd.jar`**: die `lsd.jxe` deines Geräts, mit einem JXE→JAR-Konverter (z. B. dem Community-Werkzeug *jxe2jar*) umgewandelt.
+- Zum Decompilieren: [Vineflower 1.12.0](https://github.com/Vineflower/vineflower/releases/tag/1.12.0) (braucht Java 17+) und zwei kleine OSGi-Bibliotheken aus Maven Central.
+
+Alle Schritte stehen in **[docs/BAUEN_BUILD.md](docs/BAUEN_BUILD.md)**.
+
+## Schnellstart
+
+```bash
+# 1. Quellen vorbereiten (deine lsd.jar, Vineflower und OSGi-Jars liegen unter vendor/, siehe docs/BAUEN_BUILD.md)
+VF_JAVA=/pfad/zu/java17/bin/java tools/decompile_stock.sh
+tools/prepare_sources.sh
+
+# 2. Bauen und prüfen
+./build_java.sh          # -> build/ambient_fx.jar
+./verify.sh              # Bytecode-Vergleich mit dem Original: nur erwartete Abweichungen
+tools/build_all_plugins.sh   # -> build/plugins/*.ambiente
+```
+
+Installiert wird **immer die Jar und alle Plugins zusammen**. Wege: **SD-Menü im Green Engineering Menu** (`deploy/build_sd_package.sh`, mit Sicherung auf die SD) oder **Telnet** (`DEPLOY_TELNET.md`). Siehe **[docs/INSTALLATION_INSTALL.md](docs/INSTALLATION_INSTALL.md)**.
+
+## Deinstallieren / Wiederherstellen
+
+Das SD-Menü hat den Punkt **Deinstallieren**: Es sichert zuerst alles auf die SD und entfernt dann nur die AmbientFX-Dateien (Jar, Plugins, den gemerkten Effekt). Danach ist die Ambientebeleuchtung wieder im Originalzustand. Per Telnet genügt: `ambient_fx.jar` und den Ordner `ambientfx_effects` löschen und neu starten. Details in [docs/INSTALLATION_INSTALL.md](docs/INSTALLATION_INSTALL.md).
+
+## Was geprüft ist – und was nicht
+
+- ✅ Im Fahrzeug (Audi A4 B9, MU1329): **Alle fünf Effekte** (Momentum, Momentum select, Atmosphere, Scroll, Drive) wurden vom Autor privat durchgetestet und laufen **seit Wochen im Alltag** ohne Probleme. Ebenso Menü-Einträge, Plugin-System, Installation und Deinstallation über das SD-Menü.
+- ⚠️ Die Farbübergänge hängen vom verbauten LED-Streifen ab. Auf anderen Streifen (anderes Fahrzeug, Nachrüstung) können sie anders aussehen. Das Design Studio ist bisher nur am PC getestet.
+- ❌ Andere Fahrzeuge, andere Firmware: **ungetestet**. Das Skript `verify.sh` meldet, wenn eine ersetzte Klasse in deiner Firmware nicht passt. Dann **nicht installieren**.
+
+## Dokumentation
+
+| Datei | Inhalt |
+|---|---|
+| [docs/BAUEN_BUILD.md](docs/BAUEN_BUILD.md) | Voraussetzungen und Bauen (DE/EN) |
+| [docs/INSTALLATION_INSTALL.md](docs/INSTALLATION_INSTALL.md) | Installieren, Deinstallieren, Wiederherstellen (DE/EN) |
+| [docs/EIGENE-DESIGNS_CUSTOM-DESIGNS.md](docs/EIGENE-DESIGNS_CUSTOM-DESIGNS.md) | Eigene Effekte erstellen (DE/EN) |
+| [docs/RECHT_LEGAL.md](docs/RECHT_LEGAL.md) | Straßenverkehr, StVO/StVZO, Haftung (DE/EN) |
+| [docs/TECHNIK.md](docs/TECHNIK.md) | Technische Details: Aufbau, Analyse, Effekte (DE/EN) |
+| [EFFEKTE_HANDBUCH.md](EFFEKTE_HANDBUCH.md) | Ausführliches Handbuch für eigene Effekte (DE/EN) |
+| [SD-ANLEITUNG.md](SD-ANLEITUNG.md), [TEST-ABLAUF.md](TEST-ABLAUF.md) | SD-Menü im Green Engineering Menu (DE/EN) |
+| [DEPLOY_TELNET.md](DEPLOY_TELNET.md) | Weg per Telnet (DE/EN) |
+| [docs/DEBUG.md](docs/DEBUG.md) | Debug-Protokoll nur im RAM, Marker, Obergrenze (DE/EN) |
+| [designer/README.md](designer/README.md) | Design Studio: Designs im Browser bauen, Format, Prüfung (DE/EN) |
+
+## Debug
+
+AmbientFX kann ein **Protokoll nur im RAM** führen, das du per Telnet ausliest. Es ist **standardmäßig aus** und wird nur mit der Marker-Datei `/mnt/persist/ambientfx/debug` eingeschaltet (`touch`, bleibt nach dem Neustart erhalten, bis du sie mit `rm` löschst). Das Protokoll (`/dev/shmem/ambientfx.log`) ist nach jedem Neustart weg, hat eine **feste Obergrenze von 256 KB pro Start** (danach Stopp, nichts wird rotiert oder gelöscht) und sendet **nichts** über ein Netz. Ohne Marker wird nichts geschrieben. Einzelheiten: [docs/DEBUG.md](docs/DEBUG.md).
+
+## Roadmap
+
+- **Design Studio erweitern** (mehr Bausteine in den freien Designs, etwa Gang- oder Profil-abhängige Regeln oder Zonen; die Original-Vorlagen können das schon), nach dem ersten Test im Fahrzeug. Ideen und Mithilfe willkommen.
+- **Passive LED-Beleuchtung (Fläche)** demnächst mit aufnehmen. Phase 1 sind nur die LED-Streifen.
+- Weitere Ideen: Einparkhilfe-Effekt, Blinker-Impuls, Helligkeit je Zone.
+
+## Mitmachen
+
+Eigene Effekte, Tests auf anderen Geräten und Korrekturen sind willkommen (Issue oder Pull Request). **Bitte keine Firmware, keine Audi-Dateien, keine Fahrgestellnummern, keine Logs mit persönlichen Daten und keine Zugangsdaten hochladen.**
+
+## Lizenz, Marken, Credits
+
+- Lizenz: [LICENSE.md](LICENSE.md) – Namensnennung Pflicht, **keine kommerzielle Nutzung, kein Verkauf**, Weitergabe unter gleichen Bedingungen. Sie gilt für den eigenen Code, die Skripte und die Dokumentation, **nicht** für Audi-/Drittanbieter-Code.
+- Audi, Volkswagen, MMI und alle weiteren Marken gehören ihren jeweiligen Inhabern. Dies ist ein unabhängiges Community-Projekt ohne Verbindung zu Audi/VW.
+- © 2026 Matze89x in cooperation with [DEB](https://www.digital-eliteboard.com/) and [LuKa_dev](https://github.com/luka-dev).
+- Inspiriert von **[LuKa_dev](https://github.com/luka-dev)**: Ideen zu Drive und Scroll sowie der Bootclasspath-Mechanismus stammen aus dessen Patches. Über sein Projekt [mib2q-carplay-rgi](https://github.com/luka-dev/mib2q-carplay-rgi) sind wir überhaupt auf diesen Ansatz gekommen. Danke!

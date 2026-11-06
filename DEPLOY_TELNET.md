@@ -1,7 +1,347 @@
-# AmbientFX – Deploy & Test per Telnet + SD-Karte
+<a id="english"></a>
+
+# AmbientFX – Deploy & test via telnet + SD card
+
+🇬🇧 **English** · 🇩🇪 [Deutsch (German, below)](#deutsch)
 
 > [!CAUTION]
-> **Nur zu Testzwecken auf privatem Grundstück, nicht im öffentlichen Straßenverkehr** (siehe [RECHT_LEGAL.md](docs/RECHT_LEGAL.md)). Eingriff in die HMI-Software, Nutzung auf eigene Gefahr. Dieses Dokument ist auf Deutsch, der englische Überblick steht in der [README](README.md).
+> **For testing on private property only, not in public road traffic** (see [RECHT_LEGAL.md](docs/RECHT_LEGAL.md)). Intervention in the HMI software, use at your own risk.
+
+For: Audi A4 B9, MHI2Q (MU1329), MacBook Pro + E100 cable, Terminal app (telnet).
+
+Access: IP `172.16.250.248` (default address of the unit on the Ethernet port), login `root`. **The credentials and the setup of the telnet access are not part of this repository** – use your own access.
+
+> **Since 04.10.2026 there is also the SD menu** (GEM → M.I.B. → ambientfx, without telnet; see
+> `SD-ANLEITUNG.md`). This telnet route stays valid unchanged – as a fallback and
+> for the handover after every build.
+
+---
+
+## 1. Can I “break” the MMI with this?
+
+In short: **the head unit cannot end up “not starting any more” because of this.** The
+worst realistic case is an HMI that crashes or does not show menu
+entries – and that can be undone via telnet in a minute.
+**Already installed successfully once and tested in the vehicle** (v1,
+17.09.2026) – this procedure is proven, no longer just theory.
+
+Why:
+
+| What | touched? | Consequence |
+|-----|-----------|------------|
+| Bootloader, IFS (`/net/mmx/ifs`), kernel, `/mnt/system` | **no** | QNX always boots, network/telnet is always there |
+| `lsd.jxe` (the actual HMI) | **no** | stays original |
+| `lsd.sh` (start script) | **no** | loads all `*.jar` from `jars/` by itself – just like `Cockpit_Mirror.jar` |
+| `/mnt/app/eso/hmi/lsd/jars/` | **one file added**: `ambient_fx.jar` | delete it = stock state |
+
+The patch uses exactly the mechanism that Luka’s `carplay_hook.jar` /
+`Cockpit_Mirror.jar` have been using on your unit for months: a jar on the
+bootclasspath in front of `lsd.jxe`. There is no coding, no EEPROM, no
+FEC, no system partition.
+
+What can theoretically go wrong, and what happens then:
+
+1. **Jar copied defectively** (e.g. SD card pulled too early) → J9 cannot load the
+   classes → the HMI may not start or starts in a loop
+   (black screen / Audi logo loop). Telnet still works →
+   rollback → reboot → done. That is why: **compare the checksum (`cksum`)**
+   before you reboot.
+2. **Bug in my code** → Java exception. Everything we call is
+   wrapped in `try/catch(Throwable)`; the three replaced stock classes are
+   demonstrably byte-for-byte identical except for the changed methods
+   (`verify.sh`). Worst case: menu entries are missing or an effect does not run –
+   the rest of the HMI runs normally.
+3. **Vehicle reacts unexpectedly to the RGB values** (colour gets stuck,
+   flickers) → choose a stock profile in the menu, that ends the effect. The BCM
+   itself cannot be damaged with colour values; they are normal
+   CAN messages that the MMI also sends when you turn the colour.
+
+What **really** makes it safe:
+
+* Backup beforehand (back up the original `jars/`, takes 10 s).
+* After copying **wait 30 s**, only then reboot.
+* Test the telnet connection beforehand so you can get in in an emergency.
+* Never switch off ignition/power while copying.
+
+---
+
+## 2. Overlap with the Cockpit Mirror (Audi A4 B9 MMI/VC modification)?
+
+Checked, **no overlap**:
+
+* `Cockpit_Mirror.jar` contains classes from `com/luka/carplay/*`,
+  `de/audi/app/terminalmode/*`, `de/audi/app/combi/*`,
+  `de/audi/tghu/navi/app/cluster/*`, `org/dsi/ifc/carplay/*`.
+* `ambient_fx.jar` contains `de/audi/tghu/car/hmi/evohigh/CarScreenBag5`,
+  `de/audi/app/car/evo/light/*`, `de/audi/app/car/core/light/*`, `de/mk/ambientfx/*`.
+* Intersection: **0 classes**.
+* The Cockpit Mirror scripts (CHECK / START / AutoStart) only look for
+  `Cockpit_Mirror.jar` and `carplay_hook.jar`; they ignore an `ambient_fx.jar`
+  next to them.
+* Different data: Cockpit Mirror = cluster/VC video channel, BAP, DisplayManager.
+  AmbientFX = `DSICarLight` (interior light) + read-only `DSICarVehicleStates`
+  (engine speed/speed/low beam). Different services, different bus signals.
+
+---
+
+## 3. SD card structure
+
+The complete project folder `mib2q-ambient-fx` lives in the **root** of the
+toolbox SD card (FAT32) – next to `Toolbox/`, not inside it (dragging it over
+in the Finder is enough). Backup and logs go **next to it**, so that dragging
+the project folder over again never overwrites them:
+
+```
+<SD>/
+├── Toolbox/                    ← Cockpit Mirror / MIB toolbox (leave unchanged)
+├── Custom/, Modifications/     ← Cockpit Mirror (leave unchanged)
+├── mib2q-ambient-fx/           ← the project folder (Finder or deploy/copy_to_sd.sh)
+│   └── build/ambient_fx.jar          the patch (+ .cksum next to it)
+├── ambientfx_backup/           ← original jars/ + lsd.sh (see step 4.3)
+└── ambientfx_logs/             ← old logs (until 02.10.2026)
+```
+
+Get it onto the card (Mac, SD inserted, volume name with `ls /Volumes`):
+
+```bash
+cd <your-project-folder> && ./build_java.sh && ./verify.sh && deploy/copy_to_sd.sh /Volumes/<SD-CARD>
+```
+
+`copy_to_sd.sh` is the “dragging over” done cleanly: it only updates
+`<SD>/mib2q-ambient-fx/`, leaves out `build/classes`, `java_stock` and macOS junk
+and afterwards compares the checksum of the jar on the card. Dragging it over
+manually in the Finder works just as well.
+
+Afterwards **eject the SD card properly** (Finder → Eject), otherwise data is missing.
+
+---
+
+## 4. Telnet procedure – by hand, step by step
+
+No script needed – every command individually, so you see what happens.
+(The helper scripts in `deploy/device/` do exactly the same and are there as a
+shortcut if you want – see [section 7](#7-cheat-sheet).)
+
+Mac: E100 on the laptop, ignition on, MMI booted (wait ≥ 1 min), SD card
+in the MMI slot.
+
+### 4.1 Connect
+
+```
+telnet 172.16.250.248 123
+```
+Login `root` + your password (not part of this repository).
+
+Port 123 = **RCC** (our standard route for file access, paths under
+`/net/mmx/...`). Port 23 would be the MMX directly – only needed for process checks
+(`pidin`), since port 123 always shows “not found” there.
+
+### 4.2 Mount the partitions writable
+
+```sh
+mount -uw /net/mmx/mnt/app
+mount -uw /net/mmx/mnt/system
+mount -uw /net/mmx/fs/sda0
+```
+We only write to `/mnt/app`; `/mnt/system` is mounted but not
+changed (fixed routine for this box). **The SD card (`sda0`) itself
+is also mounted read-only by default** – without this `mount -uw`
+step 4.4 (backup, writes to `sda0`) fails with “Read-only file
+system”. Easy to forget because `/mnt/app`/`/mnt/system` are already so
+familiar – so always mount all three together here.
+
+### 4.3 Check the environment (read only)
+
+```sh
+ls /net/mmx/fs/
+ls /net/mmx/fs/sda0/mib2q-ambient-fx/build/
+ls -la /net/mmx/mnt/app/eso/hmi/lsd/jars/
+```
+Expected: `sda0` (possibly `sdb0` – then replace `sda0` in all commands below);
+`ambient_fx.jar` + `.cksum` on the card; in `jars/` your previous files
+(`carplay_hook.jar` or similar), **no** `ambient_fx.jar` yet.
+
+### 4.4 Backup (mandatory, before every installation/update)
+
+```sh
+mkdir -p /net/mmx/fs/sda0/ambientfx_backup/jars
+cp -R /net/mmx/mnt/app/eso/hmi/lsd/jars/. /net/mmx/fs/sda0/ambientfx_backup/jars/
+cp /net/mmx/mnt/app/eso/hmi/lsd/lsd.sh /net/mmx/fs/sda0/ambientfx_backup/lsd.sh
+ls -la /net/mmx/fs/sda0/ambientfx_backup/jars
+```
+Byte comparison (the RCC has no `cut`/`cmp`, we borrow `cmp` from the MMX):
+```sh
+cd /net/mmx/mnt/app/eso/hmi/lsd/jars
+for f in *; do /net/mmx/mnt/app/armle/usr/bin/cmp $f /net/mmx/fs/sda0/ambientfx_backup/jars/$f && echo "OK $f"; done
+cd /
+```
+**Checkpoint:** one `OK` line per file. Only continue when all are there.
+
+### 4.5 Install
+
+```sh
+cksum /net/mmx/fs/sda0/mib2q-ambient-fx/build/ambient_fx.jar
+cat /net/mmx/fs/sda0/mib2q-ambient-fx/build/ambient_fx.jar.cksum
+```
+**Checkpoint:** both numbers equal (the file contains what `./build_java.sh`
+last printed on the Mac). Not equal → prepare the card again, do not
+install.
+
+```sh
+cp /net/mmx/fs/sda0/mib2q-ambient-fx/build/ambient_fx.jar /net/mmx/mnt/app/eso/hmi/lsd/jars/ambient_fx.jar
+chmod 755 /net/mmx/mnt/app/eso/hmi/lsd/jars/ambient_fx.jar
+cksum /net/mmx/mnt/app/eso/hmi/lsd/jars/ambient_fx.jar
+ls -la /net/mmx/mnt/app/eso/hmi/lsd/jars/ambient_fx.jar
+```
+**Checkpoint:** the same checksum as before, `ls` shows the file with the
+correct size. If it differs: `rm` and copy again.
+
+### 4.5b Effect plugins (`.ambiente`) – ALWAYS together with the jar
+
+The effects live as plugins in `ambientfx_effects/` **on the MMI**
+(not on the SD). The jar contains the same effect classes again, and
+by Java rule the plugin classloader asks the parent (= the jar) first –
+therefore: **always update the jar and the plugins together, never just one
+of the two.** Easiest: copy all plugins, that is idempotent and
+removes any doubt about what is already current on the car.
+
+```sh
+mkdir -p /net/mmx/mnt/app/eso/hmi/lsd/ambientfx_effects
+cp /net/mmx/fs/sda0/mib2q-ambient-fx/build/plugins/*.ambiente /net/mmx/mnt/app/eso/hmi/lsd/ambientfx_effects/
+cd /net/mmx/fs/sda0/mib2q-ambient-fx/build/plugins
+for f in *.ambiente; do cksum $f; cksum /net/mmx/mnt/app/eso/hmi/lsd/ambientfx_effects/$f; done
+cd /
+ls -la /net/mmx/mnt/app/eso/hmi/lsd/ambientfx_effects/
+```
+**Checkpoint:** two lines per plugin with the same two numbers (checksum,
+size). Currently five plugins: `atmosphere`, `drive`, `momentum`,
+`momentumselect`, `scroll`. The order in the menu is alphabetical by
+file name.
+
+**Once after the GDS merge (30.09.2026): remove the old test effects.** The
+`cp *.ambiente` only overwrites, it deletes nothing – the two earlier
+test effects have to go by hand, otherwise they stay in the menu:
+```sh
+rm /net/mmx/mnt/app/eso/hmi/lsd/ambientfx_effects/momentumgds.ambiente
+rm /net/mmx/mnt/app/eso/hmi/lsd/ambientfx_effects/momentumgdsselect.ambiente
+ls -la /net/mmx/mnt/app/eso/hmi/lsd/ambientfx_effects/
+```
+**Checkpoint:** `ls` shows exactly five `.ambiente` files.
+
+### 4.6 Back to read-only, wait, reboot
+
+```sh
+mount -ur /net/mmx/mnt/app
+mount -ur /net/mmx/mnt/system
+mount -ur /net/mmx/fs/sda0
+```
+**Wait 30 seconds** (flash flush, the RCC has no `sync`), `exit`, then a
+**complete MMI reboot** (ignition off, lock the car, wait until the
+MMI is really off – or your reset key combination). Just ignition
+off/on without bus rest often is not enough, because the Java VM then
+keeps running.
+
+### 4.7 Rollback (if necessary)
+
+```sh
+mount -uw /net/mmx/mnt/app
+rm /net/mmx/mnt/app/eso/hmi/lsd/jars/ambient_fx.jar
+mount -ur /net/mmx/mnt/app
+```
+→ wait 30 s → complete reboot → stock.
+
+If the MMI shows **no picture at all** after the patch: telnet still works
+(RCC/MMX boot independently of the HMI) → rollback as above. If telnet
+is exceptionally not reachable: ignition off, wait 5 min, try again.
+
+---
+
+## 5. After the reboot: test
+
+AmbientFX writes **no log file of its own**. You check the result by the behaviour of the lighting and with the menu entry *Status* of the SD menu.
+
+### Test log
+
+> **State note (29.09.2026):** the table below describes the
+> original one-effect state (only Momentum) and is still valid as a
+> basic check. There are now five effects – effect-specific
+> tests are in the [README](README.md) (sections per effect, among others “Gear lever
+> D → S” with the D→S test) and in the respective handoff in the
+> chat.
+
+**v3 (corrected after two rounds of live-test feedback): only one effect left,
+“Momentum”.** It drives **only the contour**; you set the surface completely
+as usual via the colour control in the “individual” profile – the
+effect does not change that. Colour = full rainbow over 0–100 km/h, snapped to
+real Audi factory colours (because of the retrofit LED strip at the front). Day/night
+is built directly into Momentum itself: **always 100 % bright during the day** (the first
+test showed that “bright only with firm throttle” looks practically
+invisible in daytime), **at night** 25–100 % depending on the accelerator pedal (it was 50–100 % at first,
+but hardly noticeable in the test).
+
+| # | Action | Expectation in the MMI | Expectation in the log | if not |
+|---|--------|------------------|------------------|------------|
+| 1 | Boot the MMI | normal, no error message | – (log only after `touch` + opening the menu) | black screen > 3 min → rollback |
+| 2 | Vehicle → Vehicle settings → Ambient lighting | under “Audi drive select” there is a new entry **Momentum** | `FxMenu: created 1 fx menu items`, `range2D X limit extended to 9`, `bound (dsi=true, range2d=true)` | entry missing → check the log for `createMenuItems failed` |
+| 3 | Select **Momentum**, vehicle stationary (0 km/h), **in daylight** | contour = **continuous full red**, not just briefly when touching the throttle | `activate widgetId=9 (Momentum)` | light stays off/only flashes briefly → exactly the now-fixed bug, send log + firmware state |
+| 4 | Drive off slowly, in daylight accelerate to ~20/40/70/100 km/h, giving **little** throttle (normal driving) | contour is **fully bright the whole time** and runs through the full rainbow (red → orange → yellow → green → blue → purple, red again from 100 km/h) – independent of the accelerator pedal; the colours shown are **real Audi factory colours**, not freely streamed in-between values | `alive: conSent=… con=… veh[rpm=… v=…]` with real speed values, `lowBeam=false` | `v=0.0` while driving → check `vehicleSpeed`/`speedUnit`; colours flicker anyway → log + exact description, then maybe “factory color list complete” is missing in the log |
+| 5 | In darkness/with low beam: drive at ~0–100 % throttle | contour is already **noticeably dimmed** (25 %) with the throttle released, becomes **clearly** brighter with more throttle, **fully bright** at full throttle – never completely dark | `acc=` in the log rises with the pedal travel, `lowBeam=true` | no noticeable difference when giving throttle → send log (check whether `acc=` in the log varies with the pedal at all) |
+| 6 | Brake (from any speed/throttle state, day or night) | contour jumps **immediately** to full, bright **red**, independent of speed/throttle/time of day | `brake=true` in the log | delayed or stays speed colour → send log |
+| 7 | Release the brake | contour jumps back to the colour/brightness matching the current speed/time of day | `brake=false` | – |
+| 8 | Surface: set a colour/brightness manually in the “individual” profile, then select/deselect Momentum | surface stays exactly at the manually chosen colour/brightness, whatever the contour does | – | surface changes by itself → report immediately, that must not happen any more |
+| 9 | Press the **active** effect again | brightness screen opens (title “individual”) | – | cosmetic, just note it |
+| 10 | Ignition off/on | Momentum is automatically active again (auto-restore, see README) | `state loaded: widgetId=9 …`, `restoring saved effect widgetId=9` | restore does not happen → check `/mnt/persist` writability (see docs/TECHNIK.md) |
+| 11 | Click through other menus / Cockpit Mirror / CarPlay briefly | everything as before | – | note anything unusual |
+
+There is nothing on the car that would have to be backed up or deleted after the test. Note which line of the table did not match.
+
+---
+
+## 6. What else you can see in telnet
+
+* Is the HMI running? Log in on **port 23** (MMX directly) and `pidin | grep j9`
+  → one line with `j9`. Via port 123 `pidin` always shows “not found”,
+  because it lists the RCC process space there, not that of the MMX.
+* AmbientFX debug log (RAM only, only with the marker): `cat /dev/shmem/ambientfx.log`
+  on port 23, on port 123 with `/net/mmx` in front. Enabling and limits: [docs/DEBUG.md](docs/DEBUG.md).
+* Is `/mnt/app` read-only again? `on -f mmx mount` shows all MMX mounts.
+* MMX partitions overall: `on -f mmx mount` (shows among others `/mnt/app`,
+  `/mnt/system`, `/mnt/persist`, `/ramdisk` – see docs/TECHNIK.md).
+
+---
+
+## 7. Cheat sheet
+
+```
+telnet 172.16.250.248 123                                   # login root (your own password)
+mount -uw /net/mmx/mnt/app
+mount -uw /net/mmx/mnt/system
+mount -uw /net/mmx/fs/sda0                                  # DO NOT forget - otherwise 4.4 (backup) fails
+# Backup + cmp check (4.4), checksum + cp + chmod (4.5), copy ALL plugins + checksums (4.5b)
+mount -ur /net/mmx/mnt/app
+mount -ur /net/mmx/mnt/system
+mount -ur /net/mmx/fs/sda0
+# wait 30 s, complete MMI reboot
+# ... test (AmbientFX writes no log file)
+```
+
+Shortcut via the helper scripts (do the same without typing everything individually):
+```
+. /net/mmx/fs/sda0/mib2q-ambient-fx/deploy/device/00_backup.sh
+. /net/mmx/fs/sda0/mib2q-ambient-fx/deploy/device/10_install.sh
+. /net/mmx/fs/sda0/mib2q-ambient-fx/deploy/device/90_rollback.sh
+```
+
+---
+
+<a id="deutsch"></a>
+
+# AmbientFX – Deploy & Test per Telnet + SD-Karte
+
+🇩🇪 **Deutsch** · 🇬🇧 [English (oben)](#english)
+
+> [!CAUTION]
+> **Nur zu Testzwecken auf privatem Grundstück, nicht im öffentlichen Straßenverkehr** (siehe [RECHT_LEGAL.md](docs/RECHT_LEGAL.md)). Eingriff in die HMI-Software, Nutzung auf eigene Gefahr.
 
 Für: Audi A4 B9, MHI2Q (MU1329), MacBook Pro + E100-Kabel, Terminal-App (Telnet).
 

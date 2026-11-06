@@ -1,4 +1,82 @@
+<a id="english"></a>
+
+# License (English convenience translation)
+
+🇬🇧 **English** · 🇩🇪 [Deutsch (German, below, legally binding)](#deutsch)
+
+> This is a non-binding translation for convenience. **The German text below prevails.**
+
+Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
+
+## Summary (TL;DR)
+
+- ✅ Look, learn, rebuild and modify for yourself – always allowed.
+- ✅ Share (e.g. fork, contribute your own effect, post a link) – allowed **as long as it is free of charge and with attribution**.
+- ❌ **Selling, charging money, putting it behind a paywall – NOT allowed.** Neither the code itself, nor derived works, nor an “installation service” or similar for payment, without my explicit written permission.
+- ❌ Passing it off as your own work (without attribution) – not allowed.
+
+The rest of this document is the detailed version – in case of doubt, that one applies.
+
+## Scope
+
+This licence covers the original code of this project, namely everything
+under `java_patch/de/mk/ambientfx/**`, as well as the build/deploy scripts
+and tools (`build_java.sh`, `build_plugin.sh`, `verify.sh`,
+`deploy/**`, `tools/**`) and the documentation (`README.md`,
+`EFFEKTE_HANDBUCH.md`, `DEPLOY_TELNET.md`, `docs/**`).
+
+**Expressly NOT covered** (because it is not my code): the three
+files under `java_patch/de/audi/...` (they contain decompiled,
+adapted original Audi code) as well as everything under `java_stock/` and
+`vendor/` (neither is shipped in this repository) (pure, unchanged Audi firmware code
+and third-party tools respectively). This licence does not apply to them – anyone
+who plans to do something with them has to take care of the legal position
+towards AUDI AG/Volkswagen AG themselves.
+
+## Conditions in detail
+
+Under the following conditions you may use, copy, modify and pass on the
+licensed code (modelled on
+[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)):
+
+1. **Attribution.** You name the author (“Matze89x in
+   cooperation with DEB and LuKa_dev”) and give a link to this project when you pass on the
+   code or derived works.
+2. **NonCommercial.** You may **not** use this code or
+   derived works **for commercial purposes**. This expressly
+   includes: selling the code or modifications of it, selling
+   flashed/installed devices or SD cards, paid “support”/“installation”
+   offers, or any other way of making money with it directly or
+   indirectly – without my prior, explicit written consent.
+3. **ShareAlike.** If you modify the code and pass it on, the derived
+   work must be under the same licence (same conditions, same
+   restrictions).
+
+## Why this licence?
+
+This project is based on years of reverse-engineering work on a
+specific vehicle, was created entirely in spare time and is meant to
+benefit the community (do-it-yourselfers, tinkerers, other Audi A4 B9 drivers) –
+not to let third parties make money with it without having
+contributed anything themselves.
+
+## No warranty
+
+This code is provided “as is”, without any warranty.
+Interventions in vehicle software are at your own risk.
+
+## Questions / asking for permission
+
+For anything beyond the rights mentioned above (especially any commercial
+use), please get in touch and ask for permission first.
+
+---
+
+<a id="deutsch"></a>
+
 # Lizenz
+
+🇩🇪 **Deutsch** · 🇬🇧 [English (oben)](#english)
 
 Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
 
@@ -65,38 +143,3 @@ Eingriffe in die Fahrzeugsoftware geschehen auf eigenes Risiko.
 Für alles, was über die oben genannten Rechte hinausgeht (insbesondere
 jede kommerzielle Nutzung), bitte vorher Kontakt aufnehmen und um
 Erlaubnis fragen.
-
----
-
-# License (English convenience translation)
-
-> This is a non-binding translation for convenience. **The German text above prevails.**
-
-Copyright (c) 2026 Matze89x in cooperation with DEB and LuKa_dev
-
-## Summary
-
-- ✅ Look, learn, rebuild and modify for yourself – always allowed.
-- ✅ Share (fork, contribute your own effect, post a link) – allowed **as long as it is free of charge and with attribution**.
-- ❌ **Selling, charging money, putting it behind a paywall – NOT allowed**, neither the code, nor derived works, nor “installation service” or similar for payment, without my explicit written permission.
-- ❌ Passing it off as your own work (without attribution) – not allowed.
-
-## Scope
-
-This licence covers the original code of this project, namely everything under `java_patch/de/mk/ambientfx/**`, the build/deploy scripts and tools (`build_java.sh`, `build_plugin.sh`, `verify.sh`, `deploy/**`, `tools/**`, `esd/**`, `patches/**`, `examples/**`) and the documentation. The files in `patches/` contain only our own changes and a few context lines.
-
-**Expressly NOT covered** (not my code): the Audi classes generated from your own firmware (`java_stock/`, `java_patch/de/audi/`) and everything under `vendor/` (unchanged Audi firmware code and third-party tools). This licence does not apply to them – anyone doing something with them has to take care of the legal position towards AUDI AG/Volkswagen AG themselves.
-
-## Conditions (modelled on CC BY-NC-SA 4.0)
-
-1. **Attribution.** Name the author (“Matze89x in cooperation with DEB and LuKa_dev”) and link to this project when you pass on the code or derived works.
-2. **NonCommercial.** You may **not** use this code or derived works for commercial purposes. This expressly includes selling the code or modifications of it, selling flashed/installed devices or SD cards, paid “support”/“installation” offers, or any other direct or indirect way of making money with it – without my prior explicit written consent.
-3. **ShareAlike.** If you modify and pass on the code, the derived work must be under the same licence (same conditions, same restrictions).
-
-## No warranty
-
-This code is provided “as is”, without any warranty. Interventions in vehicle software are at your own risk.
-
-## Questions / asking for permission
-
-For anything beyond the rights above (especially any commercial use), please get in touch and ask for permission first.
