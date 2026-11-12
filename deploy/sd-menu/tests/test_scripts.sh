@@ -77,6 +77,16 @@ run_all() {
     # zweiter Lauf: alles aktuell
     run afx_install.sh; check '[ $RC = 0 ] && echo "$OUT" | grep -q "schon aktuell" && [ ! -f "$T/reboot_called" ]' "zweites Installieren: schon aktuell, kein Neustart"
     run afx_status.sh; check 'echo "$OUT" | grep -q "Auto Jar    : neu" && echo "$OUT" | grep -q "= wie SD" && echo "$OUT" | grep -q "5 gleich wie SD" && echo "$OUT" | grep -q "alles auf dem Stand der SD"' "status nach install: alles gleich"
+    # Debug-Marker: "schon aktuell" laesst ihn stehen (nur Hinweis), ein echtes Update/Install entfernt ihn (vorher auf der SD gesichert)
+    mkdir -p "$PERS"; : > "$PERS/debug"; run afx_install.sh
+    check '[ $RC = 0 ] && echo "$OUT" | grep -q "schon aktuell" && echo "$OUT" | grep -q "Debug-Marker ist gesetzt" && [ -f "$PERS/debug" ] && [ ! -f "$T/reboot_called" ]' "install (schon aktuell): Marker bleibt, nur Hinweis, kein Neustart"
+    cp "$T/jar_old" "$CARJ/ambient_fx.jar"; run afx_install.sh
+    check '[ $RC = 0 ] && [ ! -e "$PERS/debug" ] && echo "$OUT" | grep -q "Debug-Marker war gesetzt und wurde entfernt" && echo "$OUT" | grep -q "Debug-Marker: nicht gesetzt" && [ -f "$T/reboot_called" ]' "update: gesetzter Debug-Marker wird entfernt und in der Pruefung bestaetigt"
+    check 'ls -d "$AFD"/backup/*_install*/state/persist_debug >/dev/null 2>&1' "update: Marker vorher auf der SD gesichert"
+    check 'ls "$PERS"/ambientfx*.state >/dev/null 2>&1 || [ ! -f "$PERS/ambientfx.state" ]' "update: gemerkter Effekt (state) bleibt unberuehrt"
+    cp "$T/jar_old" "$CARJ/ambient_fx.jar"; run afx_install.sh
+    check '[ $RC = 0 ] && ! echo "$OUT" | grep -q "war gesetzt" && echo "$OUT" | grep -q "Debug-Marker: nicht gesetzt"' "update ohne Marker: nichts zu entfernen, Pruefung zeigt nicht gesetzt"
+    check 'carjar_is "$T/jar_new" && all_plugs_same && others_same' "nach den Marker-Tests: Jar/Plugins/andere Jars wie erwartet"
 
     # --- Updaten: alte Jar + ein altes Plugin im Auto
     cp "$T/jar_old" "$CARJ/ambient_fx.jar"; echo "altes plugin" > "$EFX/momentum.ambiente"; BEFORE_B=$(ls "$AFD/backup/original/jars" | wc -l)

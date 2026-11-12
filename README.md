@@ -116,7 +116,7 @@ The SD menu has an **Uninstall** entry: it backs everything up to the SD card fi
 
 ## Debug
 
-AmbientFX can keep a **log in RAM only** that you read via telnet. It is **off by default** and is only enabled by the marker file `/mnt/persist/ambientfx/debug` (`touch`; it survives a reboot until you delete it with `rm`). The log (`/dev/shmem/ambientfx.log`) is gone after every reboot, has a **hard limit of 256 KB per boot** (then it stops; nothing is rotated or deleted) and sends **nothing** over any network. Without the marker nothing is written. Details: [docs/DEBUG.md](docs/DEBUG.md).
+AmbientFX can keep a **log in RAM only** that you read via telnet. It is **off by default** and is only enabled by the marker file `/mnt/persist/ambientfx/debug` (`touch`; it survives a reboot until you delete it with `rm` or run Install / Update in the SD menu, which removes it). The log (`/dev/shmem/ambientfx.log`) is gone after every reboot, has a **hard limit of 256 KB per boot** (then it stops; nothing is rotated or deleted) and sends **nothing** over any network. Without the marker nothing is written. Details: [docs/DEBUG.md](docs/DEBUG.md).
 
 ## Roadmap
 
@@ -257,7 +257,7 @@ Das SD-Menü hat den Punkt **Deinstallieren**: Es sichert zuerst alles auf die S
 
 ## Debug
 
-AmbientFX kann ein **Protokoll nur im RAM** führen, das du per Telnet ausliest. Es ist **standardmäßig aus** und wird nur mit der Marker-Datei `/mnt/persist/ambientfx/debug` eingeschaltet (`touch`, bleibt nach dem Neustart erhalten, bis du sie mit `rm` löschst). Das Protokoll (`/dev/shmem/ambientfx.log`) ist nach jedem Neustart weg, hat eine **feste Obergrenze von 256 KB pro Start** (danach Stopp, nichts wird rotiert oder gelöscht) und sendet **nichts** über ein Netz. Ohne Marker wird nichts geschrieben. Einzelheiten: [docs/DEBUG.md](docs/DEBUG.md).
+AmbientFX kann ein **Protokoll nur im RAM** führen, das du per Telnet ausliest. Es ist **standardmäßig aus** und wird nur mit der Marker-Datei `/mnt/persist/ambientfx/debug` eingeschaltet (`touch`, bleibt nach dem Neustart erhalten, bis du sie mit `rm` löschst oder im SD-Menü Installieren / Updaten ausführst, das sie entfernt). Das Protokoll (`/dev/shmem/ambientfx.log`) ist nach jedem Neustart weg, hat eine **feste Obergrenze von 256 KB pro Start** (danach Stopp, nichts wird rotiert oder gelöscht) und sendet **nichts** über ein Netz. Ohne Marker wird nichts geschrieben. Einzelheiten: [docs/DEBUG.md](docs/DEBUG.md).
 
 ## Roadmap
 

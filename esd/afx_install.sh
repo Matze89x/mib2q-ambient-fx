@@ -53,6 +53,7 @@ LEG_TODO=""
 for n in $LEGACY_PLUGINS; do [ -f "$EFX/$n" ] && { LEG_TODO="$LEG_TODO $n"; say "Alt-Effekt   : $n wird entfernt (frueherer Testeffekt)"; }; done
 if [ "$JAR_DO" = 0 ] && [ -z "$PLUG_TODO" ] && [ -z "$LEG_TODO" ]; then
     say "Alles ist schon aktuell - nichts zu tun. (Nichts veraendert, kein Neustart.)"
+    [ -f "$PERSIST/debug" ] && warn "Der Debug-Marker ist gesetzt (AmbientFX protokolliert im RAM). Bei einer Installation/einem Update wird er entfernt; sofort aus: Telnet: rm /mnt/persist/ambientfx/debug"
     finish 0
 fi
 
@@ -63,6 +64,7 @@ backup_dir_new || fail "Die SD-Karte ist nicht beschreibbar - ohne Sicherung wir
 ensure_full_backup || fail "Die einmalige Komplett-Sicherung der Jars (backup/original) ist misslungen."
 backup_file "$JAR" ambient_fx.jar || fail "Sicherung der bisherigen Jar misslungen."
 backup_car_plugins || fail "Sicherung der bisherigen Effekte misslungen."
+backup_file "$PERSIST/debug" state/persist_debug || fail "Sicherung des Debug-Markers misslungen."
 backup_stand
 if [ -f "$JAR" ] || [ "$(car_plugin_count)" -gt 0 ]; then say "Sicherung: $BKP"; else say "(Es gab vorher nichts zu sichern - Vermerk dazu: $BKP/STAND.txt)"; fi
 [ -n "$BKP_SAME" ] && say "  (dieselbe Jar, Nr. $BKP_JARNR, ist schon gesichert in: $BKP_SAME)"
@@ -82,6 +84,15 @@ for n in $LEG_TODO; do
     rm -f "$EFX/$n" 2>/dev/null; [ -f "$EFX/$n" ] && fail "$n nicht entfernbar."
     say "OK  entfernt: $n"
 done
+
+# Debug-Marker: nach jeder Installation/jedem Update wird ein gesetzter Marker entfernt, damit nach dem Update kein Protokoll "aus Versehen" weiterlaeuft.
+# Es wird nur geprueft, ob er da ist - dann geloescht (das Protokoll liegt im RAM und ist nach dem Neustart ohnehin weg). Wieder an: touch /mnt/persist/ambientfx/debug
+if [ -f "$PERSIST/debug" ]; then
+    persist_rw
+    rm -f "$PERSIST/debug" 2>/dev/null
+    [ -f "$PERSIST/debug" ] && fail "Debug-Marker nicht entfernbar ($PERSIST/debug)."
+    say "OK  Debug-Marker war gesetzt und wurde entfernt (Protokoll aus; wieder an per Telnet: touch /mnt/persist/ambientfx/debug)"
+fi
 
 # macOS-Muell im Effekte-Ordner (der gehoert uns): entfernen, damit dort wirklich nur die Plugins liegen
 clean_junk "$EFX"
@@ -107,5 +118,6 @@ JUNK_E=$(list_junk_in "$EFX"); JUNK_J=$(list_junk_in "$JARS")
 [ -z "$JUNK_E" ] && say "  macOS-Reste im Ordner ambientfx_effects: keine" || fail "Pruefung: macOS-Reste im Ordner ambientfx_effects ($JUNK_E)."
 [ -z "$JUNK_J" ] && say "  macOS-Reste im Jar-Ordner: keine" || warn "macOS-Reste im Jar-Ordner (nicht von uns, nicht angefasst): $(echo $JUNK_J)"
 for f in "$JAR.afxnew" "$EFX"/*.afxnew; do [ ! -e "$f" ] || fail "Pruefung: Zwischendatei uebrig ($f)."; done
+[ ! -e "$PERSIST/debug" ] && say "  Debug-Marker: nicht gesetzt (kein Protokoll)" || fail "Pruefung: Debug-Marker ist noch gesetzt."
 say "--------------------------------------------------------------------"
 finish_reboot 15

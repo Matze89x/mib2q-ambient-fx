@@ -13,7 +13,7 @@ AmbientFX can keep a **log in working memory (RAM)** that you read via telnet, f
 
 - **Marker only:** without the marker file **nothing** is written, no file is created.
 - **RAM only:** the log lives in `/dev/shmem/ambientfx.log` and is **gone after every reboot** of the unit. It is never written to flash or SD. If `/dev/shmem` is not writable, AmbientFX falls back to `/tmp/ambientfx.log`.
-- **The marker stays:** the marker lives on `/mnt/persist` and **survives a reboot** until you delete it. So after you enable it, AmbientFX logs from the start of every drive without you opening telnet each time.
+- **The marker stays:** the marker lives on `/mnt/persist` and **survives a reboot** until you delete it, **or until you run Install / Update in the SD menu: that removes a set marker** (so no log keeps running by accident after an update). So after you enable it, AmbientFX logs from the start of every drive without you opening telnet each time, until you delete the marker or update.
 - **Hard limit:** **256 KB per boot.** Once reached, AmbientFX writes a final line (`=== GRENZE 256 KB erreicht … ===` (German for “limit of 256 KB reached”)) and **stops writing**. **Nothing is rotated and nothing is deleted**; the beginning is kept. Reset: delete the file (`rm`) or reboot the unit.
 - **No network, no own thread.** Every write error is swallowed; the log cannot disturb the HMI.
 - **Content:** lines like `[+12.345s] AmbientFx: …` (seconds since enabling, because the unit’s clock is unreliable), errors with stack trace and measured values (`fx.<name> = <value>`, on change only). No vehicle identification number, no position. Speed, gear and effect names can appear though: **look at the log before you post it anywhere.**
@@ -38,7 +38,7 @@ rm /mnt/persist/ambientfx/debug
 
 The log lives on the **MMX** (where the HMI runs). With telnet on **port 23** (MMX directly) the paths above apply. With telnet on **port 123** (RCC) prefix `/net/mmx`: `/net/mmx/dev/shmem/ambientfx.log` and marker `/net/mmx/mnt/persist/ambientfx/debug` (see [DEPLOY_TELNET.md](../DEPLOY_TELNET.md)).
 
-The **SD menu** has no entry of its own for this: *Status* only shows whether the marker is set, and *Uninstall* also deletes the marker and the RAM log.
+The **SD menu** has no entry of its own for this: *Status* only shows whether the marker is set, *Install / Update* removes a set marker (it only checks whether it is there, then deletes it; the marker is backed up to the SD first), and *Uninstall* also deletes the marker and the RAM log.
 
 ## Limits
 
@@ -67,7 +67,7 @@ AmbientFX kann ein **Protokoll im Arbeitsspeicher (RAM)** führen, das du per Te
 
 - **Nur mit Marker:** Ohne die Marker-Datei wird **nichts** geschrieben, es entsteht keine Datei.
 - **Nur im RAM:** Das Protokoll liegt in `/dev/shmem/ambientfx.log` und ist nach jedem **Neustart des Geräts weg**. Es wird nie auf Flash oder SD geschrieben. Ist `/dev/shmem` nicht beschreibbar, weicht AmbientFX auf `/tmp/ambientfx.log` aus.
-- **Marker bleibt:** Der Marker liegt auf `/mnt/persist` und **überlebt den Neustart**, bis du ihn löschst. So protokolliert AmbientFX nach dem Einschalten bei jeder Fahrt ab dem Start mit, ohne dass du jedes Mal Telnet öffnen musst.
+- **Marker bleibt:** Der Marker liegt auf `/mnt/persist` und **überlebt den Neustart**, bis du ihn löschst, **oder bis du im SD-Menü Installieren / Updaten ausführst: das entfernt einen gesetzten Marker** (damit nach einem Update nicht aus Versehen ein Protokoll weiterläuft). So protokolliert AmbientFX nach dem Einschalten bei jeder Fahrt ab dem Start mit, ohne dass du jedes Mal Telnet öffnen musst, bis du den Marker löschst oder ein Update machst.
 - **Feste Obergrenze:** **256 KB pro Start.** Ist sie erreicht, schreibt AmbientFX eine Schlusszeile (`=== GRENZE 256 KB erreicht … ===`) und **hört auf zu schreiben**. Es wird **nichts rotiert und nichts gelöscht**, der Anfang bleibt erhalten. Zurücksetzen: Datei löschen (`rm`) oder das Gerät neu starten.
 - **Kein Netz, kein eigener Thread.** Jeder Schreibfehler wird verschluckt, das Protokoll kann die HMI nicht stören.
 - **Inhalt:** Zeilen wie `[+12.345s] AmbientFx: …` (Sekunden seit dem Einschalten, weil die Geräteuhr unzuverlässig ist), Fehler mit Stacktrace und Messwerte (`fx.<name> = <wert>`, nur bei Änderung). Keine Fahrzeug-Identnummer, keine Position. Es können aber Tempo, Gang und Effektnamen vorkommen: **schau ins Protokoll, bevor du es irgendwo postest.**
@@ -92,7 +92,7 @@ rm /mnt/persist/ambientfx/debug
 
 Das Protokoll liegt auf der **MMX** (dort läuft die HMI). Per Telnet auf **Port 23** (MMX direkt) gelten die Pfade oben. Per Telnet auf **Port 123** (RCC) stellst du `/net/mmx` voran: `/net/mmx/dev/shmem/ambientfx.log` und Marker `/net/mmx/mnt/persist/ambientfx/debug` (siehe [DEPLOY_TELNET.md](../DEPLOY_TELNET.md)).
 
-Das **SD-Menü** hat dafür keinen eigenen Punkt: *Status* zeigt nur, ob der Marker gesetzt ist, und *Deinstallieren* löscht Marker und RAM-Protokoll mit.
+Das **SD-Menü** hat dafür keinen eigenen Punkt: *Status* zeigt nur, ob der Marker gesetzt ist, *Installieren / Updaten* entfernt einen gesetzten Marker (es prüft nur, ob er da ist, und löscht ihn dann; vorher wird er auf der SD gesichert), und *Deinstallieren* löscht Marker und RAM-Protokoll mit.
 
 ## Grenzen
 
